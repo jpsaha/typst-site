@@ -11,74 +11,72 @@ Ensure you have the following installed on your local machine:
 - **Typst CLI** (v0.12.x or later)
 - **Node.js** (v20+ to run the local Pagefind search indexer)
 
-### 🛠️ How to Compile Natively
-To build the website layout, extract lecture metadata, and update the search index on your machine, execute the automation build script from the root folder:
+# 🧮 Typst Mathematics Lecture Portal
+
+[![CI](https://github.com/jpsaha/typst-site/actions/workflows/deploy.yml/badge.svg)](https://github.com/jpsaha/typst-site/actions) [![Pages](https://github.com/jpsaha/typst-site/workflows/Pages/badge.svg)](https://OWNER.github.io/REPO) [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+Concise, browser-viewable lecture notes and print-ready A4 PDFs generated with Typst. Includes automatic indexing, Pagefind search, local-render fallbacks, and Light/Dark themes.
+
+## Table of Contents
+- Quick Start
+- Project layout
+- Adding lectures
+- CI/CD
+- Customization
+
+## Quick Start
+
+Prerequisites
+- Typst CLI (v0.12+)
+- Node.js (v20+) — used for Pagefind indexing
+
+Build the site (from repo root):
 ```bash
 chmod +x ./build.sh
 ./build.sh
 ```
-This script populates an isolated `./dist/` directory containing all public assets. (*Note: `./dist/` is blocked by `.gitignore` to keep your Git commits clean.*)
+This creates a `dist/` directory with the static site and generated PDFs.
 
-### 🌐 Previewing Locally
-Modern browsers restrict font and MathML requests when opening static HTML files directly via `file:///`. To test your math notes with fully functioning equations locally, spin up a lightweight local server environment:
-
-**Using Python:**
+Preview locally (in macOS):
 ```bash
 cd dist
 python3 -m http.server 8000
+open http://localhost:8000
 ```
-Then navigate to `http://localhost:8000` in your web browser.
 
----
+Tip: If you only want to compile a single lecture for testing, run the Typst compiler on that file (example):
+```bash
+typst compile src/lec1.typ -o dist/lec1.pdf
+```
 
-## 📂 Project Architecture
+## Project layout
 
-```text
-math-course-site/
-├── .github/workflows/
-│   └── deploy.yml     # Cloud CI/CD engine targeting GitHub Pages
+```
+typst-site/
+├── .github/workflows/deploy.yml  # CI deploy to GitHub Pages
 ├── src/
-│   ├── template.typ   # Core layout definitions (Theorems, Exercises, Navigation)
-│   ├── style.css      # Variables, layout, and automatic Dark Mode rules
-│   ├── lec1.typ       # Lecture Note source 1
-│   └── lec2.typ       # Lecture Note source 2
-├── .gitignore         # Blocks localized build outputs from staging
-└── build.sh           # Master pipeline compiler script
+│   ├── template.typ              # Layout (theorems, exercises, nav)
+│   ├── style.css                 # Theme variables & styles
+│   ├── lec1.typ
+│   └── lec2.typ
+├── .gitignore
+└── build.sh                       # Build + index + publish pipeline
 ```
 
----
+## Adding a lecture
+1. Add `src/lecN.typ` (exact filename expected by the indexer).
+2. Include a title metadata line at the top. Example (comment or YAML frontmatter):
+```typst
+// Title: Vector Spaces & Inner Products
+#import "template.typ": theorem, definition, exercise, html-nav-header
+```
+Recommendation: consider using a YAML frontmatter block or a documented metadata header to make parsing more robust across editors and tools.
 
-## 📝 How to Add New Lecture Notes
+Run `./build.sh` to update the site and search index, or push to `main` and let CI deploy.
 
-The compile pipeline is fully automated. To add a new module (e.g., Lecture 3):
+## CI / Deployment
+Pipeline: [.github/workflows/deploy.yml](.github/workflows/deploy.yml) — the action builds the site and deploys to GitHub Pages, and runs Pagefind for search indexing.
 
-1. Create a new file inside the source directory named exactly **`src/lec3.typ`**.
-2. **Crucial Step:** Write a custom title metadata comment on **Line 1** so the dashboard can index it:
-   ```typst
-   // Title: Vector Spaces & Inner Products
-   #import "template.typ": theorem, definition, exercise, html-nav-header
-   ```
-3. Use the pre-configured layout blocks for clean formatting:
-   - `#definition(title: "Name")[...]`
-   - `#theorem(title: "Name")[...]`
-   - `#exercise(title: "Name", solution: [...])[...]` *(The solution collapses into an interactive accordion on the web!)*
-
-4. Run `./build.sh` or push directly to GitHub to see it go live instantly.
-
----
-
-## 🤖 Continuous Deployment (CI/CD)
-
-This repository utilizes **GitHub Actions** to automate publishing. Every time code is pushed to the `main` branch, the cloud runner:
-1. Provisions a clean Linux environment.
-2. Installs the official Typst compiler toolchain.
-3. Sets up a Node runtime environment.
-4. Executes `./build.sh` to generate the lecture assets.
-5. Indexes content using **Pagefind Search**.
-6. Deploys the static results directly to your private **GitHub Pages** subdomain.
-
----
-
-## 🎨 Modifying Themes and Layout
-- To change colors, typography, or adjust the system-level dark mode variables, modify **`src/style.css`**.
-- To adjust the structural aesthetics of theorems, proofs, or change top header sizes, modify **`src/template.typ`**.
+## Customization
+- Edit `src/style.css` for colors, fonts, and theme variables.
+- Edit `src/template.typ` to change layout, theorem styling, or navigation.
