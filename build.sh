@@ -69,8 +69,8 @@ cat <<EOF > dist/index.html
     <link rel="stylesheet" href="style.css">
     
     <!-- FIX: Removed leading slashes so paths resolve on subfolder domains -->
-    <link href="_pagefind/pagefind-ui.css" rel="stylesheet">
-    <script src="_pagefind/pagefind-ui.js"></script>
+    <link href="pagefind/pagefind-ui.css" rel="stylesheet">
+    <script src="pagefind/pagefind-ui.js"></script>
 </head>
 <body>
     <div class="index-container">
@@ -108,7 +108,7 @@ cat <<EOF > dist/index.html
         window.addEventListener('DOMContentLoaded', (event) => {
             new PagefindUI({ 
                 element: "#search-container", 
-                bundlePath: "_pagefind/",
+                bundlePath: "pagefind/",
                 showSubResults: true,
                 resetFilters: true
             });
