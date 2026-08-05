@@ -1,9 +1,8 @@
 // src/lec2.typ
-#import "template.typ": theorem, definition, exercise
+#import "template.typ": theorem, definition, exercise, html-nav-header
 
 #let is-html = sys.inputs.at("format", default: "pdf") == "html"
 
-// Setting global parameters at the absolute root layer avoids container bugs
 #show: doc => {
   if is-html {
     return doc
@@ -13,8 +12,9 @@
   doc
 }
 
-// Target-aware header layout mapping
+// NEW: Render navigation bar for browser view
 #if is-html {
+  html-nav-header()
   html.elem("h1", attrs: (style: "font-family: system-ui, sans-serif; color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px;"))[Lecture 2: Eigenvalues & Spectral Mapping]
 } else {
   align(center)[
@@ -43,14 +43,6 @@ In this session, we analyze how linear transformations scale specific vector sub
   Let $T: V -> V$ be a linear operator. If $v_1, v_2, ..., v_m$ are eigenvectors 
   corresponding to *distinct* eigenvalues $lambda_1, lambda_2, ..., lambda_m$, 
   then the set $\{v_1, v_2, ..., v_m\}$ is linearly independent.
-]
-
-#theorem(title: "Spectral Mapping Theorem (Polynomials)")[
-  Let $T: V -> V$ be a linear operator with an eigenvalue $lambda$. 
-  For any polynomial $p(t) = a_n t^n + ... + a_1 t + a_0$, $p(lambda)$ is an 
-  eigenvalue of the operator $p(T)$, operating as:
-  
-  $ p(T)(v) = p(lambda)v $
 ]
 
 = Homework Practice

@@ -1,12 +1,10 @@
 // src/lec1.typ
-#import "template.typ": theorem, definition, exercise
+#import "template.typ": theorem, definition, exercise, html-nav-header
 
 #let is-html = sys.inputs.at("format", default: "pdf") == "html"
 
-// FIX: Setting global parameters directly at the root layer prevents container isolation warnings
 #show: doc => {
   if is-html {
-    // If targeted for web engines, ignore paged limits entirely
     return doc
   }
   set page(paper: "a4", margin: (x: 2.5cm, y: 2.5cm), height: 29.7cm)
@@ -14,8 +12,9 @@
   doc
 }
 
-// Render dynamic header logic depending on target format output
+// NEW: Render navigation bar for browser view
 #if is-html {
+  html-nav-header()
   html.elem("h1", attrs: (style: "font-family: system-ui, sans-serif; color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px;"))[Lecture 1: Linear Transformations & Matrices]
 } else {
   align(center)[
@@ -52,5 +51,4 @@ We begin by establishing the properties of fields mapping vector components.
   Find a structured matrix representation $M_T$ and verify the output dimension explicitly:
   
   $ M_T = mat(1, 1, 0; 0, 0, 1) $
-  
 ]
