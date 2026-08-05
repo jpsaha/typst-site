@@ -1,38 +1,139 @@
 /* src/style.css */
+
+/* 1. Global Layout Variables */
 :root {
     --bg: #ffffff;
     --text: #222222;
     --border: #e9ecef;
     --nav-bg: #f8f9fa;
+    --primary: #0066cc;
+    --btn-web-bg: #f1f3f5;
+    --btn-web-text: #495057;
+    --btn-pdf-bg: #fff0f6;
+    --btn-pdf-text: #c2255c;
+    --btn-pdf-border: #ffdeeb;
 }
 
-/* Automatically swap variables if dark mode is configured on device */
+/* 2. System Level Dark Mode Variables */
 @media (prefers-color-scheme: dark) {
     :root {
         --bg: #1e1e1e;
         --text: #e0e0e0;
         --border: #333333;
         --nav-bg: #2d2d2d;
+        --primary: #339af0;
+        --btn-web-bg: #2b2b2b;
+        --btn-web-text: #ced4da;
+        --btn-pdf-bg: #2b1b22;
+        --btn-pdf-text: #ff85a0;
+        --btn-pdf-border: #4a2332;
     }
     
-    /* Ensure math images/elements invert their brightness on dark canvases */
+    /* Ensure math elements adapt color on dark canvases */
     math, math * {
         color: #e0e0e0 !important;
     }
     
-    /* Soften background tints inside blocks for dark mode */
+    /* Soften nested background tints inside Typst blocks for dark mode */
     div[style*="background-color: #f0f7ff"] { background-color: #1a2635 !important; }
     div[style*="background-color: #f1f8e9"] { background-color: #1b261d !important; }
     div[style*="background-color: #ffebee"] { background-color: #2c1a1a !important; }
-    details { background-color: #252525 !important; border-color: #441111 !important;}
+    details { background-color: #252525 !important; border-color: #441111 !important; }
 }
 
+/* 3. Base Document Styling */
 body {
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--bg);
     color: var(--text);
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
     line-height: 1.6;
+}
+
+/* 4. Index/Dashboard Layout Containers */
+.index-container {
+    max-width: 800px;
+    margin: 40px auto;
+}
+
+.index-header {
+    text-align: center;
+    margin-bottom: 40px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 20px;
+}
+
+.index-header h1 {
+    font-size: 2.5rem;
+    margin: 0 0 10px 0;
+}
+
+.index-header p {
+    color: #888;
+    font-style: italic;
+    margin: 0;
+}
+
+/* 5. Lecture List Grid System */
+.lecture-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.lecture-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.lecture-row span {
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+.lecture-links {
+    display: flex;
+    gap: 12px;
+}
+
+/* 6. Dashboard Action Buttons Styling */
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-web {
+    background-color: var(--btn-web-bg);
+    color: var(--btn-web-text);
+}
+
+.btn-web:hover {
+    opacity: 0.85;
+}
+
+.btn-pdf {
+    background-color: var(--btn-pdf-bg);
+    color: var(--btn-pdf-text);
+    border: 1px solid var(--btn-pdf-border);
+}
+
+.btn-pdf:hover {
+    opacity: 0.85;
+}
+
+/* 7. Pagefind UI Search Custom Themes Integration */
+#search-container {
+    --pagefind-ui-primary: var(--primary);
+    --pagefind-ui-text: var(--text);
+    --pagefind-ui-background: var(--bg);
+    --pagefind-ui-border: var(--border);
+    --pagefind-ui-tag: var(--nav-bg);
 }
