@@ -52,4 +52,5 @@ We begin by establishing the properties of fields mapping vector components.
   Find a structured matrix representation $M_T$ and verify the output dimension explicitly:
   
   $ M_T = mat(1, 1, 0; 0, 0, 1) $
+  
 ]
