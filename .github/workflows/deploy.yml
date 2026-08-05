@@ -1,0 +1,50 @@
+name: Deploy Typst Course Website
+
+on:
+  push:
+    branches:
+      - main  # Triggers the build whenever you push code to your main branch
+
+# Sets up the permissions required to compile and securely overwrite GitHub Pages assets
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Prevent overlapping jobs from breaking the active deployment runner
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Install Typst Compiler
+        uses: chiahappy/setup-typst@v1
+        with:
+          # Uses the stable compiler runtime engine
+          version: '0.11.x'
+
+      - name: Run Compilation Pipeline Script
+        run: |
+          # Grant executable permissions to your build script
+          chmod +x ./build.sh
+          # Execute the script to generate the ./dist folder
+          ./build.sh
+
+      - name: Setup GitHub Pages Deployment Environment
+        uses: actions/configure-pages@v4
+
+      - name: Upload Static Web Assets Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Tells GitHub to upload and package everything inside your 'dist' folder
+          path: './dist'
+
+      - name: Publish to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
