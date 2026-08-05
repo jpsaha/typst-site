@@ -57,7 +57,7 @@ done
 LECTURES_JSON+="]"
 
 # ==========================================
-# NEW: Part 2: Generate the index.html with Pagefind Search Hooks
+# FIXED: Part 2: Generate the index.html with Pagefind Search Hooks
 # ==========================================
 cat <<EOF > dist/index.html
 <!DOCTYPE html>
@@ -68,9 +68,9 @@ cat <<EOF > dist/index.html
     <title>Mathematics Lecture Series</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Load Pagefind styling and scripting modules dynamically -->
-    <link href="/_pagefind/pagefind-ui.css" rel="stylesheet">
-    <script src="/_pagefind/pagefind-ui.js"></script>
+    <!-- FIX: Removed leading slashes so paths resolve on subfolder domains -->
+    <link href="_pagefind/pagefind-ui.css" rel="stylesheet">
+    <script src="_pagefind/pagefind-ui.js"></script>
 </head>
 <body>
     <div class="index-container">
@@ -104,10 +104,11 @@ cat <<EOF > dist/index.html
             root.appendChild(row);
         });
 
-        // Initialize the Interactive Pagefind UI search box component 
+        // FIX: Added bundlePath pointing directly to your compiled files
         window.addEventListener('DOMContentLoaded', (event) => {
             new PagefindUI({ 
                 element: "#search-container", 
+                bundlePath: "_pagefind/",
                 showSubResults: true,
                 resetFilters: true
             });
