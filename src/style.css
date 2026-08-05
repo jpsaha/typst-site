@@ -1,0 +1,97 @@
+/* src/style.css */
+:root {
+    --bg: #ffffff;
+    --text: #222222;
+    --border: #e9ecef;
+    --primary: #0066cc;
+    --primary-hover: #004499;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+/* Index Page Containers */
+.index-container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.index-header {
+    text-align: center;
+    margin-bottom: 40px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 20px;
+}
+
+.index-header h1 {
+    font-size: 2.5rem;
+    margin: 0 0 10px 0;
+}
+
+.index-header p {
+    color: #666;
+    font-style: italic;
+    margin: 0;
+}
+
+/* Lecture Lists rows */
+.lecture-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.lecture-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.lecture-row span {
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+/* Buttons Engine layout */
+.lecture-links {
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-web {
+    background-color: #f1f3f5;
+    color: #495057;
+}
+
+.btn-web:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+.btn-pdf {
+    background-color: #fff0f6;
+    color: #c2255c;
+    border: 1px solid #ffdeeb;
+}
+
+.btn-pdf:hover {
+    background-color: #ffdeeb;
+}

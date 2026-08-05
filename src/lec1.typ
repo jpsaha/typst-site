@@ -52,3 +52,13 @@ We begin by establishing the properties of fields mapping vector components.
   
   $ M_T = mat(1, 1, 0; 0, 0, 1) $
 ]
+
+#exercise(title: "Identity Dimension Mapping", solution: [
+  By inspecting the matrix row parameters:
+  $ M_T = mat(1, 1, 0; 0, 0, 1) $
+  The rank is clearly 2 because the two rows are linearly independent. 
+  By Rank-Nullity, $dim("null" T) = 3 - 2 = 1$.
+])[
+  Let $T: RR^3 -> RR^2$ be defined by $T(x, y, z) = (x + y, z)$. 
+  Find the dimension of the null space.
+]
