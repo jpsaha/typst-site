@@ -13,7 +13,7 @@ Ensure you have the following installed on your local machine:
 
 # 🧮 Typst Mathematics Lecture Portal
 
-[![CI](https://github.com/jpsaha/typst-site/actions/workflows/deploy.yml/badge.svg)](https://github.com/jpsaha/typst-site/actions) [![Pages](https://github.com/jpsaha/typst-site/workflows/Pages/badge.svg)](https://OWNER.github.io/REPO) [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![CI](https://github.com/jpsaha/typst-site/actions/workflows/deploy.yml/badge.svg)](https://github.com/jpsaha/typst-site/actions) [![Pages](https://github.com/jpsaha/typst-site/workflows/Pages/badge.svg)](https://jpsaha.github.io/typst-site) [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Concise, browser-viewable lecture notes and print-ready A4 PDFs generated with Typst. Includes automatic indexing, Pagefind search, local-render fallbacks, and Light/Dark themes.
 
