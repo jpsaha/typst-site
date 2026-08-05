@@ -18,7 +18,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     
-    # FIX: Adding this explicit environment block tells GitHub to output the deployment card and URL link
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -27,9 +26,17 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
+      # 1. Install Typst to handle your .typ compiling tasks
       - name: Install Typst Compiler
         uses: typst-community/setup-typst@v5
 
+      # 2. FIXED: Setup Node.js environment to allow "npx pagefind" to index content
+      - name: Setup Node Runtime Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 3. Run the automated script which will now successfully execute pagefind
       - name: Run Compilation Pipeline Script
         run: |
           chmod +x ./build.sh
