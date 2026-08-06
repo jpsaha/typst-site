@@ -78,4 +78,6 @@ We begin by establishing the properties of fields mapping vector components.
   Find the dimension of the null space.
 ]
 
+test, text, 
+
 #previous-next(lecture)
