@@ -1,12 +1,12 @@
 // theorem / definition / exercise
-// #import "counters.typ": math-counter
 #import "render.typ": block-container
+#import "colors.typ": block-colors
+#import "block-engine.typ": make-block
 
-// ├── imports colors.typ
 // └── imports utils.typ
-// #import "counters.typ": *
-// theorem-counter, theorem-number
-// 
+
+
+
 #import "counters.typ": (
   math-counter,
   math-number,
@@ -19,250 +19,250 @@
 )
 
 
-// ------------------------------------------------------------
-// Theorem
-// ------------------------------------------------------------
+// // ------------------------------------------------------------
+// // Theorem
+// // ------------------------------------------------------------
 
-#let theorem(title: "", content) = {
+// #let theorem(title: "", content) = {
 
-  block-container(
-    math-counter,
-    math-number,
-    "Theorem",
-    title,
-    "#0066cc",
-    "#f0f7ff",
-    "theorem",
-    content,
-  )
+//   block-container(
+//     math-counter,
+//     math-number,
+//     "Theorem",
+//     title,
+//     "#0066cc",
+//     "#f0f7ff",
+//     "theorem",
+//     content,
+//   )
 
-}
-
-
-// ------------------------------------------------------------
-// Definition
-// ------------------------------------------------------------
-
-#let definition(title: "", content) = {
-
-  block-container(
-    math-counter,
-    math-number,
-    "Definition",
-    title,
-    "#2e7d32",
-    "#f1f8e9",
-    "definition",
-    content,
-  )
-
-}
-
-// ------------------------------------------------------------
-// Note
-// ------------------------------------------------------------
-
-#let note(
-  title: "",
-  content,
-) = {
-
-  block-container(
-    math-counter,
-    math-number,
-    "Note",
-    title,
-    "#1565c0",
-    "#e3f2fd",
-    "note",
-    content,
-  )
-
-}
+// }
 
 
-// ------------------------------------------------------------
-// Warning
-// ------------------------------------------------------------
+// // ------------------------------------------------------------
+// // Definition
+// // ------------------------------------------------------------
 
-#let warning(
-  title: "",
-  content,
-) = {
+// #let definition(title: "", content) = {
 
-  block-container(
-    math-counter,
-    math-number,
-    "Warning",
-    title,
-    "#ef6c00",
-    "#fff3e0",
-    "warning",
-    content,
-  )
+//   block-container(
+//     math-counter,
+//     math-number,
+//     "Definition",
+//     title,
+//     "#2e7d32",
+//     "#f1f8e9",
+//     "definition",
+//     content,
+//   )
 
-}
+// }
 
+// // ------------------------------------------------------------
+// // Note
+// // ------------------------------------------------------------
 
-// ------------------------------------------------------------
-// Example
-// ------------------------------------------------------------
+// #let note(
+//   title: "",
+//   content,
+// ) = {
 
-#let example(
-  title: "",
-  content,
-) = {
+//   block-container(
+//     math-counter,
+//     math-number,
+//     "Note",
+//     title,
+//     "#1565c0",
+//     "#e3f2fd",
+//     "note",
+//     content,
+//   )
 
-  block-container(
-    math-counter,
-    math-number,
-    "Example",
-    title,
-    "#6a1b9a",
-    "#f3e5f5",
-    "example",
-    content,
-  )
-
-}
+// }
 
 
-// ------------------------------------------------------------
-// Remark
-// ------------------------------------------------------------
+// // ------------------------------------------------------------
+// // Warning
+// // ------------------------------------------------------------
 
-#let remark(
-  title: "",
-  content,
-) = {
+// #let warning(
+//   title: "",
+//   content,
+// ) = {
 
-  block-container(
-    math-counter,
-    math-number,
-    "Remark",
-    title,
-    "#616161",
-    "#f5f5f5",
-    "remark",
-    content,
-  )
+//   block-container(
+//     math-counter,
+//     math-number,
+//     "Warning",
+//     title,
+//     "#ef6c00",
+//     "#fff3e0",
+//     "warning",
+//     content,
+//   )
 
-}
-
-
-// ------------------------------------------------------------
-// History
-// ------------------------------------------------------------
-
-#let history(
-  title: "",
-  content,
-) = {
-
-  block-container(
-    math-counter,
-    math-number,
-    "History",
-    title,
-    "#795548",
-    "#efebe9",
-    "history",
-    content,
-  )
-
-}
+// }
 
 
-// ------------------------------------------------------------
-// Lemma
-// ------------------------------------------------------------
+// // ------------------------------------------------------------
+// // Example
+// // ------------------------------------------------------------
 
-#let lemma(
-  title: "",
-  content,
-) = {
+// #let example(
+//   title: "",
+//   content,
+// ) = {
 
-  block-container(
-    math-counter,
-    math-number,
-    "Lemma",
-    title,
-    "#1565c0",
-    "#e8f1ff",
-    "lemma",
-    content,
-  )
+//   block-container(
+//     math-counter,
+//     math-number,
+//     "Example",
+//     title,
+//     "#6a1b9a",
+//     "#f3e5f5",
+//     "example",
+//     content,
+//   )
 
-}
-
-
-// ------------------------------------------------------------
-// Proposition
-// ------------------------------------------------------------
-
-#let proposition(
-  title: "",
-  content,
-) = {
-
-  block-container(
-    math-counter,
-    math-number,
-    "Proposition",
-    title,
-    "#0277bd",
-    "#e1f5fe",
-    "proposition",
-    content,
-  )
-
-}
+// }
 
 
-// ------------------------------------------------------------
-// Corollary
-// ------------------------------------------------------------
+// // ------------------------------------------------------------
+// // Remark
+// // ------------------------------------------------------------
 
-#let corollary(
-  title: "",
-  content,
-) = {
+// #let remark(
+//   title: "",
+//   content,
+// ) = {
 
-  block-container(
-    math-counter,
-    math-number,
-    "Corollary",
-    title,
-    "#00838f",
-    "#e0f7fa",
-    "corollary",
-    content,
-  )
+//   block-container(
+//     math-counter,
+//     math-number,
+//     "Remark",
+//     title,
+//     "#616161",
+//     "#f5f5f5",
+//     "remark",
+//     content,
+//   )
 
-}
+// }
 
 
-// ------------------------------------------------------------
-// Claim
-// ------------------------------------------------------------
+// // ------------------------------------------------------------
+// // History
+// // ------------------------------------------------------------
 
-#let claim(
-  title: "",
-  content,
-) = {
+// #let history(
+//   title: "",
+//   content,
+// ) = {
 
-  block-container(
-    math-counter,
-    math-number,
-    "Claim",
-    title,
-    "#5e35b1",
-    "#ede7f6",
-    "claim",
-    content,
-  )
+//   block-container(
+//     math-counter,
+//     math-number,
+//     "History",
+//     title,
+//     "#795548",
+//     "#efebe9",
+//     "history",
+//     content,
+//   )
 
-}
+// }
+
+
+// // ------------------------------------------------------------
+// // Lemma
+// // ------------------------------------------------------------
+
+// #let lemma(
+//   title: "",
+//   content,
+// ) = {
+
+//   block-container(
+//     math-counter,
+//     math-number,
+//     "Lemma",
+//     title,
+//     "#1565c0",
+//     "#e8f1ff",
+//     "lemma",
+//     content,
+//   )
+
+// }
+
+
+// // ------------------------------------------------------------
+// // Proposition
+// // ------------------------------------------------------------
+
+// #let proposition(
+//   title: "",
+//   content,
+// ) = {
+
+//   block-container(
+//     math-counter,
+//     math-number,
+//     "Proposition",
+//     title,
+//     "#0277bd",
+//     "#e1f5fe",
+//     "proposition",
+//     content,
+//   )
+
+// }
+
+
+// // ------------------------------------------------------------
+// // Corollary
+// // ------------------------------------------------------------
+
+// #let corollary(
+//   title: "",
+//   content,
+// ) = {
+
+//   block-container(
+//     math-counter,
+//     math-number,
+//     "Corollary",
+//     title,
+//     "#00838f",
+//     "#e0f7fa",
+//     "corollary",
+//     content,
+//   )
+
+// }
+
+
+// // ------------------------------------------------------------
+// // Claim
+// // ------------------------------------------------------------
+
+// #let claim(
+//   title: "",
+//   content,
+// ) = {
+
+//   block-container(
+//     math-counter,
+//     math-number,
+//     "Claim",
+//     title,
+//     "#5e35b1",
+//     "#ede7f6",
+//     "claim",
+//     content,
+//   )
+
+// }
 
 // ------------------------------------------------------------
 // Proof
@@ -487,3 +487,26 @@
   }
 
 }
+
+
+#let theorem(title: "", content) = make-block("theorem", "Theorem", title, content)
+
+#let definition(title: "", content) = make-block("definition", "Definition", title, content)
+
+#let lemma(title: "", content) = make-block("lemma", "Lemma", title, content)
+
+#let proposition(title: "", content) = make-block("proposition", "Proposition", title, content)
+
+#let corollary(title: "", content) = make-block("corollary", "Corollary", title, content)
+
+#let claim(title: "", content) = make-block("claim", "Claim", title, content)
+
+#let example(title: "", content) = make-block("example", "Example", title, content)
+
+#let note(title: "", content) = make-block("note", "Note", title, content)
+
+#let warning(title: "", content) = make-block("warning", "Warning", title, content)
+
+#let remark(title: "", content) = make-block("remark", "Remark", title, content)
+
+#let history(title: "", content) = make-block("history", "History", title, content)
