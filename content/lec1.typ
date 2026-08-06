@@ -7,6 +7,8 @@
   number: 1,
   title: "Linear Transformations & Matrices",
   category: "Linear Algebra",
+  date: "2026-08-10",
+  reading: "Chapter 2",
 )
 
 #show: setup-document
