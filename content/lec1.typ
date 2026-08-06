@@ -9,8 +9,9 @@
   category: "Linear Algebra",
   date: "2026-08-10",
   reading: "Chapter 2",
+  duration: "75 minutes",
+  difficulty: "Intermediate",
 )
-
 #show: setup-document
 
 // #if is-html {
