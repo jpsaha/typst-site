@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+python3 scripts/generate_metadata.py
+
 # Initialize isolated web assets folder
 mkdir -p dist
 export TYPST_FEATURES=html
