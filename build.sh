@@ -71,7 +71,8 @@ for item in "${LECTURES_ARR[@]}"; do
                 <span>${ftitle}</span>
                 <div class="lecture-links">
                     <a href="${fname}.html" class="btn btn-web">🌐 View Web</a>
-                    <a href="${fname}.pdf" class="btn btn-pdf" download>📄 PDF Version</a>
+                    <!-- FIXED: Removed 'download' and added target="_blank" -->
+                    <a href="${fname}.pdf" class="btn btn-pdf" target="_blank">📄 PDF Version</a>
                 </div>
             </div>
 EOF
