@@ -1,6 +1,6 @@
 // src/lec1.typ
 #import "template.typ": theorem, definition, exercise, html-nav-header
-#let lecture_title = "Lecture 1: Linear Transformations & Matrices"
+
 #let is-html = sys.inputs.at("format", default: "pdf") == "html"
 
 #show: doc => {

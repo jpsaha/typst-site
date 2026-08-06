@@ -1,152 +1,104 @@
-#!/usr/bin/env bash
+#!/bin/bash
+set -e
 
-set -euo pipefail
-
+# Initialize output folder
+mkdir -p dist
 export TYPST_FEATURES=html
 
-DIST="dist"
-SRC="src"
+echo "🚀 Starting automated build..."
 
-echo "========================================"
-echo " Building Typst Course Website"
-echo "========================================"
-
-############################################################
-# Clean output directory
-############################################################
-
-rm -rf "$DIST"
-mkdir -p "$DIST"
-
-############################################################
-# Copy static assets
-############################################################
-
-echo "📋 Copying assets..."
-
-if [[ -f "$SRC/style.css" ]]; then
-    cp "$SRC/style.css" "$DIST/"
+# Copy CSS
+if [ -f "src/style.css" ]; then
+    cp src/style.css dist/style.css
+    echo "📋 Synced style.css to dist/"
+else
+    echo "⚠️ Warning: src/style.css not found"
 fi
 
-############################################################
-# Locate lecture files
-############################################################
+# Gather lecture metadata dynamically
+LECTURES_JSON="["
 
-FILES=$(find "$SRC" -maxdepth 1 -name "lec*.typ" | sort -V)
+# Find all lecture files sorted numerically
+FILES=$(ls src/lec*.typ 2>/dev/null | sort -V)
 
-if [[ -z "$FILES" ]]; then
-    echo "No lecture files found."
+if [ -z "$FILES" ]; then
+    echo "❌ No lecture files found matching src/lec*.typ"
     exit 1
 fi
 
-############################################################
-# Build lectures
-############################################################
-
-LECTURE_ROWS=""
-
-count=$(echo "$FILES" | wc -l | tr -d ' ')
-
-i=1
-
-while IFS= read -r file
-do
-
+FIRST=true
+for file in $FILES; do
     filename=$(basename "$file" .typ)
 
-    ############################################################
-    # Read lecture title (portable: macOS + Linux)
-    ############################################################
-
-    title=$(sed -n 's/^#let lecture_title = "\(.*\)"/\1/p' "$file")
-
-    if [[ -z "$title" ]]; then
+    # Extract lecture title
+    title=$(grep -oP '(?<=\)\[)Lecture.*(?=\])' "$file" | head -n 1)
+    if [ -z "$title" ]; then
+        title=$(grep -oP '(?<="bold")\[Lecture.*(?=\])' "$file" | head -n 1)
+    fi
+    if [ -z "$title" ]; then
         title="Lecture ${filename#lec}"
     fi
 
-    echo "[$i/$count] HTML : $filename"
-    typst compile "$file" "$DIST/$filename.html" --input format=html
+    echo "Processing module: $title ($filename)"
 
-    echo "[$i/$count] PDF  : $filename"
-    typst compile "$file" "$DIST/$filename.pdf" --input format=pdf
+    # Compile HTML
+    typst compile "$file" "dist/${filename}.html" --input format=html
 
-    LECTURE_ROWS+="
-        <div class=\"lecture-row\">
-            <span>${title}</span>
+    # Compile PDF
+    typst compile "$file" "dist/${filename}.pdf" --input format=pdf
 
-            <div class=\"lecture-links\">
-                <a class=\"btn btn-web\" href=\"${filename}.html\">
-                    🌐 View Web
-                </a>
+    # Add metadata
+    if [ "$FIRST" = true ]; then
+        FIRST=false
+    else
+        LECTURES_JSON+=", "
+    fi
 
-                <a class=\"btn btn-pdf\" href=\"${filename}.pdf\" download>
-                    📄 Download PDF
-                </a>
-            </div>
-        </div>
-"
+    LECTURES_JSON+="{\"filename\": \"$filename\", \"title\": \"$title\"}"
+done
 
-    i=$((i+1))
+LECTURES_JSON+="]"
 
-done <<< "$FILES"
-
-############################################################
-# Generate index
-############################################################
-
-echo "📝 Generating index.html"
-
-cat > "$DIST/index.html" <<EOF
+# Generate index.html
+cat <<EOF > dist/index.html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1">
-
-<title>Mathematics Lecture Series</title>
-
-<link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematics Lecture Series</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <div class="index-container">
+        <header class="index-header">
+            <h1>🧮 Mathematics Lecture Series</h1>
+            <p>Course Materials & Practice Sets</p>
+        </header>
 
-<div class="index-container">
+        <h2>Course Modules</h2>
+        <div class="lecture-list" id="lecture-root"></div>
+    </div>
 
-<header class="index-header">
+    <script>
+        const lectures = ${LECTURES_JSON};
+        const root = document.getElementById('lecture-root');
 
-<h1>🧮 Mathematics Lecture Series</h1>
-
-<p>Course Materials &amp; Practice Sets</p>
-
-</header>
-
-<h2>Course Modules</h2>
-
-<div class="lecture-list">
-
-$LECTURE_ROWS
-
-</div>
-
-</div>
-
+        lectures.forEach(lec => {
+            const row = document.createElement('div');
+            row.className = 'lecture-row';
+            row.innerHTML = \`
+                <span>\${lec.title}</span>
+                <div class="lecture-links">
+                    <a href="\${lec.filename}.html" class="btn btn-web">🌐 View Web</a>
+                    <a href="\${lec.filename}.pdf" class="btn btn-pdf" download>📄 Download PDF</a>
+                </div>
+            \`;
+            root.appendChild(row);
+        });
+    </script>
 </body>
-
 </html>
-
 EOF
 
-############################################################
-# Finished
-############################################################
-
-echo
-echo "========================================"
-echo " Build completed successfully."
-echo " Output directory: $DIST"
-echo "========================================"
+echo "🎉 Build complete!"
