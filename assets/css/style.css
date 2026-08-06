@@ -171,3 +171,21 @@ body {
 .breadcrumb a:hover {
     text-decoration: underline;
 }
+.download-buttons {
+    margin: 0.6rem 0 1rem;
+}
+
+.download-buttons a {
+    display: inline-block;
+    padding: 0.35rem 0.8rem;
+    margin-right: 0.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    background: #0b63ce;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.download-buttons a:hover {
+    background: #084fa3;
+}

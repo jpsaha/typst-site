@@ -66,3 +66,22 @@
     ]
   }
 }
+
+#let download-buttons(lecture) = {
+
+  if is-html {
+
+    html.elem(
+      "div",
+      attrs: (
+        class: "download-buttons",
+      ),
+    )[
+
+      #link(lecture.file + ".pdf")[⬇ PDF]
+
+    ]
+
+  }
+
+}

@@ -7,7 +7,7 @@
   lecture-number,
 )
 #import "utils.typ": is-html
-#import "nav.typ": html-nav-header, breadcrumb
+#import "nav.typ": html-nav-header, breadcrumb, download-buttons
 
 // ------------------------------------------------------------
 // Lecture metadata display
@@ -85,6 +85,7 @@
   if is-html {
     html-nav-header()
     breadcrumb(lecture)
+    download-buttons(lecture)
 
     html.elem(
       "h1",
