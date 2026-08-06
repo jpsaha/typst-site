@@ -4,52 +4,35 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  contents: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Checkout Source Code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1. Install Typst to handle your .typ compiling tasks
-      - name: Install Typst Compiler
+      - name: Install Typst
         uses: typst-community/setup-typst@v5
 
-      # 2. FIXED: Setup Node.js environment to allow "npx pagefind" to index content
-      # - name: Setup Node Runtime Environment
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: '20'
-
-      # 3. Run the automated script which will now successfully execute pagefind
-      - name: Run Compilation Pipeline Script
+      - name: Build website
         run: |
-          chmod +x ./build.sh
+          chmod +x build.sh
           ./build.sh
 
-      - name: Setup GitHub Pages Deployment Environment
-        uses: actions/configure-pages@v4
+      - name: Verify build output
+        run: |
+          ls -lah dist
+          test -f dist/index.html
 
-      - name: Upload Static Web Assets Artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: './dist'
-
-      - name: Publish to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          force_orphan: true
