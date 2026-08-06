@@ -6,9 +6,9 @@
   if is-html {
     html.elem("nav", attrs: (class: "breadcrumb"))[
       #link("index.html")[🏠 Home]
-      #text(fill: rgb("#666"))[" / "]
+      #html.elem("span", attrs: (class: "breadcrumb-sep"))[/]
       #lecture.category
-      #text(fill: rgb("#666"))[" / "]
+      #html.elem("span", attrs: (class: "breadcrumb-sep"))[/]
       #lecture.title
     ]
   }

@@ -12,13 +12,21 @@
       "h1",
       attrs: (
         style: "font-family: system-ui, sans-serif; color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px;"
-      )
+      ),
     )[
+      #if lecture.number != none {
+        [Lecture #lecture.number: ]
+      }
       #lecture.title
     ]
   } else {
     align(center)[
-      #text(size: 20pt, weight: "bold")[#lecture.title]
+      #text(size: 20pt, weight: "bold")[
+        #if lecture.number != none {
+          [Lecture #lecture.number: ]
+        }
+        #lecture.title
+      ]
       #v(1cm)
     ]
   }
@@ -62,5 +70,24 @@
         #content
       ]
     )
+  }
+}
+
+#let setup-document(doc) = {
+  if is-html {
+    doc
+  } else {
+    set page(
+      paper: "a4",
+      margin: (x: 2.5cm, y: 2.5cm),
+      height: 29.7cm,
+    )
+
+    set text(
+      size: 11pt,
+      font: "Liberation Serif",
+    )
+
+    doc
   }
 }
