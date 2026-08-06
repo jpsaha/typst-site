@@ -143,6 +143,13 @@ body {
 .btn-web { background-color: var(--btn-web-bg); color: var(--btn-web-text); }
 .btn-pdf { background-color: var(--btn-pdf-bg); color: var(--btn-pdf-text); border: 1px solid var(--btn-pdf-border); }
 
+.lecture-meta {
+    font-family: system-ui, sans-serif;
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0.5rem 0 1.5rem;
+}
+
 .breadcrumb-sep {
     margin: 0 0.4em;
     color: #d01a1a;
