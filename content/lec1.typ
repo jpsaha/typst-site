@@ -78,4 +78,37 @@ We begin by establishing the properties of fields mapping vector components.
   Find the dimension of the null space.
 ]
 
+#note[
+Remember that every basis is linearly independent.
+]
+
+#warning[
+Do *not* confuse image and codomain.
+]
+
+#example[
+Let
+
+$
+T(x,y)=(x+y,y).
+$
+]
+
+#proof[
+We proceed by induction...
+]
+
+#remark[
+The converse is false.
+]
+
+#history[
+The Rank-Nullity theorem appeared in the nineteenth century.
+]
+
+#lemma[lemma statement]
+#proposition[proposition statement]
+#claim[claim statement]
+#corollary[corollary statement]
+
 #previous-next(lecture)

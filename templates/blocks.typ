@@ -58,6 +58,268 @@
 
 }
 
+// ------------------------------------------------------------
+// Note
+// ------------------------------------------------------------
+
+#let note(
+  title: "",
+  content,
+) = {
+
+  block-container(
+    math-counter,
+    math-number,
+    "Note",
+    title,
+    "#1565c0",
+    "#e3f2fd",
+    "note",
+    content,
+  )
+
+}
+
+
+// ------------------------------------------------------------
+// Warning
+// ------------------------------------------------------------
+
+#let warning(
+  title: "",
+  content,
+) = {
+
+  block-container(
+    math-counter,
+    math-number,
+    "Warning",
+    title,
+    "#ef6c00",
+    "#fff3e0",
+    "warning",
+    content,
+  )
+
+}
+
+
+// ------------------------------------------------------------
+// Example
+// ------------------------------------------------------------
+
+#let example(
+  title: "",
+  content,
+) = {
+
+  block-container(
+    math-counter,
+    math-number,
+    "Example",
+    title,
+    "#6a1b9a",
+    "#f3e5f5",
+    "example",
+    content,
+  )
+
+}
+
+
+// ------------------------------------------------------------
+// Remark
+// ------------------------------------------------------------
+
+#let remark(
+  title: "",
+  content,
+) = {
+
+  block-container(
+    math-counter,
+    math-number,
+    "Remark",
+    title,
+    "#616161",
+    "#f5f5f5",
+    "remark",
+    content,
+  )
+
+}
+
+
+// ------------------------------------------------------------
+// History
+// ------------------------------------------------------------
+
+#let history(
+  title: "",
+  content,
+) = {
+
+  block-container(
+    math-counter,
+    math-number,
+    "History",
+    title,
+    "#795548",
+    "#efebe9",
+    "history",
+    content,
+  )
+
+}
+
+
+// ------------------------------------------------------------
+// Lemma
+// ------------------------------------------------------------
+
+#let lemma(
+  title: "",
+  content,
+) = {
+
+  block-container(
+    math-counter,
+    math-number,
+    "Lemma",
+    title,
+    "#1565c0",
+    "#e8f1ff",
+    "lemma",
+    content,
+  )
+
+}
+
+
+// ------------------------------------------------------------
+// Proposition
+// ------------------------------------------------------------
+
+#let proposition(
+  title: "",
+  content,
+) = {
+
+  block-container(
+    math-counter,
+    math-number,
+    "Proposition",
+    title,
+    "#0277bd",
+    "#e1f5fe",
+    "proposition",
+    content,
+  )
+
+}
+
+
+// ------------------------------------------------------------
+// Corollary
+// ------------------------------------------------------------
+
+#let corollary(
+  title: "",
+  content,
+) = {
+
+  block-container(
+    math-counter,
+    math-number,
+    "Corollary",
+    title,
+    "#00838f",
+    "#e0f7fa",
+    "corollary",
+    content,
+  )
+
+}
+
+
+// ------------------------------------------------------------
+// Claim
+// ------------------------------------------------------------
+
+#let claim(
+  title: "",
+  content,
+) = {
+
+  block-container(
+    math-counter,
+    math-number,
+    "Claim",
+    title,
+    "#5e35b1",
+    "#ede7f6",
+    "claim",
+    content,
+  )
+
+}
+
+// ------------------------------------------------------------
+// Proof
+// ------------------------------------------------------------
+
+#let proof(
+  title: "",
+  content,
+) = {
+
+  if sys.inputs.at("format", default: "pdf") == "html" {
+
+    html.elem(
+      "div",
+      attrs: (
+        class: "proof-block",
+        style:
+          "margin: 20px 0; padding-left: 18px; border-left: 4px solid #2e7d32;",
+      ),
+    )[
+
+      #html.elem(
+        "strong",
+      )[
+        Proof#if title != "" [: #title].
+      ]
+
+      #v(0.5em)
+
+      #content
+
+      #align(right)[□]
+
+    ]
+
+  } else {
+
+    block(
+      inset: 6pt,
+      stroke: (left: 3pt + rgb("#2e7d32")),
+    )[
+
+      #text(weight: "bold")[
+        Proof#if title != "" [: #title].
+      ]
+
+      #v(4pt)
+
+      #content
+
+      #align(right)[□]
+
+    ]
+
+  }
+
+}
 
 // ------------------------------------------------------------
 // Exercise
