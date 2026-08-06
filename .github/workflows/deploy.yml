@@ -31,10 +31,10 @@ jobs:
         uses: typst-community/setup-typst@v5
 
       # 2. FIXED: Setup Node.js environment to allow "npx pagefind" to index content
-      - name: Setup Node Runtime Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      # - name: Setup Node Runtime Environment
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '20'
 
       # 3. Run the automated script which will now successfully execute pagefind
       - name: Run Compilation Pipeline Script
