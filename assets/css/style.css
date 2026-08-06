@@ -143,10 +143,6 @@ body {
 .btn-web { background-color: var(--btn-web-bg); color: var(--btn-web-text); }
 .btn-pdf { background-color: var(--btn-pdf-bg); color: var(--btn-pdf-text); border: 1px solid var(--btn-pdf-border); }
 
-body {
-    background: yellow !important;
-}
-
 .breadcrumb-sep {
     margin: 0 0.4em;
     color: #d01a1a;
