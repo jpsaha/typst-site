@@ -3,12 +3,81 @@
 #import "utils.typ": is-html
 #import "nav.typ": html-nav-header, breadcrumb
 
-#let page-header(lecture) = {
+// ------------------------------------------------------------
+// Lecture metadata display
+// ------------------------------------------------------------
+
+#let lecture-info(lecture) = {
 
   if is-html {
 
-    html-nav-header()
+    html.elem(
+      "div",
+      attrs: (
+        class: "lecture-meta",
+      ),
+    )[
 
+      #if "date" in lecture [
+        📅 #lecture.date
+        #linebreak()
+      ]
+
+      #if "reading" in lecture [
+        📖 Reading: #lecture.reading
+        #linebreak()
+      ]
+
+      #if "duration" in lecture [
+        ⏱ Duration: #lecture.duration
+        #linebreak()
+      ]
+
+      #if "difficulty" in lecture [
+        ⭐ Difficulty: #lecture.difficulty
+      ]
+
+    ]
+
+  } else {
+
+    // PDF metadata
+
+    if "date" in lecture {
+      text(size: 10pt)[
+        Date: #lecture.date
+      ]
+      linebreak()
+    }
+
+    if "reading" in lecture {
+      text(size: 10pt)[
+        Reading: #lecture.reading
+      ]
+      linebreak()
+    }
+
+    if "duration" in lecture {
+      text(size: 10pt)[
+        Duration: #lecture.duration
+      ]
+      linebreak()
+    }
+
+    if "difficulty" in lecture {
+      text(size: 10pt)[
+        Difficulty: #lecture.difficulty
+      ]
+    }
+
+    v(0.5cm)
+  }
+}
+
+#let page-header(lecture) = {
+  
+  if is-html {
+    html-nav-header()
     breadcrumb(lecture)
 
     html.elem(
@@ -26,30 +95,21 @@
       #lecture.title
     ]
 
+    lecture-info(lecture)
 
-    // Metadata box
+  } else {
 
-    html.elem(
-      "div",
-      attrs: (
-        class: "lecture-meta"
-      ),
-    )[
-
-      #if "date" in lecture [
-        📅 #lecture.date
-        #linebreak()
+    align(center)[
+      #text(size: 20pt, weight: "bold")[
+        #if lecture.number != none {
+          [Lecture #lecture.number: ]
+        }
+        #lecture.title
       ]
 
-      #if "reading" in lecture [
-        📖 Reading: #lecture.reading
-        #linebreak()
-      ]
+      #lecture-info(lecture)
 
-      #if "duration" in lecture [
-        ⏱ #lecture.duration
-      ]
-
+      #v(1cm)
     ]
 
   }
