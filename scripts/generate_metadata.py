@@ -10,6 +10,8 @@ Each lecture file should contain:
   number: 1,
   title: "Linear Transformations & Matrices",
   category: "Linear Algebra",
+  date: "2026-08-10",
+  reading: "Chapter 2",
 )
 
 Generates:
@@ -36,49 +38,93 @@ HOMEPAGE_JSON = TEMPLATES / "homepage.json"
 
 
 # ------------------------------------------------------------
-# Match lecture metadata
+# Find lecture metadata block
 # ------------------------------------------------------------
 
-LECTURE_RE = re.compile(
-    r"#let\s+lecture\s*=\s*\(\s*"
-    r"file\s*:\s*\"([^\"]+)\"\s*,\s*"
-    r"number\s*:\s*(none|\d+)\s*,\s*"
-    r"title\s*:\s*\"([^\"]+)\"\s*,?\s*"
-    r"category\s*:\s*\"([^\"]+)\"\s*,?\s*"
-    r"\)",
+LECTURE_BLOCK_RE = re.compile(
+    r"#let\s+lecture\s*=\s*\((.*?)\)",
     re.DOTALL,
 )
 
 
+# ------------------------------------------------------------
+# Parse lecture metadata
+# ------------------------------------------------------------
+
+def parse_lecture(text):
+
+    m = LECTURE_BLOCK_RE.search(text)
+
+    if m is None:
+        return None
+
+    body = m.group(1)
+
+    lecture = {}
+
+    for line in body.splitlines():
+
+        line = line.strip()
+
+        if not line:
+            continue
+
+        if line.endswith(","):
+            line = line[:-1]
+
+        if ":" not in line:
+            continue
+
+        key, value = line.split(":", 1)
+
+        key = key.strip()
+        value = value.strip()
+
+
+        # string
+        if value.startswith('"') and value.endswith('"'):
+            value = value[1:-1]
+
+        # none
+        elif value == "none":
+            value = None
+
+        # integer
+        else:
+            try:
+                value = int(value)
+            except ValueError:
+                pass
+
+
+        lecture[key] = value
+
+
+    return lecture
+
+
+
+# ------------------------------------------------------------
+# Read all lectures
+# ------------------------------------------------------------
+
 lectures = []
 
-
-# ------------------------------------------------------------
-# Read lecture files
-# ------------------------------------------------------------
 
 for path in sorted(SRC.glob("*.typ")):
 
     text = path.read_text(encoding="utf-8")
 
-    m = LECTURE_RE.search(text)
+    lecture = parse_lecture(text)
 
-    if not m:
+
+    if lecture is None:
         print(f"Skipping {path.name}: no lecture metadata.")
         continue
 
-    file_name, number_text, title, category = m.groups()
 
-    number = None if number_text == "none" else int(number_text)
+    lectures.append(lecture)
 
-    lectures.append(
-        {
-            "file": file_name,
-            "number": number,
-            "title": title,
-            "category": category,
-        }
-    )
 
 
 # ------------------------------------------------------------
@@ -87,49 +133,65 @@ for path in sorted(SRC.glob("*.typ")):
 
 lectures.sort(
     key=lambda x: (
-        x["number"] is None,
-        x["number"] if x["number"] is not None else 10**9,
-        x["file"],
+        x.get("number") is None,
+        x.get("number")
+        if x.get("number") is not None
+        else 10**9,
+        x.get("file"),
     )
 )
 
 
+
 # ------------------------------------------------------------
-# Add previous / next
-# Only numbered lectures participate
+# Add previous / next links
+# Only numbered lectures
 # ------------------------------------------------------------
 
 numbered = [
-    lec for lec in lectures
-    if lec["number"] is not None
+    lec
+    for lec in lectures
+    if lec.get("number") is not None
 ]
 
 
 for i, lec in enumerate(numbered):
 
     if i > 0:
+
         prev = numbered[i - 1]
+
         lec["previous"] = {
             "title": prev["title"],
             "html": prev["file"] + ".html",
         }
+
     else:
+
         lec["previous"] = None
 
 
+
     if i < len(numbered) - 1:
+
         nxt = numbered[i + 1]
+
         lec["next"] = {
             "title": nxt["title"],
             "html": nxt["file"] + ".html",
         }
+
     else:
+
         lec["next"] = None
 
 
-# Non lectures (fun etc.)
+
+# Non-numbered pages (fun, extras)
 for lec in lectures:
-    if lec["number"] is None:
+
+    if lec.get("number") is None:
+
         lec["previous"] = None
         lec["next"] = None
 
@@ -141,54 +203,99 @@ for lec in lectures:
 
 with GENERATED.open("w", encoding="utf-8") as f:
 
+
     f.write("// AUTO-GENERATED. DO NOT EDIT.\n\n")
 
     f.write("#let lectures = (\n")
 
+
     for lec in lectures:
+
 
         f.write("  (\n")
 
-        f.write(f'    file: "{lec["file"]}",\n')
-        f.write(f'    html: "{lec["file"]}.html",\n')
-        f.write(f'    pdf: "{lec["file"]}.pdf",\n')
 
-        if lec["number"] is None:
-            f.write("    number: none,\n")
+        # generated fields
+        f.write(
+            f'    html: "{lec["file"]}.html",\n'
+        )
+
+        f.write(
+            f'    pdf: "{lec["file"]}.pdf",\n'
+        )
+
+
+        # all metadata
+        for key, value in lec.items():
+
+            if key in ("previous", "next"):
+                continue
+
+
+            if value is None:
+
+                f.write(
+                    f"    {key}: none,\n"
+                )
+
+            elif isinstance(value, int):
+
+                f.write(
+                    f"    {key}: {value},\n"
+                )
+
+            else:
+
+                f.write(
+                    f'    {key}: "{value}",\n'
+                )
+
+
+
+        # previous
+
+        if lec["previous"] is None:
+
+            f.write(
+                "    previous: none,\n"
+            )
+
         else:
-            f.write(f'    number: {lec["number"]},\n')
 
-        f.write(f'    title: "{lec["title"]}",\n')
-        f.write(f'    category: "{lec["category"]}",\n')
-
-
-        if lec["previous"]:
+            p = lec["previous"]
 
             f.write(
                 "    previous: (\n"
-                f'      title: "{lec["previous"]["title"]}",\n'
-                f'      html: "{lec["previous"]["html"]}",\n'
+                f'      title: "{p["title"]}",\n'
+                f'      html: "{p["html"]}",\n'
                 "    ),\n"
             )
 
+
+
+        # next
+
+        if lec["next"] is None:
+
+            f.write(
+                "    next: none,\n"
+            )
+
         else:
-            f.write("    previous: none,\n")
 
-
-        if lec["next"]:
+            n = lec["next"]
 
             f.write(
                 "    next: (\n"
-                f'      title: "{lec["next"]["title"]}",\n'
-                f'      html: "{lec["next"]["html"]}",\n'
+                f'      title: "{n["title"]}",\n'
+                f'      html: "{n["html"]}",\n'
                 "    ),\n"
             )
 
-        else:
-            f.write("    next: none,\n")
 
 
         f.write("  ),\n")
+
 
 
     f.write(")\n")
@@ -204,23 +311,61 @@ print(f"Wrote {GENERATED}")
 
 with HOMEPAGE_TYP.open("w", encoding="utf-8") as f:
 
+
     f.write("// AUTO-GENERATED. DO NOT EDIT.\n\n")
 
     f.write("#let homepage = (\n")
 
+
     for lec in lectures:
 
-        if lec["number"] is None:
+
+        if lec.get("number") is None:
             continue
 
+
+        f.write("  (\n")
+
+
+        for key in (
+            "number",
+            "title",
+            "category",
+            "date",
+            "reading",
+            "duration",
+        ):
+
+            if key in lec:
+
+                value = lec[key]
+
+                if isinstance(value, int):
+
+                    f.write(
+                        f"    {key}: {value},\n"
+                    )
+
+                else:
+
+                    f.write(
+                        f'    {key}: "{value}",\n'
+                    )
+
+
+
         f.write(
-            "  (\n"
-            f'    title: "{lec["title"]}",\n'
-            f'    category: "{lec["category"]}",\n'
             f'    html: "{lec["file"]}.html",\n'
-            f'    pdf: "{lec["file"]}.pdf",\n'
-            "  ),\n"
         )
+
+        f.write(
+            f'    pdf: "{lec["file"]}.pdf",\n'
+        )
+
+
+        f.write("  ),\n")
+
+
 
     f.write(")\n")
 
@@ -235,23 +380,51 @@ print(f"Wrote {HOMEPAGE_TYP}")
 
 homepage = {}
 
+
 for lec in lectures:
 
-    cat = lec["category"]
 
-    if cat not in homepage:
-        homepage[cat] = []
+    category = lec.get(
+        "category",
+        "Uncategorized"
+    )
 
-    homepage[cat].append(
+
+    homepage.setdefault(
+        category,
+        []
+    )
+
+
+    homepage[category].append(
+
         {
             "title": lec["title"],
             "html": lec["file"] + ".html",
             "pdf": lec["file"] + ".pdf",
+
+            **{
+                k: v
+                for k, v in lec.items()
+                if k not in (
+                    "file",
+                    "title",
+                    "category",
+                    "previous",
+                    "next",
+                )
+            },
         }
+
     )
 
 
-with HOMEPAGE_JSON.open("w", encoding="utf-8") as f:
+
+with HOMEPAGE_JSON.open(
+    "w",
+    encoding="utf-8"
+) as f:
+
     json.dump(
         homepage,
         f,
