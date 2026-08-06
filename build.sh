@@ -7,11 +7,11 @@ export TYPST_FEATURES=html
 
 echo "🚀 Launching modular artifact compile pipeline..."
 
-if [ -f "assets/style.css" ]; then
-    cp assets/style.css dist/style.css
+if [ -f "assets/css/style.css" ]; then
+    cp assets/css/style.css dist/style.css
     echo "📋 Copied style.css"
 else
-    echo "⚠️ Warning: assets/style.css not found"
+    echo "⚠️ Warning: assets/css/style.css not found"
 fi
 
 # --------------------------------------------------------------------
