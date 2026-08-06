@@ -12,7 +12,11 @@
   duration: "75 minutes",
   difficulty: "Intermediate",
 )
-#show: setup-document
+
+#show: doc => {
+  reset-counters(lecture.number)
+  setup-document(doc)
+}
 
 // #if is-html {
 //   html-nav-header()

@@ -8,7 +8,10 @@
   category: "lecture",
 )
 
-#show: setup-document
+#show: doc => {
+  reset-counters(lecture.number)
+  setup-document(doc)
+}
 
 // #if is-html {
 //   html-nav-header()
