@@ -2,7 +2,8 @@
 #import "../templates/course.typ": *
 
 #let lecture = (
-  number: 4,
+  file: "fun",
+  number: none,
   title: "Fun Lecture",
 )
 
@@ -38,3 +39,6 @@
 = Core Definitions
 
 aaa
+
+
+#previous-next(lecture)

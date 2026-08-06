@@ -2,6 +2,7 @@
 #import "../templates/course.typ": *
 
 #let lecture = (
+  file: "lec2",
   number: 2,
   title: "Eigenvalues & Spectral Mapping",
 )
@@ -69,3 +70,5 @@ In this session, we analyze how linear transformations scale specific vector sub
   
   $ lambda^2 - 7lambda + 10 = 0 $
 ]
+
+#previous-next(lecture)

@@ -2,6 +2,7 @@
 #import "../templates/course.typ": *
 
 #let lecture = (
+  file: "lec3",
   number: 3,
   title: "Olympiad Inequalities",
 )
@@ -41,3 +42,5 @@
 #theorem[
   There are infinitely many prime numbers.
 ]
+
+#previous-next(lecture)

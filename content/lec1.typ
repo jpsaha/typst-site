@@ -3,6 +3,7 @@
 #import "../templates/course.typ": *
 
 #let lecture = (
+  file: "lec1",
   number: 1,
   title: "Linear Transformations & Matrices",
 )
@@ -75,3 +76,5 @@ We begin by establishing the properties of fields mapping vector components.
   Let $T: RR^3 -> RR^2$ be defined by $T(x, y, z) = (x + y, z)$. 
   Find the dimension of the null space.
 ]
+
+#previous-next(lecture)

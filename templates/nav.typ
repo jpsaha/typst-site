@@ -2,6 +2,47 @@
 #import "generated.typ": lectures
 #import "utils.typ": is-html
 
+
+#let previous-next(current) = {
+
+  if is-html {
+
+    let index = lectures.position(
+      lec => lec.file == current.file
+    )
+
+    // If this page is not in generated lectures, show nothing
+    if index == none {
+      return
+    }
+
+    let lec = lectures.at(index)
+
+    html.elem(
+      "div",
+      attrs: (
+        class: "lecture-navigation",
+      ),
+    )[
+
+      #if lec.previous != none [
+        #link(lec.previous.html)[
+          ← #lec.previous.title
+        ]
+      ]
+
+      #h(1fr)
+
+      #if lec.next != none [
+        #link(lec.next.html)[
+          #lec.next.title →
+        ]
+      ]
+
+    ]
+  }
+}
+
 #let html-nav-header() = {
   if sys.inputs.at("format", default: "pdf") == "html" {
     html.elem("nav", attrs: (class: "global-nav-header"))[
