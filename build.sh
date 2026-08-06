@@ -1,104 +1,87 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Initialize output folder
+# Initialize isolated web assets folder
 mkdir -p dist
 export TYPST_FEATURES=html
 
-echo "🚀 Starting automated build..."
+echo "🚀 Launching modular artifact compile pipeline..."
 
-# Copy CSS
 if [ -f "src/style.css" ]; then
     cp src/style.css dist/style.css
-    echo "📋 Synced style.css to dist/"
+    echo "📋 Synced external stylesheet assets to dist/ workspace"
 else
-    echo "⚠️ Warning: src/style.css not found"
+    echo "⚠️ Warning: src/style.css asset target missing"
 fi
 
-# Gather lecture metadata dynamically
-LECTURES_JSON="["
-
-# Find all lecture files sorted numerically
-FILES=$(ls src/lec*.typ 2>/dev/null | sort -V)
+# Locate tracking paths chronologically
+FILES=$(ls src/lec*.typ 2>/dev/null | sort -V || true)
 
 if [ -z "$FILES" ]; then
-    echo "❌ No lecture files found matching src/lec*.typ"
+    echo "❌ Missing source lecture targets matching: src/lec*.typ"
     exit 1
 fi
 
-FIRST=true
+# Core array initialization for building the portal index
+LECTURES_ARR=()
+
 for file in $FILES; do
     filename=$(basename "$file" .typ)
-
-    # Extract lecture title
-    title=$(grep -oP '(?<=\)\[)Lecture.*(?=\])' "$file" | head -n 1)
-    if [ -z "$title" ]; then
-        title=$(grep -oP '(?<="bold")\[Lecture.*(?=\])' "$file" | head -n 1)
-    fi
+    
+    # Brittle extraction alternative: Read metadata safely with robust parsing fallback
+    title=$(grep -m 1 "^// Title:" "$file" | sed 's/\/\/ Title://g' | xargs || true)
     if [ -z "$title" ]; then
         title="Lecture ${filename#lec}"
     fi
 
-    echo "Processing module: $title ($filename)"
+    echo "Compiling academic segment: $title ($filename)"
 
-    # Compile HTML
+    # Build web pages and high-fidelity print layouts independently
     typst compile "$file" "dist/${filename}.html" --input format=html
-
-    # Compile PDF
     typst compile "$file" "dist/${filename}.pdf" --input format=pdf
 
-    # Add metadata
-    if [ "$FIRST" = true ]; then
-        FIRST=false
-    else
-        LECTURES_JSON+=", "
-    fi
-
-    LECTURES_JSON+="{\"filename\": \"$filename\", \"title\": \"$title\"}"
+    # Push to array mapping stack variables safely
+    LECTURES_ARR+=("$filename|$title")
 done
 
-LECTURES_JSON+="]"
-
-# Generate index.html
-cat <<EOF > dist/index.html
+# Dynamically write out the dashboard file
+echo "🌐 Writing landing index layout workspace: dist/index.html"
+cat << 'EOF' > dist/index.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mathematics Lecture Series</title>
+    <title>Mathematics Lecture Portal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="index-container">
         <header class="index-header">
-            <h1>🧮 Mathematics Lecture Series</h1>
-            <p>Course Materials & Practice Sets</p>
+            <h1>🧮 Mathematics Lecture Portal</h1>
+            <p>Interactive web modules & downloadable print-ready course material</p>
         </header>
+        <main class="lecture-list">
+EOF
 
-        <h2>Course Modules</h2>
-        <div class="lecture-list" id="lecture-root"></div>
-    </div>
-
-    <script>
-        const lectures = ${LECTURES_JSON};
-        const root = document.getElementById('lecture-root');
-
-        lectures.forEach(lec => {
-            const row = document.createElement('div');
-            row.className = 'lecture-row';
-            row.innerHTML = \`
-                <span>\${lec.title}</span>
+for item in "${LECTURES_ARR[@]}"; do
+    IFS='|' read -r fname ftitle <<< "$item"
+    cat << EOF >> dist/index.html
+            <div class="lecture-row">
+                <span>${ftitle}</span>
                 <div class="lecture-links">
-                    <a href="\${lec.filename}.html" class="btn btn-web">🌐 View Web</a>
-                    <a href="\${lec.filename}.pdf" class="btn btn-pdf" download>📄 Download PDF</a>
+                    <a href="${fname}.html" class="btn btn-web">🌐 View Web</a>
+                    <a href="${fname}.pdf" class="btn btn-pdf" download>📄 PDF Version</a>
                 </div>
-            \`;
-            root.appendChild(row);
-        });
-    </script>
+            </div>
+EOF
+done
+
+cat << 'EOF' >> dist/index.html
+        </main>
+    </div>
 </body>
 </html>
 EOF
 
-echo "🎉 Build complete!"
+echo "✅ Compilation pipeline executed successfully!"
