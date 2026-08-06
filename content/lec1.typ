@@ -1,7 +1,12 @@
 // src/lec1.typ
-#import "../templates/template.typ": theorem, definition, exercise, html-nav-header
+// #import "../templates/template.typ": theorem, definition, exercise, html-nav-header
+#import "../templates/course.typ": *
 
-#let is-html = sys.inputs.at("format", default: "pdf") == "html"
+#let lecture = (
+  number: 1,
+  title: "Linear Transformations & Matrices",
+)
+
 
 #show: doc => {
   if is-html {
@@ -12,13 +17,21 @@
   doc
 }
 
-// NEW: Render navigation bar for browser view
 #if is-html {
   html-nav-header()
-  html.elem("h1", attrs: (style: "font-family: system-ui, sans-serif; color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px;"))[Lecture 1: Linear Transformations & Matrices]
+  html.elem(
+    "h1",
+    attrs: (
+      style: "font-family: system-ui, sans-serif; color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px;"
+    ),
+  )[
+    Lecture #lecture.number: #lecture.title
+  ]
 } else {
   align(center)[
-    #text(size: 20pt, weight: "bold")[Lecture 1: Linear Transformations & Matrices]
+    #text(size: 20pt, weight: "bold")[
+      Lecture #lecture.number: #lecture.title
+    ]
     #v(1cm)
   ]
 }

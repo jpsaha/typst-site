@@ -19,10 +19,10 @@ fi
 # --------------------------------------------------------------------
 # Find ALL Typst files (instead of only lec*.typ)
 # --------------------------------------------------------------------
-FILES=$(find src -maxdepth 1 -type f -name "*.typ" | sort -V)
+FILES=$(find content -maxdepth 1 -type f -name "*.typ" | sort -V)
 
 if [ -z "$FILES" ]; then
-    echo "❌ No Typst source files found in src/"
+    echo "❌ No Typst source files found in content/"
     exit 1
 fi
 
@@ -93,14 +93,14 @@ for item in "${LECTURES_ARR[@]}"; do
 
     typst compile \
         --root . \
-        "src/${fname}.typ" \
+        "content/${fname}.typ" \
         "dist/${fname}.html" \
         --input format=html \
         --input nav-data="$NAV_ITEMS"
 
     typst compile \
         --root . \
-        "src/${fname}.typ" \
+        "content/${fname}.typ" \
         "dist/${fname}.pdf" \
         --input format=pdf
 

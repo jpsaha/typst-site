@@ -10,7 +10,7 @@ Each lecture file should contain something like
   title: "Linear Transformations & Matrices",
 )
 
-The script scans src/*.typ and writes
+The script scans content/*.typ and writes
 
 templates/generated.typ
 """
@@ -19,7 +19,7 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "src"
+SRC = ROOT / "content"
 OUT = ROOT / "templates" / "generated.typ"
 
 # Match the lecture metadata block.
