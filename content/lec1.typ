@@ -9,15 +9,7 @@
   category: "Linear Algebra",
 )
 
-
-#show: doc => {
-  if is-html {
-    return doc
-  }
-  set page(paper: "a4", margin: (x: 2.5cm, y: 2.5cm), height: 29.7cm)
-  set text(size: 11pt, font: "Liberation Serif")
-  doc
-}
+#show: setup-document
 
 // #if is-html {
 //   html-nav-header()

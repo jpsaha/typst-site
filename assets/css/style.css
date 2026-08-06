@@ -142,3 +142,27 @@ body {
 .btn:hover { opacity: 0.85; }
 .btn-web { background-color: var(--btn-web-bg); color: var(--btn-web-text); }
 .btn-pdf { background-color: var(--btn-pdf-bg); color: var(--btn-pdf-text); border: 1px solid var(--btn-pdf-border); }
+
+body {
+    background: yellow !important;
+}
+
+.breadcrumb-sep {
+    margin: 0 0.4em;
+    color: #d01a1a;
+}
+
+.breadcrumb {
+    margin: 1rem 0 0.5rem;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.breadcrumb a {
+    color: #0b63ce;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}

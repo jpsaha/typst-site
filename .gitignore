@@ -4,3 +4,5 @@ dist/
 templates/generated.typ
 templates/homepage.typ
 templates/homepage.json
+
+imports.dot
