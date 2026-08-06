@@ -1,6 +1,6 @@
 // src/lec2.typ
 #import "template.typ": theorem, definition, exercise, html-nav-header
-
+#let lecture_title = "Lecture 2: ..."
 #let is-html = sys.inputs.at("format", default: "pdf") == "html"
 
 #show: doc => {
