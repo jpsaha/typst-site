@@ -5,6 +5,7 @@
   file: "lec3",
   number: 3,
   title: "Olympiad Inequalities",
+  category: "lecture",
 )
 
 

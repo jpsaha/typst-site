@@ -5,6 +5,7 @@
   file: "lec2",
   number: 2,
   title: "Eigenvalues & Spectral Mapping",
+  category: "lecture",
 )
 
 

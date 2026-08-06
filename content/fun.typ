@@ -5,6 +5,7 @@
   file: "fun",
   number: none,
   title: "Fun Lecture",
+  category: "Extras",
 )
 
 

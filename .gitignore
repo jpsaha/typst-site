@@ -2,3 +2,5 @@ dist/
 
 .DS_Store
 templates/generated.typ
+templates/homepage.typ
+templates/homepage.json

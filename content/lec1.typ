@@ -6,6 +6,7 @@
   file: "lec1",
   number: 1,
   title: "Linear Transformations & Matrices",
+  category: "Linear Algebra",
 )
 
 
