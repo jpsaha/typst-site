@@ -1,6 +1,28 @@
 // HTML/PDF rendering helpers
 #import "counters.typ": math-counter
 #import "utils.typ": is-html
+#import "nav.typ": html-nav-header, breadcrumb
+
+#let page-header(lecture) = {
+  if is-html {
+    html-nav-header()
+    breadcrumb(lecture)
+
+    html.elem(
+      "h1",
+      attrs: (
+        style: "font-family: system-ui, sans-serif; color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px;"
+      )
+    )[
+      #lecture.title
+    ]
+  } else {
+    align(center)[
+      #text(size: 20pt, weight: "bold")[#lecture.title]
+      #v(1cm)
+    ]
+  }
+}
 
 #let block-container(title, label-text, primary-color, bg-color, class-name, content) = {
   // Step the counter forward by 1 inside a hidden location context

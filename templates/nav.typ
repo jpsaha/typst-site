@@ -2,6 +2,17 @@
 #import "generated.typ": lectures
 #import "utils.typ": is-html
 
+#let breadcrumb(lecture) = {
+  if is-html {
+    html.elem("nav", attrs: (class: "breadcrumb"))[
+      #link("index.html")[🏠 Home]
+      #text(fill: rgb("#666"))[" / "]
+      #lecture.category
+      #text(fill: rgb("#666"))[" / "]
+      #lecture.title
+    ]
+  }
+}
 
 #let previous-next(current) = {
 

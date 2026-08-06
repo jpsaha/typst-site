@@ -2,6 +2,9 @@
 #import "counters.typ": math-counter
 #import "render.typ": block-container
 
+// ├── imports colors.typ
+// └── imports utils.typ
+
 #let theorem(title: "", content) = block-container(title, "Theorem", "#0066cc", "#f0f7ff", "theorem", content)
 
 #let definition(title: "", content) = block-container(title, "Definition", "#2e7d32", "#f1f8e9", "definition", content)
