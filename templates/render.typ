@@ -4,14 +4,20 @@
 #import "nav.typ": html-nav-header, breadcrumb
 
 #let page-header(lecture) = {
+
   if is-html {
+
     html-nav-header()
+
     breadcrumb(lecture)
 
     html.elem(
       "h1",
       attrs: (
-        style: "font-family: system-ui, sans-serif; color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px;"
+        style: "font-family: system-ui, sans-serif;
+        color: #111;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;"
       ),
     )[
       #if lecture.number != none {
@@ -19,16 +25,33 @@
       }
       #lecture.title
     ]
-  } else {
-    align(center)[
-      #text(size: 20pt, weight: "bold")[
-        #if lecture.number != none {
-          [Lecture #lecture.number: ]
-        }
-        #lecture.title
+
+
+    // Metadata box
+
+    html.elem(
+      "div",
+      attrs: (
+        class: "lecture-meta"
+      ),
+    )[
+
+      #if "date" in lecture [
+        📅 #lecture.date
+        #linebreak()
       ]
-      #v(1cm)
+
+      #if "reading" in lecture [
+        📖 Reading: #lecture.reading
+        #linebreak()
+      ]
+
+      #if "duration" in lecture [
+        ⏱ #lecture.duration
+      ]
+
     ]
+
   }
 }
 
