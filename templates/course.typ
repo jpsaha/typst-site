@@ -1,4 +1,5 @@
 // Public API
+#import "utils.typ": is-html
 #import "counters.typ": math-counter
 #import "render.typ": block-container
 #import "blocks.typ": theorem, definition, exercise

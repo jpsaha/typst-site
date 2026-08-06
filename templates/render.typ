@@ -1,5 +1,6 @@
 // HTML/PDF rendering helpers
 #import "counters.typ": math-counter
+#import "utils.typ": is-html
 
 #let block-container(title, label-text, primary-color, bg-color, class-name, content) = {
   // Step the counter forward by 1 inside a hidden location context
