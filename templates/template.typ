@@ -96,6 +96,8 @@
       #text(fill: rgb("#cbd5e1"))[ | ]
       #link("lec1.html")[Lecture 1]
       #link("lec2.html")[Lecture 2]
+      #link("lec3.html")[Lecture 3]
+      #link("fun.html")[Fun Lecture]
     ]
   }
 }

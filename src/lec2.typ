@@ -1,5 +1,5 @@
 // src/lec2.typ
-#import "template.typ": theorem, definition, exercise, html-nav-header
+#import "../templates/template.typ": theorem, definition, exercise, html-nav-header
 
 #let is-html = sys.inputs.at("format", default: "pdf") == "html"
 

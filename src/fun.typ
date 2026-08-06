@@ -1,4 +1,4 @@
-// src/lec3.typ
+// src/fun.typ
 #import "../templates/template.typ": theorem, definition, exercise, html-nav-header
 
 #let is-html = sys.inputs.at("format", default: "pdf") == "html"
@@ -15,17 +15,14 @@
 // NEW: Render navigation bar for browser view
 #if is-html {
   html-nav-header()
-  html.elem("h1", attrs: (style: "font-family: system-ui, sans-serif; color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px;"))[Lecture 3: Olym]
+  html.elem("h1", attrs: (style: "font-family: system-ui, sans-serif; color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px;"))[Fun Lecture]
 } else {
   align(center)[
-    #text(size: 20pt, weight: "bold")[Lecture 3: Oly]
+    #text(size: 20pt, weight: "bold")[Fun Lecture]
     #v(1cm)
   ]
 }
 
 = Core Definitions
 
-
-#theorem[
-  There are infinitely many prime numbers.
-]
+aaa

@@ -7,45 +7,61 @@ export TYPST_FEATURES=html
 
 echo "🚀 Launching modular artifact compile pipeline..."
 
-if [ -f "src/style.css" ]; then
-    cp src/style.css dist/style.css
-    echo "📋 Synced external stylesheet assets to dist/ workspace"
+if [ -f "assets/style.css" ]; then
+    cp assets/style.css dist/style.css
+    echo "📋 Copied style.css"
 else
-    echo "⚠️ Warning: src/style.css asset target missing"
+    echo "⚠️ Warning: assets/style.css not found"
 fi
 
-# Locate tracking paths chronologically
-FILES=$(ls src/lec*.typ 2>/dev/null | sort -V || true)
+# --------------------------------------------------------------------
+# Find ALL Typst files (instead of only lec*.typ)
+# --------------------------------------------------------------------
+FILES=$(find src -maxdepth 1 -type f -name "*.typ" | sort -V)
 
 if [ -z "$FILES" ]; then
-    echo "❌ Missing source lecture targets matching: src/lec*.typ"
+    echo "❌ No Typst source files found in src/"
     exit 1
 fi
 
-# Core array initialization for building the portal index
+# --------------------------------------------------------------------
+# Collect titles
+# --------------------------------------------------------------------
 LECTURES_ARR=()
 
 for file in $FILES; do
     filename=$(basename "$file" .typ)
-    
-    # Brittle extraction alternative: Read metadata safely with robust parsing fallback
-    title=$(grep -m 1 "^// Title:" "$file" | sed 's/\/\/ Title://g' | xargs || true)
+
+    title=$(grep -m1 "^// Title:" "$file" \
+        | sed 's#// Title:##' \
+        | xargs || true)
+
     if [ -z "$title" ]; then
-        title="Lecture ${filename#lec}"
+        title="$filename"
     fi
 
-    echo "Compiling academic segment: $title ($filename)"
-
-    # Build web pages and high-fidelity print layouts independently
-    typst compile "$file" "dist/${filename}.html" --input format=html
-    typst compile "$file" "dist/${filename}.pdf" --input format=pdf
-
-    # Push to array mapping stack variables safely
     LECTURES_ARR+=("$filename|$title")
 done
 
-# Dynamically write out the dashboard file
-echo "🌐 Writing landing index layout workspace: dist/index.html"
+# --------------------------------------------------------------------
+# Build navigation string for Typst
+# Format:
+# lec1|Lecture 1;lec2|Lecture 2;fun|Fun Problems
+# --------------------------------------------------------------------
+NAV_ITEMS=""
+
+for item in "${LECTURES_ARR[@]}"; do
+    if [ -n "$NAV_ITEMS" ]; then
+        NAV_ITEMS+=";"
+    fi
+    NAV_ITEMS+="$item"
+done
+
+# --------------------------------------------------------------------
+# Write landing page header
+# --------------------------------------------------------------------
+echo "🌐 Writing landing page..."
+
 cat << 'EOF' > dist/index.html
 <!DOCTYPE html>
 <html lang="en">
@@ -61,23 +77,46 @@ cat << 'EOF' > dist/index.html
             <h1>🧮 Mathematics Lecture Portal</h1>
             <p>Interactive web modules & downloadable print-ready course material</p>
         </header>
+
         <main class="lecture-list">
 EOF
 
+# --------------------------------------------------------------------
+# Compile lectures
+# --------------------------------------------------------------------
 for item in "${LECTURES_ARR[@]}"; do
     IFS='|' read -r fname ftitle <<< "$item"
+
+    echo "📖 Compiling $ftitle"
+
+    typst compile \
+        --root . \
+        "src/${fname}.typ" \
+        "dist/${fname}.html" \
+        --input format=html \
+        --input nav-data="$NAV_ITEMS"
+
+    typst compile \
+        --root . \
+        "src/${fname}.typ" \
+        "dist/${fname}.pdf" \
+        --input format=pdf
+
     cat << EOF >> dist/index.html
             <div class="lecture-row">
                 <span>${ftitle}</span>
                 <div class="lecture-links">
                     <a href="${fname}.html" class="btn btn-web">🌐 View Web</a>
-                    <!-- FIXED: Removed 'download' and added target="_blank" -->
                     <a href="${fname}.pdf" class="btn btn-pdf" target="_blank">📄 PDF Version</a>
                 </div>
             </div>
+
 EOF
 done
 
+# --------------------------------------------------------------------
+# Finish index.html
+# --------------------------------------------------------------------
 cat << 'EOF' >> dist/index.html
         </main>
     </div>
@@ -85,4 +124,5 @@ cat << 'EOF' >> dist/index.html
 </html>
 EOF
 
+echo
 echo "✅ Compilation pipeline executed successfully!"
