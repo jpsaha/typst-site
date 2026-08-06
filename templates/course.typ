@@ -1,6 +1,11 @@
 // Public API
 #import "utils.typ": is-html
-#import "counters.typ": math-counter
+#import "counters.typ": (
+  math-counter,
+  math-number,
+  reset-counters,
+  lecture-number,
+)
 #import "render.typ": block-container, page-header, setup-document, lecture-info
 #import "blocks.typ": theorem, definition, exercise
 #import "nav.typ": html-nav-header, previous-next
