@@ -38,77 +38,7 @@
 // }
 
 #page-header(lecture)
-= Core Definitions
 
-We begin by establishing the properties of fields mapping vector components.
-
-#definition(title: "Linear Map")[
-  A function $T: V -> W$ between two vector spaces over the same field $F$ 
-  is called a *linear transformation* if it satisfies:
-  
-  1. Additivity: $T(u + v) = T(u) + T(v)$ for all $u, v in V$
-  2. Homogeneity: $T(c v) = c T(v)$ for all $c in F$ and $v in V$
-]
-
-= Fundamental Theorems
-
-#theorem(title: "Rank-Nullity Theorem")[
-  Let $V$ and $W$ be vector spaces, where $V$ is finite-dimensional. 
-  If $T: V -> W$ is a linear map, then:
-  
-  $ dim("null" T) + dim("range" T) = dim V $
-]
-
-= Homework Practice
-
-#exercise(title: "Identity Dimension Mapping")[
-  Let $T: RR^3 -> RR^2$ be defined by $T(x, y, z) = (x + y, z)$. 
-  Find a structured matrix representation $M_T$ and verify the output dimension explicitly:
-  
-  $ M_T = mat(1, 1, 0; 0, 0, 1) $
-]
-
-#exercise(title: "Identity Dimension Mapping", solution: [
-  By inspecting the matrix row parameters:
-  $ M_T = mat(1, 1, 0; 0, 0, 1) $
-  The rank is clearly 2 because the two rows are linearly independent. 
-  By Rank-Nullity, $dim("null" T) = 3 - 2 = 1$.
-])[
-  Let $T: RR^3 -> RR^2$ be defined by $T(x, y, z) = (x + y, z)$. 
-  Find the dimension of the null space.
-]
-
-#note[
-Remember that every basis is linearly independent.
-]
-
-#warning[
-Do *not* confuse image and codomain.
-]
-
-#example[
-Let
-
-$
-T(x,y)=(x+y,y).
-$
-]
-
-#proof[
-We proceed by induction...
-]
-
-#remark[
-The converse is false.
-]
-
-#history[
-The Rank-Nullity theorem appeared in the nineteenth century.
-]
-
-#lemma[lemma statement]
-#proposition[proposition statement]
-#claim[claim statement]
-#corollary[corollary statement]
+#include "lec1_content.typ"
 
 #previous-next(lecture)

@@ -31,9 +31,7 @@
 
 #page-header(lecture)
 
-= Core Definitions
 
-aaa
-
+#include "fun_content.typ"
 
 #previous-next(lecture)

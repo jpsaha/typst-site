@@ -3,7 +3,7 @@
 
 #let lecture = (
   file: "lec3",
-  number: 3,
+  number: 30,
   title: "Olympiad Inequalities",
   category: "lecture",
 )
@@ -31,11 +31,6 @@
 
 #page-header(lecture)
 
-= Core Definitions
-
-
-#theorem[
-  There are infinitely many prime numbers.
-]
+#include "lec3_content.typ"
 
 #previous-next(lecture)
