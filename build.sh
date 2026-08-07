@@ -124,13 +124,9 @@ f"""
             title = lec["title"]
             html = lec["html"]
             pdf = lec["pdf"]
-
-            # fname = html.removesuffix(".html")
-            fname = html[:-5] if html.endswith(".html") else html
-
+            source = lec["source"]
 
             print(f"📖 Compiling {title}")
-
 
             subprocess.run(
                 [
@@ -138,7 +134,7 @@ f"""
                     "compile",
                     "--root",
                     ".",
-                    f"content/{fname}.typ",
+                    f"content/{source}",
                     f"dist/pages/{html}",
                     "--input",
                     "format=html",
@@ -146,14 +142,13 @@ f"""
                 check=True,
             )
 
-
             subprocess.run(
                 [
                     "typst",
                     "compile",
                     "--root",
                     ".",
-                    f"content/{fname}.typ",
+                    f"content/{source}",
                     f"dist/pdf/{pdf}",
                     "--input",
                     "format=pdf",
@@ -161,6 +156,53 @@ f"""
                 check=True,
             )
 
+
+            # ------------------------------------------------------------
+            # Old code below for compiling lectures (commented out)
+            # ------------------------------------------------------------
+
+            # html = lec["html"]
+            # pdf = lec["pdf"]
+
+            # # fname = html.removesuffix(".html")
+            # fname = html[:-5] if html.endswith(".html") else html
+
+
+            # print(f"📖 Compiling {title}")
+
+
+            # subprocess.run(
+            #     [
+            #         "typst",
+            #         "compile",
+            #         "--root",
+            #         ".",
+            #         f"content/{fname}.typ",
+            #         f"dist/pages/{html}",
+            #         "--input",
+            #         "format=html",
+            #     ],
+            #     check=True,
+            # )
+
+
+            # subprocess.run(
+            #     [
+            #         "typst",
+            #         "compile",
+            #         "--root",
+            #         ".",
+            #         f"content/{fname}.typ",
+            #         f"dist/pdf/{pdf}",
+            #         "--input",
+            #         "format=pdf",
+            #     ],
+            #     check=True,
+            # )
+            
+            # ------------------------------------------------------------
+            # Old code above for compiling lectures (commented out)
+            # ------------------------------------------------------------
 
             index.write(
 f"""
