@@ -223,3 +223,31 @@
     doc
   }
 }
+
+
+// ------------------------------------------------------------
+// Typeset one lecture inside the combined course book
+// ------------------------------------------------------------
+
+
+#let include-lecture(lecture, body) = [
+  #pagebreak()
+
+  #reset-counters(lecture.number)
+
+  #align(center)[
+    #text(size: 1.8em, weight: "bold")[
+      Lecture #lecture.number
+    ]
+
+    #v(0.4em)
+
+    #text(size: 1.4em)[
+      #lecture.title
+    ]
+
+    #v(1em)
+  ]
+
+  #body
+]

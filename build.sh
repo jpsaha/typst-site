@@ -200,7 +200,18 @@ cat << 'EOF' >> dist/index.html
 
 EOF
 
+# ------------------------------------------------------------
+# Build complete course PDF
+# ------------------------------------------------------------
 
+echo
+echo "📚 Building complete course book..."
+
+typst compile \
+    --root . \
+    book.typ \
+    dist/course.pdf \
+    --input format=pdf
 
 echo
 echo "✅ Compilation pipeline executed successfully!"

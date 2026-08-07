@@ -6,7 +6,7 @@
   reset-counters,
   lecture-number,
 )
-#import "render.typ": block-container, page-header, setup-document, lecture-info
+#import "render.typ": block-container, page-header, setup-document, lecture-info, include-lecture
 #import "blocks.typ": theorem, definition, exercise, note, warning, example, remark, history, proof, corollary, lemma, proposition, claim
 #import "nav.typ": html-nav-header, previous-next
 #import "colors.typ"

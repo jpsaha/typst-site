@@ -35,6 +35,7 @@ TEMPLATES = ROOT / "templates"
 GENERATED = TEMPLATES / "generated.typ"
 HOMEPAGE_TYP = TEMPLATES / "homepage.typ"
 HOMEPAGE_JSON = TEMPLATES / "homepage.json"
+GENERATED_BOOK = TEMPLATES / "generated_book.typ"
 
 
 # ------------------------------------------------------------
@@ -104,27 +105,54 @@ def parse_lecture(text):
 
 
 
+# # ------------------------------------------------------------
+# # Read all lectures
+# # ------------------------------------------------------------
+
+# lectures = []
+
+
+# for path in sorted(SRC.glob("*.typ")):
+
+#     text = path.read_text(encoding="utf-8")
+
+#     lecture = parse_lecture(text)
+
+
+#     if lecture is None:
+#         print(f"Skipping {path.name}: no lecture metadata.")
+#         continue
+
+
+#     lectures.append(lecture)
+
+
 # ------------------------------------------------------------
-# Read all lectures
+# Read all lecture wrappers
 # ------------------------------------------------------------
 
 lectures = []
 
-
 for path in sorted(SRC.glob("*.typ")):
+
+    # Skip content-only files
+    if path.stem.endswith("_content"):
+        continue
 
     text = path.read_text(encoding="utf-8")
 
     lecture = parse_lecture(text)
 
-
     if lecture is None:
         print(f"Skipping {path.name}: no lecture metadata.")
         continue
 
-
     lectures.append(lecture)
 
+
+# print("\nLECTURES FOUND:")
+# for lec in lectures:
+#     print(lec)
 
 
 # ------------------------------------------------------------
@@ -372,6 +400,39 @@ with HOMEPAGE_TYP.open("w", encoding="utf-8") as f:
 
 print(f"Wrote {HOMEPAGE_TYP}")
 
+
+# ------------------------------------------------------------
+# Write generated_book.typ
+# ------------------------------------------------------------
+
+with GENERATED_BOOK.open("w", encoding="utf-8") as f:
+    f.write("// AUTO-GENERATED. DO NOT EDIT.\n\n")
+
+    f.write('#import "render.typ": include-lecture\n')
+    f.write('#import "generated.typ": lectures\n\n')
+    
+    for lec in lectures:
+
+        if lec.get("number") is None:
+            print(f"Skipping {lec['file']}: no lecture number.")
+            continue
+
+        f.write(
+f"""#include-lecture(
+  (
+    file: "{lec["file"]}",
+    number: {lec["number"]},
+    title: "{lec["title"]}",
+  ),
+  [
+    #include "../content/{lec["file"]}_content.typ"
+  ],
+)
+
+"""
+        )
+
+print(f"Wrote {GENERATED_BOOK}")
 
 
 # ------------------------------------------------------------
