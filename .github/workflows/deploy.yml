@@ -27,8 +27,13 @@ jobs:
 
       - name: Verify build output
         run: |
-          ls -lah dist
+          find dist
+
           test -f dist/index.html
+          test -d dist/pages
+          test -d dist/pdf
+          test -d dist/assets
+          test -f dist/assets/css/style.css
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
