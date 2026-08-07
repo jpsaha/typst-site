@@ -1,5 +1,6 @@
 // Navigation bar
 #import "generated.typ": lectures
+#import "generated_pages_meta.typ": pages
 #import "utils.typ": is-html
 
 #let breadcrumb(lecture) = {
@@ -62,6 +63,11 @@
       #for lec in lectures {
         text(fill: rgb("#cbd5e1"))[ | ]
         link(lec.file + ".html")[#lec.title]
+      }
+
+      #for page in pages {
+        text(fill: rgb("#cbd5e1"))[ | ]
+        link(page.html)[#page.title]
       }
     ]
   }

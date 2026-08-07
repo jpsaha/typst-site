@@ -37,6 +37,7 @@ HOMEPAGE_TYP = TEMPLATES / "homepage.typ"
 HOMEPAGE_JSON = TEMPLATES / "homepage.json"
 GENERATED_BOOK = TEMPLATES / "generated_book.typ"
 GENERATED_PAGES = TEMPLATES / "generated_pages.typ"
+GENERATED_PAGES_META = TEMPLATES / "generated_pages_meta.typ"
 
 
 # ------------------------------------------------------------
@@ -378,6 +379,20 @@ f'''
 '''
         )
 
+with GENERATED_PAGES_META.open("w", encoding="utf-8") as f:
+
+    f.write("// AUTO-GENERATED. DO NOT EDIT.\n\n")
+
+    f.write("#let pages = (\n")
+
+    for page in pages:
+        f.write("  (\n")
+        f.write(f'    html: "{page["file"]}.html",\n')
+        f.write(f'    pdf: "{page["file"]}.pdf",\n')
+        f.write(f'    title: "{page["title"]}",\n')
+        f.write("  ),\n")
+
+    f.write(")\n")
 
 
 # ------------------------------------------------------------
