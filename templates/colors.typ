@@ -63,3 +63,35 @@
   ),
 
 )
+
+#let code-colors = (
+  python: (
+    name: "Python",
+    border: "#3776ab",
+    bg: "#eef6ff",
+  ),
+
+  sage: (
+    name: "SageMath",
+    border: "#2e7d32",
+    bg: "#eef9ee",
+  ),
+
+  lean: (
+    name: "Lean",
+    border: "#5e35b1",
+    bg: "#f4efff",
+  ),
+
+  julia: (
+    name: "Julia",
+    border: "#7b1fa2",
+    bg: "#f8f0ff",
+  ),
+
+  asy: (
+    name: "Asymptote",
+    border: "#ef6c00",
+    bg: "#fff5e6",
+  ),
+)
