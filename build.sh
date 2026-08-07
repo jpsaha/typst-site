@@ -13,7 +13,12 @@ python3 scripts/generate_metadata.py
 # Initialize dist
 # ------------------------------------------------------------
 
-mkdir -p dist
+mkdir -p \
+    dist/pages \
+    dist/pdf \
+    dist/assets/css \
+    dist/assets/js \
+    dist/assets/images
 
 export TYPST_FEATURES=html
 
@@ -25,7 +30,7 @@ echo "🚀 Launching modular artifact compile pipeline..."
 # ------------------------------------------------------------
 
 if [ -f "assets/css/style.css" ]; then
-    cp assets/css/style.css dist/style.css
+    cp assets/css/style.css dist/assets/css/style.css
     echo "📋 Copied style.css"
 else
     echo "⚠️ Warning: assets/css/style.css not found"
@@ -66,7 +71,7 @@ cat << 'EOF' > dist/index.html
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mathematics Lecture Portal</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
@@ -134,7 +139,7 @@ f"""
                     "--root",
                     ".",
                     f"content/{fname}.typ",
-                    f"dist/{html}",
+                    f"dist/pages/{html}",
                     "--input",
                     "format=html",
                 ],
@@ -149,7 +154,7 @@ f"""
                     "--root",
                     ".",
                     f"content/{fname}.typ",
-                    f"dist/{pdf}",
+                    f"dist/pdf/{pdf}",
                     "--input",
                     "format=pdf",
                 ],
@@ -165,11 +170,11 @@ f"""
 
     <div class="lecture-links">
 
-        <a href="{html}" class="btn btn-web">
+        <a href="pages/{html}" class="btn btn-web">
             🌐 View Web
         </a>
 
-        <a href="{pdf}"
+        <a href="pdf/{pdf}"
            class="btn btn-pdf"
            target="_blank">
             📄 PDF Version
@@ -211,7 +216,7 @@ echo "📚 Building complete course book..."
 typst compile \
     --root . \
     book.typ \
-    dist/book.pdf \
+    dist/pdf/book.pdf \
     --input format=pdf
 
 
@@ -225,7 +230,7 @@ echo "📚 Building complete pages.pdf ..."
 typst compile \
     --root . \
     pages.typ \
-    dist/pages.pdf \
+    dist/pdf/pages.pdf \
     --input format=pdf
 
 echo

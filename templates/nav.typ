@@ -6,7 +6,7 @@
 #let breadcrumb(lecture) = {
   if is-html {
     html.elem("nav", attrs: (class: "breadcrumb"))[
-      #link("index.html")[🏠 Home]
+      #link("../index.html")[🏠 Home]
       #html.elem("span", attrs: (class: "breadcrumb-sep"))[/]
       #lecture.category
       #html.elem("span", attrs: (class: "breadcrumb-sep"))[/]
@@ -58,7 +58,7 @@
 #let html-nav-header() = {
   if sys.inputs.at("format", default: "pdf") == "html" {
     html.elem("nav", attrs: (class: "global-nav-header"))[
-      #link("index.html")[🏠 Home]
+      #link("../index.html")[🏠 Home]
 
       #for lec in lectures {
         text(fill: rgb("#cbd5e1"))[ | ]
@@ -84,7 +84,7 @@
       ),
     )[
 
-      #link(lecture.file + ".pdf")[⬇ PDF]
+      #link("../pdf/" + lecture.file + ".pdf")[⬇ PDF]
 
     ]
 
