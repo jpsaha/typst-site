@@ -37,8 +37,8 @@ fi
 # Check homepage metadata
 # ------------------------------------------------------------
 
-if [ ! -f "templates/homepage.json" ]; then
-    echo "❌ Missing templates/homepage.json"
+if [ ! -f "generated/homepage.json" ]; then
+    echo "❌ Missing generated/homepage.json"
     exit 1
 fi
 
@@ -48,7 +48,7 @@ fi
 # Read lecture list from homepage.json
 # ------------------------------------------------------------
 
-LECTURES_JSON="templates/homepage.json"
+LECTURES_JSON="generated/homepage.json"
 
 
 
@@ -94,7 +94,7 @@ import json
 import subprocess
 
 
-with open("templates/homepage.json",
+with open("generated/homepage.json",
           encoding="utf-8") as f:
     categories = json.load(f)
 

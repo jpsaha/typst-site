@@ -1,6 +1,6 @@
 // Navigation bar
-#import "generated.typ": lectures
-#import "generated_pages_meta.typ": pages
+#import "../generated/generated.typ": lectures
+#import "../generated/generated_pages_meta.typ": pages
 #import "utils.typ": is-html
 
 #let breadcrumb(lecture) = {

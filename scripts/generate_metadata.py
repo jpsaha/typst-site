@@ -30,7 +30,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 SRC = ROOT / "content"
 
-TEMPLATES = ROOT / "templates"
+TEMPLATES = ROOT / "generated"
 
 GENERATED = TEMPLATES / "generated.typ"
 HOMEPAGE_TYP = TEMPLATES / "homepage.typ"
@@ -470,8 +470,8 @@ print(f"Wrote {HOMEPAGE_TYP}")
 with GENERATED_BOOK.open("w", encoding="utf-8") as f:
     f.write("// AUTO-GENERATED. DO NOT EDIT.\n\n")
 
-    f.write('#import "render.typ": include-lecture\n')
-    f.write('#import "generated.typ": lectures\n\n')
+    f.write('#import "../templates/render.typ": include-lecture\n')
+    f.write('#import "../generated/generated.typ": lectures\n\n')
     
     for lec in lectures:
 
