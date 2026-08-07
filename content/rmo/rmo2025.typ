@@ -1,11 +1,11 @@
-// content/ioqm2025.typ
-#import "../templates/course.typ": *
+// content/rmo2025.typ
+#import "../../templates/course.typ": *
 
 #let lecture = (
-  file: "ioqm2025",
+  file: "rmo2025",
   number: none,
-  title: "IOQM 2025",
-  category: "IOQM",
+  title: "RMO 2025",
+  category: "R-M-O",
 )
 
 #show: doc => {
@@ -16,6 +16,6 @@
 
 #page-header(lecture)
 
-#include "ioqm2025_content.typ"
+#include "rmo2025_content.typ"
 
 #previous-next(lecture)
