@@ -28,9 +28,9 @@ import json
 
 ROOT = Path(__file__).resolve().parent.parent
 
-SRC = ROOT / "content"
+SRC = ROOT / "../content"
 
-TEMPLATES = ROOT / "generated"
+TEMPLATES = ROOT / "../generated"
 
 GENERATED = TEMPLATES / "lectures.typ"
 HOMEPAGE_TYP = TEMPLATES / "homepage.typ"

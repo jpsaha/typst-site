@@ -6,7 +6,7 @@ set -euo pipefail
 # Generate metadata
 # ------------------------------------------------------------
 
-python3 scripts/generate_metadata.py
+python3 scripts/build/generate_metadata.py
 
 
 # ------------------------------------------------------------
