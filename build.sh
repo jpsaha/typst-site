@@ -210,7 +210,21 @@ echo "📚 Building complete course book..."
 typst compile \
     --root . \
     book.typ \
-    dist/course.pdf \
+    dist/book.pdf \
+    --input format=pdf
+
+
+# ------------------------------------------------------------
+# Build complete course PDF (pages part)
+# ------------------------------------------------------------
+
+echo
+echo "📚 Building complete course book..."
+
+typst compile \
+    --root . \
+    pages.typ \
+    dist/pages.pdf \
     --input format=pdf
 
 echo

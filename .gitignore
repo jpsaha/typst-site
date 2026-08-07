@@ -4,5 +4,7 @@ dist/
 templates/generated.typ
 templates/homepage.typ
 templates/homepage.json
+templates/generated_book.typ
+templates/generated_pages.typ
 
 imports.dot

@@ -36,6 +36,7 @@ GENERATED = TEMPLATES / "generated.typ"
 HOMEPAGE_TYP = TEMPLATES / "homepage.typ"
 HOMEPAGE_JSON = TEMPLATES / "homepage.json"
 GENERATED_BOOK = TEMPLATES / "generated_book.typ"
+GENERATED_PAGES = TEMPLATES / "generated_pages.typ"
 
 
 # ------------------------------------------------------------
@@ -132,27 +133,58 @@ def parse_lecture(text):
 # ------------------------------------------------------------
 
 lectures = []
+pages = []
 
 for path in sorted(SRC.glob("*.typ")):
 
-    # Skip content-only files
     if path.stem.endswith("_content"):
         continue
 
     text = path.read_text(encoding="utf-8")
 
-    lecture = parse_lecture(text)
+    data = parse_lecture(text)
 
-    if lecture is None:
-        print(f"Skipping {path.name}: no lecture metadata.")
+    if data is None:
+        print(f"Skipping {path.name}: no metadata.")
         continue
 
-    lectures.append(lecture)
+    if data.get("number") is None:
+        pages.append(data)
+        print(f"Page: {data['file']}")
+    else:
+        lectures.append(data)
+        print(f"Lecture: {data['file']}")
 
 
-# print("\nLECTURES FOUND:")
-# for lec in lectures:
-#     print(lec)
+# lectures = []
+# pages = []
+
+# for path in sorted(SRC.glob("*.typ")):
+
+#     if path.stem.endswith("_content"):
+#         continue
+
+#     text = path.read_text(encoding="utf-8")
+
+#     lecture = parse_lecture(text)
+
+#     if lecture is None:
+#         print(f"Adding content page: {path.name}")
+
+#     if lecture.get("number") is None:
+#         print(f"Adding page: {lecture['file']}")
+#         pages.append(lecture)
+#         continue
+
+#     lectures.append(lecture)
+
+print("LECTURES:")
+for lec in lectures:
+    print(lec)
+
+print("\nPAGES:")
+for page in pages:
+    print(page)
 
 
 # ------------------------------------------------------------
@@ -332,6 +364,21 @@ with GENERATED.open("w", encoding="utf-8") as f:
 print(f"Wrote {GENERATED}")
 
 
+with GENERATED_PAGES.open("w", encoding="utf-8") as f:
+
+    f.write("// AUTO-GENERATED. DO NOT EDIT.\n\n")
+
+    for page in pages:
+        f.write(
+f'''
+= {page["title"]}
+
+#include "../content/{page["file"]}_content.typ"
+
+'''
+        )
+
+
 
 # ------------------------------------------------------------
 # Write homepage.typ
@@ -442,7 +489,7 @@ print(f"Wrote {GENERATED_BOOK}")
 homepage = {}
 
 
-for lec in lectures:
+for lec in lectures + pages:
 
 
     category = lec.get(
