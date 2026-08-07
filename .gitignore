@@ -1,12 +1,6 @@
 dist/
 generated/
+diagnostics/
 
 .DS_Store
-templates/generated.typ
-templates/homepage.typ
-templates/homepage.json
-templates/generated_book.typ
-templates/generated_pages.typ
-templates/generated_pages_meta.typ
 
-imports.dot

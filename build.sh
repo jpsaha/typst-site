@@ -120,7 +120,8 @@ f"""
             html = lec["html"]
             pdf = lec["pdf"]
 
-            fname = html.removesuffix(".html")
+            # fname = html.removesuffix(".html")
+            fname = html[:-5] if html.endswith(".html") else html
 
 
             print(f"📖 Compiling {title}")
@@ -219,7 +220,7 @@ typst compile \
 # ------------------------------------------------------------
 
 echo
-echo "📚 Building complete course book..."
+echo "📚 Building complete pages.pdf ..."
 
 typst compile \
     --root . \

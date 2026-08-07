@@ -32,12 +32,12 @@ SRC = ROOT / "content"
 
 TEMPLATES = ROOT / "generated"
 
-GENERATED = TEMPLATES / "generated.typ"
+GENERATED = TEMPLATES / "lectures.typ"
 HOMEPAGE_TYP = TEMPLATES / "homepage.typ"
 HOMEPAGE_JSON = TEMPLATES / "homepage.json"
-GENERATED_BOOK = TEMPLATES / "generated_book.typ"
-GENERATED_PAGES = TEMPLATES / "generated_pages.typ"
-GENERATED_PAGES_META = TEMPLATES / "generated_pages_meta.typ"
+GENERATED_BOOK = TEMPLATES / "book.typ"
+GENERATED_PAGES = TEMPLATES / "pages.typ"
+GENERATED_PAGES_META = TEMPLATES / "pages_meta.typ"
 
 
 # ------------------------------------------------------------
@@ -471,7 +471,7 @@ with GENERATED_BOOK.open("w", encoding="utf-8") as f:
     f.write("// AUTO-GENERATED. DO NOT EDIT.\n\n")
 
     f.write('#import "../templates/render.typ": include-lecture\n')
-    f.write('#import "../generated/generated.typ": lectures\n\n')
+    f.write('#import "../generated/lectures.typ": lectures\n\n')
     
     for lec in lectures:
 

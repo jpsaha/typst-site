@@ -160,7 +160,7 @@ print()
 # Generate Graphviz
 # ------------------------------------------------------------
 
-dot = ROOT / "imports.dot"
+dot = ROOT / "diagnostics/imports.dot"
 
 with dot.open("w") as f:
 
