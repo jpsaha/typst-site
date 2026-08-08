@@ -1,97 +1,88 @@
 #!/usr/bin/env bash
+
 set -euo pipefail
 
+export TYPST_FEATURES=html
 
-# ------------------------------------------------------------
-# Generate metadata
-# ------------------------------------------------------------
+
+# ============================================================
+# Configuration
+# ============================================================
+
+DIST="dist"
+PAGES_DIR="$DIST/pages"
+PDF_DIR="$DIST/pdf"
+ASSETS_DIR="$DIST/assets"
+
+HOMEPAGE_JSON="generated/homepage.json"
+
+
+# ============================================================
+# Helpers
+# ============================================================
+
+die() {
+    echo "❌ $1"
+    exit 1
+}
+
+
+# ============================================================
+# 1. Generate metadata
+# ============================================================
+
+echo "📋 Generating metadata..."
 
 python3 scripts/build/generate_metadata.py
 
 
-# ------------------------------------------------------------
-# Initialize dist
-# ------------------------------------------------------------
+# ============================================================
+# 2. Initialize dist
+# ============================================================
+
+echo "📁 Preparing dist/..."
 
 mkdir -p \
-    dist/pages \
-    dist/pdf \
-    dist/assets/css \
-    dist/assets/js \
-    dist/assets/images
-
-export TYPST_FEATURES=html
-
-echo "🚀 Launching modular artifact compile pipeline..."
+    "$PAGES_DIR" \
+    "$PDF_DIR" \
+    "$ASSETS_DIR/css" \
+    "$ASSETS_DIR/js" \
+    "$ASSETS_DIR/images"
 
 
-# ------------------------------------------------------------
-# Copy CSS
-# ------------------------------------------------------------
+# ============================================================
+# 3. Copy assets
+# ============================================================
 
 if [ -f "assets/css/style.css" ]; then
-    cp assets/css/style.css dist/assets/css/style.css
+
+    cp \
+        assets/css/style.css \
+        "$ASSETS_DIR/css/style.css"
+
     echo "📋 Copied style.css"
+
 else
+
     echo "⚠️ Warning: assets/css/style.css not found"
+
 fi
 
 
+# ============================================================
+# 4. Check generated metadata
+# ============================================================
 
-# ------------------------------------------------------------
-# Check homepage metadata
-# ------------------------------------------------------------
-
-if [ ! -f "generated/homepage.json" ]; then
-    echo "❌ Missing generated/homepage.json"
-    exit 1
+if [ ! -f "$HOMEPAGE_JSON" ]; then
+    die "Missing $HOMEPAGE_JSON"
 fi
 
 
+# ============================================================
+# 5. Generate homepage and compile pages
+# ============================================================
 
-# ------------------------------------------------------------
-# Read lecture list from homepage.json
-# ------------------------------------------------------------
-
-LECTURES_JSON="generated/homepage.json"
-
-
-
-# ------------------------------------------------------------
-# Write landing page header
-# ------------------------------------------------------------
-
-echo "🌐 Writing landing page..."
-
-
-cat << 'EOF' > dist/index.html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mathematics Lecture Portal</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-
-<body>
-
-<div class="index-container">
-
-<header class="index-header">
-    <h1>🧮 Mathematics Lecture Portal</h1>
-    <p>Interactive web modules & downloadable print-ready course material</p>
-</header>
-
-<main class="lecture-list">
-
-EOF
-
-
-
-# ------------------------------------------------------------
-# Compile lectures
-# ------------------------------------------------------------
+echo "🌐 Building course pages..."
 
 python3 - <<'PY'
 
@@ -99,34 +90,73 @@ import json
 import subprocess
 
 
-with open("generated/homepage.json",
-          encoding="utf-8") as f:
-    categories = json.load(f)
+HOMEPAGE_JSON = "generated/homepage.json"
+INDEX_HTML = "dist/index.html"
 
 
-with open("dist/index.html",
-          "a",
-          encoding="utf-8") as index:
+# ------------------------------------------------------------
+# Read metadata
+# ------------------------------------------------------------
+
+with open(
+    HOMEPAGE_JSON,
+    encoding="utf-8",
+) as file:
+
+    categories = json.load(file)
+
+
+# ------------------------------------------------------------
+# Start homepage
+# ------------------------------------------------------------
+
+with open(
+    INDEX_HTML,
+    "w",
+    encoding="utf-8",
+) as index:
+
+    index.write(
+        "<!DOCTYPE html>\n"
+        "<html>\n"
+        "<head>\n"
+        '  <meta charset="utf-8">\n'
+        '  <link rel="stylesheet" href="assets/css/style.css">\n'
+        "</head>\n"
+        "<body>\n"
+    )
+
+
+    # --------------------------------------------------------
+    # Categories
+    # --------------------------------------------------------
 
     for category, lectures in categories.items():
 
         index.write(
-f"""
-<h2 class="category-title">
-    {category}
-</h2>
-
-"""
+            f"\n<h2>{category}</h2>\n"
         )
 
-        for lec in lectures:
 
-            title = lec["title"]
-            html = lec["html"]
-            pdf = lec["pdf"]
-            source = lec["source"]
+        # ----------------------------------------------------
+        # Lectures/pages
+        # ----------------------------------------------------
 
-            print(f"📖 Compiling {title}")
+        for lecture in lectures:
+
+            title = lecture["title"]
+            html = lecture["html"]
+            pdf = lecture["pdf"]
+            source = lecture["source"]
+
+            print(
+                f"📖 Compiling {title}"
+            )
+
+
+            # ------------------------------------------------
+            # HTML
+            # ------------------------------------------------
 
             subprocess.run(
                 [
@@ -141,6 +171,11 @@ f"""
                 ],
                 check=True,
             )
+
+
+            # ------------------------------------------------
+            # PDF
+            # ------------------------------------------------
 
             subprocess.run(
                 [
@@ -157,109 +192,71 @@ f"""
             )
 
 
-            # ------------------------------------------------------------
-            # Old code below for compiling lectures (commented out)
-            # ------------------------------------------------------------
-
-            # html = lec["html"]
-            # pdf = lec["pdf"]
-
-            # # fname = html.removesuffix(".html")
-            # fname = html[:-5] if html.endswith(".html") else html
-
-
-            # print(f"📖 Compiling {title}")
-
-
-            # subprocess.run(
-            #     [
-            #         "typst",
-            #         "compile",
-            #         "--root",
-            #         ".",
-            #         f"content/{fname}.typ",
-            #         f"dist/pages/{html}",
-            #         "--input",
-            #         "format=html",
-            #     ],
-            #     check=True,
-            # )
-
-
-            # subprocess.run(
-            #     [
-            #         "typst",
-            #         "compile",
-            #         "--root",
-            #         ".",
-            #         f"content/{fname}.typ",
-            #         f"dist/pdf/{pdf}",
-            #         "--input",
-            #         "format=pdf",
-            #     ],
-            #     check=True,
-            # )
-            
-            # ------------------------------------------------------------
-            # Old code above for compiling lectures (commented out)
-            # ------------------------------------------------------------
+            # ------------------------------------------------
+            # Homepage entry
+            # ------------------------------------------------
 
             index.write(
-f"""
-<div class="lecture-row">
+                f"""
+<div class="lecture">
 
     <span>{title}</span>
 
     <div class="lecture-links">
 
-        <a href="pages/{html}" class="btn btn-web">
+        <a
+            href="pages/{html}"
+            class="btn btn-web"
+        >
             🌐 View Web
         </a>
 
-        <a href="pdf/{pdf}"
-           class="btn btn-pdf"
-           target="_blank">
+        <a
+            href="pdf/{pdf}"
+            class="btn btn-pdf"
+            target="_blank"
+        >
             📄 PDF Version
         </a>
 
     </div>
 
 </div>
-
 """
             )
+
+
+    # --------------------------------------------------------
+    # Finish homepage
+    # --------------------------------------------------------
+
+    index.write(
+        """
+</body>
+</html>
+"""
+    )
 
 PY
 
 
+# ============================================================
+# 6. Check links
+# ============================================================
 
-# ------------------------------------------------------------
-# Finish index.html
-# ------------------------------------------------------------
-
-cat << 'EOF' >> dist/index.html
-
-</main>
-
-</div>
-
-</body>
-</html>
-
-EOF
-
-echo ""
+echo
 echo "🔗 Checking links..."
 
 if ! python3 scripts/lint/check_links.py; then
-    echo ""
-    echo "❌ Build failed: broken links detected."
-    exit 1
+
+    die "Build failed: broken links detected."
+
 fi
 
-# ------------------------------------------------------------
-# Build complete course PDF
-# ------------------------------------------------------------
+
+# ============================================================
+# 7. Build complete course PDF
+# ============================================================
 
 echo
 echo "📚 Building complete course book..."
@@ -267,22 +264,29 @@ echo "📚 Building complete course book..."
 typst compile \
     --root . \
     book_source.typ \
-    dist/pdf/book.pdf \
+    "$PDF_DIR/book.pdf" \
     --input format=pdf
 
 
-# ------------------------------------------------------------
-# Build complete course PDF (pages part)
-# ------------------------------------------------------------
+# ============================================================
+# 8. Build complete pages PDF
+# ============================================================
 
 echo
-echo "📚 Building complete pages.pdf ..."
+echo "📚 Building complete pages.pdf..."
 
 typst compile \
     --root . \
     pages_source.typ \
-    dist/pdf/pages.pdf \
+    "$PDF_DIR/pages.pdf" \
     --input format=pdf
 
+
+# ============================================================
+# Done
+# ============================================================
+
 echo
-echo "✅ Compilation pipeline executed successfully!"
+echo "=============================================="
+echo "✅ Compilation pipeline completed successfully"
+echo "=============================================="
