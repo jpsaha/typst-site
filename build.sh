@@ -10,6 +10,7 @@ export TYPST_FEATURES=html
 # ============================================================
 
 DIST="dist"
+
 PAGES_DIR="$DIST/pages"
 PDF_DIR="$DIST/pdf"
 ASSETS_DIR="$DIST/assets"
@@ -74,7 +75,9 @@ fi
 # ============================================================
 
 if [ ! -f "$HOMEPAGE_JSON" ]; then
+
     die "Missing $HOMEPAGE_JSON"
+
 fi
 
 
@@ -139,7 +142,7 @@ with open(
 
 
         # ----------------------------------------------------
-        # Lectures/pages
+        # Lectures / pages
         # ----------------------------------------------------
 
         for lecture in lectures:
