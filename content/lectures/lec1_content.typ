@@ -1,4 +1,4 @@
-#import "../templates/course.typ": *
+#import "../../templates/course.typ": *
 
 = Core Definitions
 

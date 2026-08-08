@@ -1,17 +1,14 @@
-// src/lec2.typ
-#import "../templates/course.typ": *
+// src/fun.typ
+#import "../../templates/course.typ": *
 
 #let lecture = (
-  file: "lec2",
-  number: 2,
-  title: "Eigenvalues & Spectral Mapping",
-  category: "lecture",
+  file: "fun",
+  number: none,
+  title: "Fun Lecture",
+  category: "Extras",
 )
 
-#show: doc => {
-  reset-counters(lecture.number)
-  setup-document(doc)
-}
+#show: setup-document
 
 // #if is-html {
 //   html-nav-header()
@@ -34,6 +31,7 @@
 
 #page-header(lecture)
 
-#include "lec2_content.typ"
+
+#include "fun_content.typ"
 
 #previous-next(lecture)

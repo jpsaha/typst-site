@@ -1,16 +1,11 @@
-// src/lec1.typ
-// #import "../templates/template.typ": theorem, definition, exercise, html-nav-header
-#import "../templates/course.typ": *
+// src/lec2.typ
+#import "../../templates/course.typ": *
 
 #let lecture = (
-  file: "lec1",
-  number: 1,
-  title: "Linear Transformations & Matrices",
-  category: "Linear Algebra",
-  date: "2026-08-10",
-  reading: "Chapter 2",
-  duration: "75 minutes",
-  difficulty: "Intermediate",
+  file: "lec2",
+  number: 2,
+  title: "Eigenvalues & Spectral Mapping",
+  category: "lecture",
 )
 
 #show: doc => {
@@ -39,6 +34,6 @@
 
 #page-header(lecture)
 
-#include "lec1_content.typ"
+#include "lec2_content.typ"
 
 #previous-next(lecture)

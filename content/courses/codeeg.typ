@@ -1,11 +1,11 @@
-// content/rmo2025.typ
+// src/codeeg.typ
 #import "../../templates/course.typ": *
 
 #let lecture = (
-  file: "rmo2025",
+  file: "codeeg",
   number: none,
-  title: "RMO 2025",
-  category: "R-M-O",
+  title: "Code Listing Showcase",
+  category: "Developer",
 )
 
 #show: doc => {
@@ -13,9 +13,6 @@
   setup-document(doc)
 }
 
-
 #page-header(lecture)
 
-#include "rmo2025_content.typ"
-
-#previous-next(lecture)
+#include "codeeg_content.typ"

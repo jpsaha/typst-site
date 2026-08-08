@@ -1,8 +1,12 @@
-dist/
-generated/
-diagnostics/
-
 .DS_Store
 
+# Python
 __pycache__/
 *.py[cod]
+
+# Build output
+dist/
+diagnostics/
+
+# Generated Typst/metadata files
+generated/

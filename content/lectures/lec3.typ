@@ -1,11 +1,11 @@
-// src/fun.typ
-#import "../templates/course.typ": *
+// src/lec3.typ
+#import "../../templates/course.typ": *
 
 #let lecture = (
-  file: "fun",
-  number: none,
-  title: "Fun Lecture",
-  category: "Extras",
+  file: "lec3",
+  number: 30,
+  title: "Olympiad Inequalities",
+  category: "lecture",
 )
 
 #show: setup-document
@@ -31,7 +31,6 @@
 
 #page-header(lecture)
 
-
-#include "fun_content.typ"
+#include "lec3_content.typ"
 
 #previous-next(lecture)

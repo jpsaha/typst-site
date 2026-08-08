@@ -1,14 +1,22 @@
-// src/lec3.typ
-#import "../templates/course.typ": *
+// src/lec1.typ
+// #import "../templates/template.typ": theorem, definition, exercise, html-nav-header
+#import "../../templates/course.typ": *
 
 #let lecture = (
-  file: "lec3",
-  number: 30,
-  title: "Olympiad Inequalities",
-  category: "lecture",
+  file: "lec1",
+  number: 1,
+  title: "Linear Transformations & Matrices",
+  category: "Linear Algebra",
+  date: "2026-08-10",
+  reading: "Chapter 2",
+  duration: "75 minutes",
+  difficulty: "Intermediate",
 )
 
-#show: setup-document
+#show: doc => {
+  reset-counters(lecture.number)
+  setup-document(doc)
+}
 
 // #if is-html {
 //   html-nav-header()
@@ -31,6 +39,6 @@
 
 #page-header(lecture)
 
-#include "lec3_content.typ"
+#include "lec1_content.typ"
 
 #previous-next(lecture)
