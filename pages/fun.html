@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>/* Alignment */
+mtable.right-align mtd,
+mtable mtd.right-align,
+mtable.left-align mtd.right-align,
+mtable.aligned mtd:nth-child(odd) {
+  justify-items: end;
+  text-align: right;
+}
+mtable.cases mtd,
+mtable.left-align mtd,
+mtable mtd.left-align,
+mtable.aligned mtd:nth-child(even),
+math:is(:not([display])) > mtable.multiline-equation mtd {
+  justify-items: start;
+  text-align: left;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.left-flush {
+  padding-left: 0;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.right-flush {
+  padding-right: 0;
+}
+
+/* Tables */
+mtable {
+  math-style: inherit;
+}
+mtd {
+  math-depth: auto-add;
+  math-style: compact;
+  math-shift: compact;
+}
+
+/* Equations */
+mtable.multiline-equation mtd {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+  padding: 0;
+}
+math > mtable.multiline-equation mtr:not(:last-child) mtd {
+  padding-bottom: 0.5em;
+}
+
+/* Fractions */
+mfrac {
+  padding-inline: 0;
+  margin-inline: 0.1em;
+}
+
+/* Accents */
+mover[accent="true" i] > :first-child {
+  font-feature-settings: "dtls";
+}
+mover.dotted[accent="true" i] > :first-child {
+  font-feature-settings: "dtls" 0;
+}
+
+/* Other rules for scriptlevel, displaystyle and math-shift */
+munder > :nth-child(2),
+munderover > :nth-child(2) {
+  math-shift: compact
+}
+munder[accentunder="true" i] > :not(:first-child),
+mover[accent="true" i] > :not(:first-child) {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+}</style></head><body><nav class="global-nav-header"><p><a href="../index.html">🏠 Home</a></p><p>| <a href="lec1.html">Linear Transformations &amp; Matrices</a> | <a href="lec2.html">Eigenvalues &amp; Spectral Mapping</a> | <a href="lec3.html">Olympiad Inequalities</a></p><p>| <a href="codeeg.html">Code Listing Showcase</a> | <a href="fun.html">Fun Lecture</a> | <a href="ioqm2025.html">IOQM 2025</a> | <a href="rmo2025.html">RMO 2025</a></p></nav><nav class="breadcrumb"><a href="../index.html">🏠 Home</a> <span class="breadcrumb-sep">/</span> Extras <span class="breadcrumb-sep">/</span> Fun Lecture</nav><div class="download-buttons"><p><a href="../pdf/fun.pdf">⬇ PDF</a></p></div><h1 style="font-family: system-ui, sans-serif;
+        color: #111;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;">Fun Lecture</h1><div class="lecture-meta"></div><h2>Core Definitions</h2><p>aaa</p><div class="math-card theorem" style="border-left: 5px solid #0066cc; background-color: #f0f7ff; padding: 18px; margin: 24px 0; border-radius: 0 4px 4px 0;"><p><strong class="math-card-title" style="color: #0066cc; display:block; font-size:1.1em;">Theorem 0.1</strong></p><div class="math-card-body">There are infinitely many prime numbers of the form <math><mn>4</mn><mi>𝑛</mi><mo>+</mo><mn>3</mn></math>.</div></div></body></html>

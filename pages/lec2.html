@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>/* Alignment */
+mtable.right-align mtd,
+mtable mtd.right-align,
+mtable.left-align mtd.right-align,
+mtable.aligned mtd:nth-child(odd) {
+  justify-items: end;
+  text-align: right;
+}
+mtable.cases mtd,
+mtable.left-align mtd,
+mtable mtd.left-align,
+mtable.aligned mtd:nth-child(even),
+math:is(:not([display])) > mtable.multiline-equation mtd {
+  justify-items: start;
+  text-align: left;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.left-flush {
+  padding-left: 0;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.right-flush {
+  padding-right: 0;
+}
+
+/* Tables */
+mtable {
+  math-style: inherit;
+}
+mtd {
+  math-depth: auto-add;
+  math-style: compact;
+  math-shift: compact;
+}
+
+/* Equations */
+mtable.multiline-equation mtd {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+  padding: 0;
+}
+math > mtable.multiline-equation mtr:not(:last-child) mtd {
+  padding-bottom: 0.5em;
+}
+
+/* Fractions */
+mfrac {
+  padding-inline: 0;
+  margin-inline: 0.1em;
+}
+
+/* Accents */
+mover[accent="true" i] > :first-child {
+  font-feature-settings: "dtls";
+}
+mover.dotted[accent="true" i] > :first-child {
+  font-feature-settings: "dtls" 0;
+}
+
+/* Other rules for scriptlevel, displaystyle and math-shift */
+munder > :nth-child(2),
+munderover > :nth-child(2) {
+  math-shift: compact
+}
+munder[accentunder="true" i] > :not(:first-child),
+mover[accent="true" i] > :not(:first-child) {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+}</style></head><body><nav class="global-nav-header"><p><a href="../index.html">🏠 Home</a></p><p>| <a href="lec1.html">Linear Transformations &amp; Matrices</a> | <a href="lec2.html">Eigenvalues &amp; Spectral Mapping</a> | <a href="lec3.html">Olympiad Inequalities</a></p><p>| <a href="codeeg.html">Code Listing Showcase</a> | <a href="fun.html">Fun Lecture</a> | <a href="ioqm2025.html">IOQM 2025</a> | <a href="rmo2025.html">RMO 2025</a></p></nav><nav class="breadcrumb"><a href="../index.html">🏠 Home</a> <span class="breadcrumb-sep">/</span> lecture <span class="breadcrumb-sep">/</span> Eigenvalues &amp; Spectral Mapping</nav><div class="download-buttons"><p><a href="../pdf/lec2.pdf">⬇ PDF</a></p></div><h1 style="font-family: system-ui, sans-serif;
+        color: #111;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;">Lecture 2: Eigenvalues &amp; Spectral Mapping</h1><div class="lecture-meta"></div><h2>Core Definitions</h2><p>In this session, we analyze how linear transformations scale specific vector subspaces.</p><div class="math-card definition" style="border-left: 5px solid #2e7d32; background-color: #f1f8e9; padding: 18px; margin: 24px 0; border-radius: 0 4px 4px 0;"><p><strong class="math-card-title" style="color: #2e7d32; display:block; font-size:1.1em;">Definition 2.1 : Eigenvalues and Eigenvectors</strong></p><div class="math-card-body"><p>Let <math><mi>𝑇</mi><mo lspace="0.2777777777777778em" rspace="0.2777777777777778em">:</mo><mi>𝑉</mi><mo stretchy="false">→</mo><mi>𝑉</mi></math> be a linear operator on a vector space <math><mi>𝑉</mi></math> over a field <math><mi>𝐹</mi></math>. A non-zero vector <math><mi>𝑣</mi><mo>∈</mo><mi>𝑉</mi></math> is called an <strong>eigenvector</strong> of <math><mi>𝑇</mi></math> if there exists a scalar <math><mi>𝜆</mi><mo>∈</mo><mi>𝐹</mi></math> such that:</p><math display="block"><mi>𝑇</mi><mrow><mo>(</mo><mi>𝑣</mi><mo>)</mo></mrow><mo>=</mo><mi>𝜆</mi><mi>𝑣</mi></math><p>The scalar <math><mi>𝜆</mi></math> is called the <strong>eigenvalue</strong> corresponding to the eigenvector <math><mi>𝑣</mi></math>.</p></div></div><h2>Fundamental Theorems</h2><div class="math-card theorem" style="border-left: 5px solid #0066cc; background-color: #f0f7ff; padding: 18px; margin: 24px 0; border-radius: 0 4px 4px 0;"><p><strong class="math-card-title" style="color: #0066cc; display:block; font-size:1.1em;">Theorem 2.2 : Linear Independence of Eigenvectors</strong></p><div class="math-card-body">Let <math><mi>𝑇</mi><mo lspace="0.2777777777777778em" rspace="0.2777777777777778em">:</mo><mi>𝑉</mi><mo stretchy="false">→</mo><mi>𝑉</mi></math> be a linear operator. If <math><msub><mi>𝑣</mi><mn>1</mn></msub><mo>,</mo><msub><mi>𝑣</mi><mn>2</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>𝑣</mi><mi>𝑚</mi></msub></math> are eigenvectors corresponding to <strong>distinct</strong> eigenvalues <math><msub><mi>𝜆</mi><mn>1</mn></msub><mo>,</mo><msub><mi>𝜆</mi><mn>2</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>𝜆</mi><mi>𝑚</mi></msub></math>, then the set <math><mo stretchy="false">{</mo><msub><mi>𝑣</mi><mn>1</mn></msub><mo>,</mo><msub><mi>𝑣</mi><mn>2</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>𝑣</mi><mi>𝑚</mi></msub><mo stretchy="false">}</mo></math> is linearly independent.</div></div><h2>Homework Practice</h2><div class="math-card exercise" style="border-left: 5px solid #c62828;
+           background-color: #ffebee;
+           padding: 18px;
+           margin: 24px 0;
+           border-radius: 0 4px 4px 0;"><p><strong class="math-card-title" style="color: c62828;
+             display: block;
+             font-size: 1.1em;
+             margin-bottom: 8px;"><p>Exercise 2.3 : Characteristic Polynomial Evaluation</p></strong></p><div class="math-card-body"><p>Consider the <math><mn>2</mn><mo lspace="0.2222222222222222em" rspace="0.2222222222222222em">×</mo><mn>2</mn></math> matrix <math><mi>𝐴</mi></math> representing a linear transformation on <math><msup><mi>ℝ</mi><mn>2</mn></msup></math>:</p><math display="block"><mi>𝐴</mi><mo>=</mo><mrow><mo>(</mo><mtable><mtr><mtd><mn>4</mn></mtd><mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>1</mn></mtd><mtd><mn>3</mn></mtd></mtr></mtable><mo>)</mo></mrow></math><ol><li value="1">Compute the characteristic polynomial <math><mi>𝑝</mi><mrow><mo>(</mo><mi>𝜆</mi><mo>)</mo></mrow><mo>=</mo><mo form="prefix" lspace="0em" rspace="0em">det</mo><mrow><mo>(</mo><mrow><mi>𝐴</mi><mo>−</mo><mi>𝜆</mi><mi>𝐼</mi></mrow><mo>)</mo></mrow></math>.</li><li value="2">Find the distinct eigenvalues <math><msub><mi>𝜆</mi><mn>1</mn></msub></math> and <math><msub><mi>𝜆</mi><mn>2</mn></msub></math> by solving:</li></ol><math display="block"><msup><mi>𝜆</mi><mn>2</mn></msup><mo>−</mo><mn>7</mn><mi>𝜆</mi><mo>+</mo><mn>10</mn><mo>=</mo><mn>0</mn></math></div></div><div class="lecture-navigation"><p><a href="lec1.html">← Linear Transformations &amp; Matrices</a></p><p></p><p><a href="lec3.html">Olympiad Inequalities →</a></p></div></body></html>
