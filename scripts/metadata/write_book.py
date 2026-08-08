@@ -2,8 +2,21 @@ from .config import BOOK_TYP
 from .typst import write_header
 
 
+def content_source(lecture):
+    """Return the path to the lecture's content file."""
+
+    source = lecture["source"]
+
+    if source.endswith(".typ"):
+        return source[:-4] + "_content.typ"
+
+    return source + "_content.typ"
+
+
 def write_lecture(file, lecture):
     """Write one lecture to the generated book."""
+
+    content = content_source(lecture)
 
     file.write(
         f"""#include-lecture(
@@ -13,7 +26,7 @@ def write_lecture(file, lecture):
     title: "{lecture["title"]}",
   ),
   [
-    #include "../content/{lecture["file"]}_content.typ"
+    #include "../content/{content}"
   ],
 )
 

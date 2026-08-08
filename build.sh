@@ -248,6 +248,15 @@ cat << 'EOF' >> dist/index.html
 
 EOF
 
+echo ""
+echo "🔗 Checking links..."
+
+if ! python3 scripts/lint/check_links.py; then
+    echo ""
+    echo "❌ Build failed: broken links detected."
+    exit 1
+fi
+
 # ------------------------------------------------------------
 # Build complete course PDF
 # ------------------------------------------------------------
@@ -257,7 +266,7 @@ echo "📚 Building complete course book..."
 
 typst compile \
     --root . \
-    book.typ \
+    book_source.typ \
     dist/pdf/book.pdf \
     --input format=pdf
 
@@ -271,7 +280,7 @@ echo "📚 Building complete pages.pdf ..."
 
 typst compile \
     --root . \
-    pages.typ \
+    pages_source.typ \
     dist/pdf/pages.pdf \
     --input format=pdf
 
