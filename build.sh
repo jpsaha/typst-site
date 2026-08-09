@@ -90,50 +90,8 @@ echo "🌐 Building course pages..."
 python3 scripts/build/build_pages.py
 
 
-# ============================================================
-# 6. Check links
-# ============================================================
-
-echo
-echo "🔗 Checking links..."
-
-if ! python3 scripts/lint/check_links.py; then
-
-    die "Build failed: broken links detected."
-
-fi
-
-
-# ============================================================
-# 7. Build complete course PDF
-# ============================================================
-
-echo
-echo "📚 Building complete course book..."
-
-typst compile \
-    --root . \
-    book_source.typ \
-    "$PDF_DIR/book.pdf" \
-    --input format=pdf
-
-
-# ============================================================
-# 8. Build complete pages PDF
-# ============================================================
-
-echo
-echo "📚 Building complete pages.pdf..."
-
-typst compile \
-    --root . \
-    pages_source.typ \
-    "$PDF_DIR/pages.pdf" \
-    --input format=pdf
-
-
 # ------------------------------------------------------------
-# 9. Build category books
+# 6. Build category books
 # ------------------------------------------------------------
 
 echo
@@ -155,6 +113,49 @@ for CATEGORY_SOURCE in generated/category_*.typ; do
         --input format=pdf
 
 done
+
+
+# ============================================================
+# 7. Check links
+# ============================================================
+
+echo
+echo "🔗 Checking links..."
+
+if ! python3 scripts/lint/check_links.py; then
+
+    die "Build failed: broken links detected."
+
+fi
+
+
+# ============================================================
+# 8. Build complete course PDF
+# ============================================================
+
+echo
+echo "📚 Building complete course book..."
+
+typst compile \
+    --root . \
+    book_source.typ \
+    "$PDF_DIR/book.pdf" \
+    --input format=pdf
+
+
+# ============================================================
+# 9. Build complete pages PDF
+# ============================================================
+
+echo
+echo "📚 Building complete pages.pdf..."
+
+typst compile \
+    --root . \
+    pages_source.typ \
+    "$PDF_DIR/pages.pdf" \
+    --input format=pdf
+
 
 # ============================================================
 # Done
