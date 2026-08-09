@@ -17,6 +17,10 @@ import subprocess
 from pathlib import Path
 
 
+# ============================================================
+# Paths
+# ============================================================
+
 ROOT = Path(__file__).resolve().parents[2]
 
 GENERATED = ROOT / "generated"
@@ -24,6 +28,7 @@ DIST = ROOT / "dist"
 
 HOMEPAGE_JSON = GENERATED / "homepage.json"
 INDEX_HTML = DIST / "index.html"
+
 PAGES_DIR = DIST / "pages"
 PDF_DIR = DIST / "pdf"
 
@@ -85,7 +90,7 @@ def compile_page(lecture):
 
 
 # ============================================================
-# Write homepage entry
+# Write one homepage entry
 # ============================================================
 
 def write_homepage_entry(file, lecture):
@@ -97,7 +102,7 @@ def write_homepage_entry(file, lecture):
 
     file.write(
         f"""
-<div class="lecture">
+<div class="lecture-row">
 
     <span>{title}</span>
 
@@ -137,22 +142,53 @@ def build_homepage(categories):
         encoding="utf-8",
     ) as index:
 
+        # ----------------------------------------------------
+        # Header
+        # ----------------------------------------------------
+
         index.write(
             "<!DOCTYPE html>\n"
-            "<html>\n"
+            "<html lang=\"en\">\n"
             "<head>\n"
-            '  <meta charset="utf-8">\n'
-            '  <link rel="stylesheet" '
+            '    <meta charset="UTF-8">\n'
+            '    <meta name="viewport" '
+            'content="width=device-width, initial-scale=1.0">\n'
+            '    <title>Mathematics Lecture Portal</title>\n'
+            '    <link rel="stylesheet" '
             'href="assets/css/style.css">\n'
             "</head>\n"
+            "\n"
             "<body>\n"
+            "\n"
+            '<div class="index-container">\n'
+            "\n"
+            '<header class="index-header">\n'
+            "    <h1>🧮 Mathematics Lecture Portal</h1>\n"
+            "    <p>Interactive web modules & "
+            "downloadable print-ready course material</p>\n"
+            "</header>\n"
+            "\n"
+            '<main class="lecture-list">\n'
         )
+
+        # ----------------------------------------------------
+        # Categories
+        # ----------------------------------------------------
 
         for category, lectures in categories.items():
 
             index.write(
-                f"\n<h2>{category}</h2>\n"
+                f"""
+<h2 class="category-title">
+    {category}
+</h2>
+
+"""
             )
+
+            # ------------------------------------------------
+            # Lectures / pages
+            # ------------------------------------------------
 
             for lecture in lectures:
 
@@ -163,9 +199,19 @@ def build_homepage(categories):
                     lecture,
                 )
 
+        # ----------------------------------------------------
+        # Footer
+        # ----------------------------------------------------
+
         index.write(
-            "\n</body>\n"
-            "</html>\n"
+            """
+</main>
+
+</div>
+
+</body>
+</html>
+"""
         )
 
 
@@ -175,10 +221,19 @@ def build_homepage(categories):
 
 def main():
 
+    # --------------------------------------------------------
+    # Check metadata
+    # --------------------------------------------------------
+
     if not HOMEPAGE_JSON.exists():
+
         raise FileNotFoundError(
             f"Missing {HOMEPAGE_JSON}"
         )
+
+    # --------------------------------------------------------
+    # Prepare output directories
+    # --------------------------------------------------------
 
     PAGES_DIR.mkdir(
         parents=True,
@@ -190,11 +245,19 @@ def main():
         exist_ok=True,
     )
 
+    # --------------------------------------------------------
+    # Read homepage metadata
+    # --------------------------------------------------------
+
     with HOMEPAGE_JSON.open(
         encoding="utf-8",
     ) as file:
 
         categories = json.load(file)
+
+    # --------------------------------------------------------
+    # Build
+    # --------------------------------------------------------
 
     build_homepage(categories)
 
@@ -202,6 +265,10 @@ def main():
         f"🌐 Wrote {INDEX_HTML}"
     )
 
+
+# ============================================================
+# Entry point
+# ============================================================
 
 if __name__ == "__main__":
     main()
