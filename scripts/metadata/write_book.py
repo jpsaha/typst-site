@@ -214,7 +214,10 @@ def write_category_books(
 
     outputs = []
 
-    for category in sorted(categories):
+    for category in sorted(
+        categories,
+        key=str.casefold,
+    ):
 
         category_lectures = categories[
             category
