@@ -209,6 +209,17 @@ def write_category_book(
     return output
 
 
+def remove_stale_category_books(generated_dir):
+    """Remove previously generated category book files."""
+
+    generated_dir = Path(generated_dir)
+
+    for path in generated_dir.glob("category_*.typ"):
+        path.unlink()
+
+        print(f"Removed stale category book: {path}")
+
+
 def write_category_books(
     lectures,
     generated_dir,
