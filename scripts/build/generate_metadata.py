@@ -68,6 +68,19 @@ def main():
     lectures, pages = discover_content()
 
     # --------------------------------------------------------
+    # Combine all content
+    #
+    # Keep lectures and pages separate because the existing
+    # homepage, navigation, and course-book generators need
+    # that distinction.
+    #
+    # Category books, however, should contain every
+    # metadata-bearing item regardless of its type.
+    # --------------------------------------------------------
+
+    all_content = lectures + pages
+
+    # --------------------------------------------------------
     # Sort
     # --------------------------------------------------------
 
@@ -99,23 +112,30 @@ def main():
     # --------------------------------------------------------
 
     # Preserve the existing combined course book.
+    #
+    # This currently uses numbered lectures only.
     write_book(lectures)
 
     # --------------------------------------------------------
     # Category books
     # --------------------------------------------------------
 
-    # Generate one Typst source for each category.
+    # Generate one Typst source for every category.
     #
-    # For example:
+    # Unlike the complete course book, category books use
+    # ALL metadata-bearing content: lectures + pages.
     #
-    # generated/category_lectures.typ
-    # generated/category_courses.typ
-    # generated/category_olympiad.typ
+    # For example, this can generate:
+    #
+    # generated/category_developer.typ
+    # generated/category_ioqm.typ
+    # generated/category_lecture.typ
+    # generated/category_linear_algebra.typ
+    # generated/category_rmo.typ
     #
     # These will be compiled into PDFs later by build.sh.
     write_category_books(
-        lectures,
+        all_content,
         CATEGORY_BOOK_DIR,
     )
 

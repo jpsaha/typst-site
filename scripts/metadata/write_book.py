@@ -5,6 +5,10 @@ from .config import BOOK_TYP
 from .typst import write_header
 
 
+# ============================================================
+# Content source
+# ============================================================
+
 def content_source(lecture):
     """Return the path to the lecture's content file."""
 
@@ -16,6 +20,10 @@ def content_source(lecture):
     return source + "_content.typ"
 
 
+# ============================================================
+# Safe filenames
+# ============================================================
+
 def safe_filename(name):
     """Convert a category name into a safe filename."""
 
@@ -24,6 +32,10 @@ def safe_filename(name):
 
     return name.strip("_")
 
+
+# ============================================================
+# Complete course book
+# ============================================================
 
 def write_lecture(file, lecture):
     """Write one lecture to the generated book."""
@@ -85,20 +97,37 @@ def write_book(lectures):
     )
 
 
-# ------------------------------------------------------------
+# ============================================================
 # Category books
-# ------------------------------------------------------------
+# ============================================================
 
 def write_category_lecture(file, lecture):
-    """Write one lecture into a category book."""
+    """Write one content item into a category book."""
 
     content = content_source(lecture)
 
-    file.write(
-        f"""#include-lecture(
+    # --------------------------------------------------------
+    # Category books can contain both:
+    #
+    #   1. numbered lectures
+    #   2. non-numbered pages/courses
+    #
+    # Therefore, do not require a lecture number here.
+    # --------------------------------------------------------
+
+    number = lecture.get("number")
+
+    if number is None:
+
+        # Non-numbered page.
+        #
+        # include-lecture expects a number, so use none.
+        # The actual page/content is still included.
+        file.write(
+            f"""#include-lecture(
 (
 file: "{lecture["file"]}",
-number: {lecture["number"]},
+number: none,
 title: "{lecture["title"]}",
 ),
 [
@@ -107,7 +136,25 @@ title: "{lecture["title"]}",
 )
 
 """
-    )
+        )
+
+    else:
+
+        # Normal numbered lecture.
+        file.write(
+            f"""#include-lecture(
+(
+file: "{lecture["file"]}",
+number: {number},
+title: "{lecture["title"]}",
+),
+[
+#include "../content/{content}"
+],
+)
+
+"""
+        )
 
 
 def write_category_book(
@@ -140,16 +187,15 @@ def write_category_book(
             '#import "../generated/lectures.typ": lectures\n\n'
         )
 
+        # ----------------------------------------------------
+        # Include every item in this category.
+        #
+        # Unlike the complete course book, category books
+        # include both numbered lectures and non-numbered
+        # pages/courses.
+        # ----------------------------------------------------
+
         for lecture in lectures:
-
-            if lecture.get("number") is None:
-
-                print(
-                    f"Skipping {lecture['file']} in "
-                    f"{category}: no lecture number."
-                )
-
-                continue
 
             write_category_lecture(
                 file,
@@ -173,6 +219,12 @@ def write_category_books(
 
     categories = {}
 
+    # --------------------------------------------------------
+    # Group all content by category.
+    #
+    # The argument may contain both lectures and pages.
+    # --------------------------------------------------------
+
     for lecture in lectures:
 
         category = lecture.get(
@@ -190,6 +242,10 @@ def write_category_books(
         )
 
     outputs = []
+
+    # --------------------------------------------------------
+    # Generate one Typst source per category.
+    # --------------------------------------------------------
 
     for category, category_lectures in categories.items():
 

@@ -224,26 +224,47 @@
   }
 }
 
-
 // ------------------------------------------------------------
-// Typeset one lecture inside the combined course book
+// Typeset one lecture inside a combined book
 // ------------------------------------------------------------
-
+//
+// Used by:
+//   generated/book.typ
+//   generated/category_*.typ
+//
+// Keeps the same lecture rendering for the complete course
+// book and for category-specific books.
 
 #let include-lecture(lecture, body) = [
   #pagebreak()
 
-  #reset-counters(lecture.number)
+  // Reset counters only when a lecture number exists.
+  // This keeps the function safe for future non-numbered
+  // content as well.
+  #if lecture.number != none {
+    reset-counters(lecture.number)
+  }
 
   #align(center)[
-    #text(size: 1.8em, weight: "bold")[
-      Lecture #lecture.number
+    #text(
+      size: 1.8em,
+      weight: "bold",
+    )[
+      #if lecture.number != none [
+        Lecture #lecture.number
+      ] else [
+        #lecture.title
+      ]
     ]
 
     #v(0.4em)
 
-    #text(size: 1.4em)[
-      #lecture.title
+    #if lecture.number != none [
+      #text(
+        size: 1.4em,
+      )[
+        #lecture.title
+      ]
     ]
 
     #v(1em)
