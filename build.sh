@@ -90,9 +90,9 @@ echo "🌐 Building course pages..."
 python3 scripts/build/build_pages.py
 
 
-# ------------------------------------------------------------
+# ============================================================
 # 6. Build category books
-# ------------------------------------------------------------
+# ============================================================
 
 echo
 echo "📚 Building category books..."
@@ -109,28 +109,14 @@ for CATEGORY_SOURCE in generated/category_*.typ; do
     typst compile \
         --root . \
         "$CATEGORY_SOURCE" \
-        "dist/pdf/${CATEGORY_NAME}.pdf" \
+        "$PDF_DIR/${CATEGORY_NAME}.pdf" \
         --input format=pdf
 
 done
 
 
 # ============================================================
-# 7. Check links
-# ============================================================
-
-echo
-echo "🔗 Checking links..."
-
-if ! python3 scripts/lint/check_links.py; then
-
-    die "Build failed: broken links detected."
-
-fi
-
-
-# ============================================================
-# 8. Build complete course PDF
+# 7. Build complete course PDF
 # ============================================================
 
 echo
@@ -144,7 +130,7 @@ typst compile \
 
 
 # ============================================================
-# 9. Build complete pages PDF
+# 8. Build complete pages PDF
 # ============================================================
 
 echo
@@ -155,6 +141,20 @@ typst compile \
     pages_source.typ \
     "$PDF_DIR/pages.pdf" \
     --input format=pdf
+
+
+# ============================================================
+# 9. Check links
+# ============================================================
+
+echo
+echo "🔗 Checking links..."
+
+if ! python3 scripts/lint/check_links.py; then
+
+    die "Build failed: broken links detected."
+
+fi
 
 
 # ============================================================
