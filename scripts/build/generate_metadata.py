@@ -13,7 +13,6 @@ scripts/metadata/
 import sys
 from pathlib import Path
 
-
 # ------------------------------------------------------------
 # Make scripts/ available for imports
 # ------------------------------------------------------------
@@ -22,7 +21,6 @@ SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
-
 
 # ------------------------------------------------------------
 # Import metadata modules
@@ -50,8 +48,12 @@ from metadata.write_homepage import (
 
 from metadata.write_book import (
     write_book,
+    write_category_books,
 )
 
+from metadata.config import (
+    CATEGORY_BOOK_DIR,
+)
 
 # ------------------------------------------------------------
 # Main
@@ -92,7 +94,30 @@ def main():
         pages,
     )
 
+    # --------------------------------------------------------
+    # Complete course book
+    # --------------------------------------------------------
+
+    # Preserve the existing combined course book.
     write_book(lectures)
+
+    # --------------------------------------------------------
+    # Category books
+    # --------------------------------------------------------
+
+    # Generate one Typst source for each category.
+    #
+    # For example:
+    #
+    # generated/category_lectures.typ
+    # generated/category_courses.typ
+    # generated/category_olympiad.typ
+    #
+    # These will be compiled into PDFs later by build.sh.
+    write_category_books(
+        lectures,
+        CATEGORY_BOOK_DIR,
+    )
 
 
 if __name__ == "__main__":

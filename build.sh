@@ -132,6 +132,30 @@ typst compile \
     --input format=pdf
 
 
+# ------------------------------------------------------------
+# 9. Build category books
+# ------------------------------------------------------------
+
+echo
+echo "📚 Building category books..."
+
+for CATEGORY_SOURCE in generated/category_*.typ; do
+
+    # If no category files exist, skip the loop.
+    [ -e "$CATEGORY_SOURCE" ] || continue
+
+    CATEGORY_NAME="$(basename "$CATEGORY_SOURCE" .typ)"
+
+    echo "  📖 Building $CATEGORY_NAME..."
+
+    typst compile \
+        --root . \
+        "$CATEGORY_SOURCE" \
+        "dist/pdf/${CATEGORY_NAME}.pdf" \
+        --input format=pdf
+
+done
+
 # ============================================================
 # Done
 # ============================================================

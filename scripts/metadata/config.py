@@ -1,6 +1,4 @@
-
 from pathlib import Path
-
 
 # ============================================================
 # Project paths
@@ -10,7 +8,6 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 
 CONTENT_DIR = ROOT / "content"
 GENERATED_DIR = ROOT / "generated"
-
 
 # ============================================================
 # Generated files
@@ -28,6 +25,18 @@ HOMEPAGE_TYP = GENERATED_DIR / "homepage.typ"
 
 HOMEPAGE_JSON = GENERATED_DIR / "homepage.json"
 
+# ============================================================
+# Category books
+# ============================================================
+
+# Directory containing generated Typst sources for
+# category-level combined books.
+#
+# At present this is the same generated/ directory.
+# Keeping it as a separate constant makes the purpose
+# explicit and allows us to move category books later
+# without changing write_book.py.
+CATEGORY_BOOK_DIR = GENERATED_DIR
 
 # ============================================================
 # Metadata
