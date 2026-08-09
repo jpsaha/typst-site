@@ -6,7 +6,7 @@ from .typst import write_header
 
 
 # ============================================================
-# Content source
+# Paths
 # ============================================================
 
 def content_source(lecture):
@@ -15,14 +15,10 @@ def content_source(lecture):
     source = lecture["source"]
 
     if source.endswith(".typ"):
-        return source[:-4] + "_content.typ"
+        source = source[:-4]
 
-    return source + "_content.typ"
+    return f"{source}_content.typ"
 
-
-# ============================================================
-# Safe filenames
-# ============================================================
 
 def safe_filename(name):
     """Convert a category name into a safe filename."""
@@ -34,29 +30,60 @@ def safe_filename(name):
 
 
 # ============================================================
-# Complete course book
+# Typst writers
 # ============================================================
 
+def write_imports(file):
+    """Write imports required by generated book files."""
+
+    file.write(
+        '#import "../templates/render.typ": include-lecture\n'
+    )
+
+    file.write(
+        '#import "../generated/lectures.typ": lectures\n\n'
+    )
+
+
+def write_header_and_imports(file):
+    """Write the standard header and imports."""
+
+    write_header(file)
+    write_imports(file)
+
+
 def write_lecture(file, lecture):
-    """Write one lecture to the generated book."""
+    """Write one lecture or page as an include-lecture call."""
 
     content = content_source(lecture)
 
+    number = lecture.get("number")
+
+    number_value = (
+        str(number)
+        if number is not None
+        else "none"
+    )
+
     file.write(
         f"""#include-lecture(
-(
-file: "{lecture["file"]}",
-number: {lecture["number"]},
-title: "{lecture["title"]}",
-),
-[
-#include "../content/{content}"
-],
+  (
+    file: "{lecture["file"]}",
+    number: {number_value},
+    title: "{lecture["title"]}",
+  ),
+  [
+    #include "../content/{content}"
+  ],
 )
 
 """
     )
 
+
+# ============================================================
+# Complete course book
+# ============================================================
 
 def write_book(lectures):
     """Generate generated/book.typ."""
@@ -66,15 +93,7 @@ def write_book(lectures):
         encoding="utf-8",
     ) as file:
 
-        write_header(file)
-
-        file.write(
-            '#import "../templates/render.typ": include-lecture\n'
-        )
-
-        file.write(
-            '#import "../generated/lectures.typ": lectures\n\n'
-        )
+        write_header_and_imports(file)
 
         for lecture in lectures:
 
@@ -98,64 +117,34 @@ def write_book(lectures):
 
 
 # ============================================================
-# Category books
+# Category grouping
 # ============================================================
 
-def write_category_lecture(file, lecture):
-    """Write one content item into a category book."""
+def group_by_category(lectures):
+    """Group lectures and pages by category."""
 
-    content = content_source(lecture)
+    categories = {}
 
-    # --------------------------------------------------------
-    # Category books can contain both:
-    #
-    #   1. numbered lectures
-    #   2. non-numbered pages/courses
-    #
-    # Therefore, do not require a lecture number here.
-    # --------------------------------------------------------
+    for lecture in lectures:
 
-    number = lecture.get("number")
-
-    if number is None:
-
-        # Non-numbered page.
-        #
-        # include-lecture expects a number, so use none.
-        # The actual page/content is still included.
-        file.write(
-            f"""#include-lecture(
-(
-file: "{lecture["file"]}",
-number: none,
-title: "{lecture["title"]}",
-),
-[
-#include "../content/{content}"
-],
-)
-
-"""
+        category = lecture.get(
+            "category",
+            "Uncategorized",
         )
 
-    else:
-
-        # Normal numbered lecture.
-        file.write(
-            f"""#include-lecture(
-(
-file: "{lecture["file"]}",
-number: {number},
-title: "{lecture["title"]}",
-),
-[
-#include "../content/{content}"
-],
-)
-
-"""
+        categories.setdefault(
+            category,
+            [],
+        ).append(
+            lecture
         )
 
+    return categories
+
+
+# ============================================================
+# Category books
+# ============================================================
 
 def write_category_book(
     category,
@@ -166,38 +155,21 @@ def write_category_book(
 
     generated_dir = Path(generated_dir)
 
-    filename = (
-        f"category_{safe_filename(category)}.typ"
+    output = (
+        generated_dir
+        / f"category_{safe_filename(category)}.typ"
     )
-
-    output = generated_dir / filename
 
     with output.open(
         "w",
         encoding="utf-8",
     ) as file:
 
-        write_header(file)
-
-        file.write(
-            '#import "../templates/render.typ": include-lecture\n'
-        )
-
-        file.write(
-            '#import "../generated/lectures.typ": lectures\n\n'
-        )
-
-        # ----------------------------------------------------
-        # Include every item in this category.
-        #
-        # Unlike the complete course book, category books
-        # include both numbered lectures and non-numbered
-        # pages/courses.
-        # ----------------------------------------------------
+        write_header_and_imports(file)
 
         for lecture in lectures:
 
-            write_category_lecture(
+            write_lecture(
                 file,
                 lecture,
             )
@@ -214,10 +186,14 @@ def remove_stale_category_books(generated_dir):
 
     generated_dir = Path(generated_dir)
 
-    for path in generated_dir.glob("category_*.typ"):
+    for path in generated_dir.glob(
+        "category_*.typ"
+    ):
         path.unlink()
 
-        print(f"Removed stale category book: {path}")
+        print(
+            f"Removed stale category book: {path}"
+        )
 
 
 def write_category_books(
@@ -228,37 +204,21 @@ def write_category_books(
 
     generated_dir = Path(generated_dir)
 
-    categories = {}
+    remove_stale_category_books(
+        generated_dir
+    )
 
-    # --------------------------------------------------------
-    # Group all content by category.
-    #
-    # The argument may contain both lectures and pages.
-    # --------------------------------------------------------
-
-    for lecture in lectures:
-
-        category = lecture.get(
-            "category",
-            "Uncategorized",
-        )
-
-        categories.setdefault(
-            category,
-            [],
-        )
-
-        categories[category].append(
-            lecture
-        )
+    categories = group_by_category(
+        lectures
+    )
 
     outputs = []
 
-    # --------------------------------------------------------
-    # Generate one Typst source per category.
-    # --------------------------------------------------------
+    for category in sorted(categories):
 
-    for category, category_lectures in categories.items():
+        category_lectures = categories[
+            category
+        ]
 
         output = write_category_book(
             category,
