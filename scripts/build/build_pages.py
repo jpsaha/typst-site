@@ -241,14 +241,27 @@ def build_homepage(categories):
         for category, lectures in categories.items():
 
             # ------------------------------------------------
-            # Category heading + complete PDF button
+            # Category heading + complete category PDF
+            #
+            # Keep the category visually distinct from lecture
+            # rows. The inline flex layout puts the PDF button
+            # at the far right without changing the stylesheet.
             # ------------------------------------------------
 
             index.write(
                 f"""
-        <div class="lecture-row">
+        <div style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+        ">
 
-            <span>{category}</span>
+            <h2 style="
+                margin: 0;
+            ">
+                {category}
+            </h2>
 
             <div class="lecture-links">
 
