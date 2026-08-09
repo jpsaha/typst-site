@@ -9,6 +9,7 @@ def discover_content():
 
     for path in sorted(CONTENT_DIR.rglob("*.typ")):
 
+        # Ignore content files; only process wrapper files.
         if path.stem.endswith("_content"):
             continue
 
@@ -25,12 +26,19 @@ def discover_content():
             )
             continue
 
-        # Path relative to content/
+        # ----------------------------------------------------
+        # Derive source automatically from the actual location
+        # ----------------------------------------------------
+
         data["source"] = (
             path
             .relative_to(CONTENT_DIR)
             .as_posix()
         )
+
+        # ----------------------------------------------------
+        # Classify
+        # ----------------------------------------------------
 
         if data.get("number") is None:
 
