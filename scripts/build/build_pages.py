@@ -4,15 +4,18 @@
 Build individual HTML and PDF pages from generated homepage metadata.
 
 Reads:
-    generated/homepage.json
+generated/homepage.json
 
 Generates:
-    dist/index.html
-    dist/pages/*.html
-    dist/pdf/*.pdf
+dist/index.html
+dist/pages/*.html
+dist/pdf/*.pdf
+
+Also adds a complete PDF download button for each category.
 """
 
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -131,6 +134,66 @@ def write_homepage_entry(file, lecture):
 
 
 # ============================================================
+# Category PDF filename
+# ============================================================
+
+def category_pdf_filename(category):
+    """
+    Convert a category name into the same safe filename
+    convention used by write_book.py.
+
+    Examples:
+
+        Linear Algebra -> category_linear_algebra.pdf
+        IOQM           -> category_ioqm.pdf
+        R-M-O          -> category_r_m_o.pdf
+    """
+
+    name = category.lower().strip()
+
+    name = re.sub(
+        r"[^a-z0-9]+",
+        "_",
+        name,
+    )
+
+    name = name.strip("_")
+
+    return f"category_{name}.pdf"
+
+
+# ============================================================
+# Write category PDF button
+# ============================================================
+
+def write_category_pdf_entry(file, category):
+    """
+    Write the complete category PDF button.
+
+    This deliberately uses the existing button classes.
+    No new CSS classes are introduced.
+    """
+
+    pdf = category_pdf_filename(category)
+
+    file.write(
+        f"""
+<div class="lecture-links">
+
+    <a
+        href="pdf/{pdf}"
+        class="btn btn-pdf"
+        target="_blank"
+    >
+        📚 Download Complete PDF
+    </a>
+
+</div>
+"""
+    )
+
+
+# ============================================================
 # Build homepage
 # ============================================================
 
@@ -177,13 +240,30 @@ def build_homepage(categories):
 
         for category, lectures in categories.items():
 
+            # ------------------------------------------------
+            # Category heading + complete PDF button
+            # ------------------------------------------------
+
             index.write(
                 f"""
-<h2 class="category-title">
-    {category}
-</h2>
+        <div class="lecture-row">
 
-"""
+            <span>{category}</span>
+
+            <div class="lecture-links">
+
+                <a
+                    href="pdf/{category_pdf_filename(category)}"
+                    class="btn btn-pdf"
+                    target="_blank"
+                >
+                    📚 Download Complete PDF
+                </a>
+
+            </div>
+
+        </div>
+        """
             )
 
             # ------------------------------------------------
