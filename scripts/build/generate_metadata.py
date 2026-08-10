@@ -114,7 +114,7 @@ def main():
     # Preserve the existing combined course book.
     #
     # This currently uses numbered lectures only.
-    write_book(lectures)
+    write_book(lectures, title="Combined")
 
     # --------------------------------------------------------
     # Category books
