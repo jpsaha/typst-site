@@ -436,31 +436,52 @@
 
 
   } else {
+    // block(
+    //   width: 100%,
+    //   stroke: (left: 4pt + rgb("#c62828")),
+    //   fill: rgb("#ffebee"),
+    //   inset: 12pt,
+    //   radius: (right: 4pt),
+    //   breakable: true,
+    // )[
+
+    //   #text(
+    //     weight: "bold",
+    //     fill: rgb("c62828"),
+    //     size: 1.1em,
+    //   )[
+
+    //     #full-label
+    //     #if title != "" [: #title]
+
+    //   ]
+
+    //   #v(4pt)
+
+    //   #content
 
     block(
       width: 100%,
-      stroke: (left: 4pt + rgb("#c62828")),
-      fill: rgb("#ffebee"),
-      inset: 12pt,
-      radius: (right: 4pt),
+      stroke: 0.9pt + rgb("#c62828"),
+      fill: none,
+      inset: 9pt,
+      radius: 5pt,
       breakable: true,
     )[
 
       #text(
         weight: "bold",
-        fill: rgb("c62828"),
-        size: 1.1em,
+        size: 0.9em,
       )[
 
         #full-label
-        #if title != "" [: #title]
+        #if title != none [ (#title)]
 
       ]
 
       #v(4pt)
 
       #content
-
 
       #if solution != none [
 
