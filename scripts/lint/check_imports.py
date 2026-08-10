@@ -49,6 +49,145 @@ IMPORT_RE = re.compile(
     r'#import\s+"([^"]+)"'
 )
 
+
+def remove_comments(text):
+    """
+    Remove Typst comments while preserving strings.
+
+    Supports:
+
+        // line comments
+
+        /*
+           block comments
+        */
+
+    Comment markers appearing inside quoted strings are preserved.
+    """
+
+    result = []
+
+    i = 0
+    length = len(text)
+
+    in_string = False
+    in_line_comment = False
+    in_block_comment = False
+    escaped = False
+
+    while i < length:
+
+        char = text[i]
+
+        # ----------------------------------------------------
+        # Line comment
+        # ----------------------------------------------------
+
+        if in_line_comment:
+
+            if char == "\n":
+
+                in_line_comment = False
+                result.append(char)
+
+            i += 1
+            continue
+
+        # ----------------------------------------------------
+        # Block comment
+        # ----------------------------------------------------
+
+        if in_block_comment:
+
+            if (
+                char == "*"
+                and i + 1 < length
+                and text[i + 1] == "/"
+            ):
+
+                in_block_comment = False
+                i += 2
+                continue
+
+            # Preserve newlines so that the resulting text
+            # retains approximately the original structure.
+            if char == "\n":
+                result.append("\n")
+
+            i += 1
+            continue
+
+        # ----------------------------------------------------
+        # Quoted string
+        # ----------------------------------------------------
+
+        if in_string:
+
+            result.append(char)
+
+            if escaped:
+
+                escaped = False
+
+            elif char == "\\":
+
+                escaped = True
+
+            elif char == '"':
+
+                in_string = False
+
+            i += 1
+            continue
+
+        # ----------------------------------------------------
+        # Start quoted string
+        # ----------------------------------------------------
+
+        if char == '"':
+
+            in_string = True
+            result.append(char)
+            i += 1
+            continue
+
+        # ----------------------------------------------------
+        # Start line comment
+        # ----------------------------------------------------
+
+        if (
+            char == "/"
+            and i + 1 < length
+            and text[i + 1] == "/"
+        ):
+
+            in_line_comment = True
+            i += 2
+            continue
+
+        # ----------------------------------------------------
+        # Start block comment
+        # ----------------------------------------------------
+
+        if (
+            char == "/"
+            and i + 1 < length
+            and text[i + 1] == "*"
+        ):
+
+            in_block_comment = True
+            i += 2
+            continue
+
+        # ----------------------------------------------------
+        # Normal character
+        # ----------------------------------------------------
+
+        result.append(char)
+        i += 1
+
+    return "".join(result)
+
 TYPST_DIRS = (
     ROOT / "content",
     ROOT / "templates",
@@ -153,10 +292,46 @@ def build_graph(files):
 
             continue
 
+        # --------------------------------------------------------
+        # Ignore commented-out imports.
+        #
+        # This prevents lines such as:
+        #
+        #     // #import "main.typ": *
+        #
+        # and imports inside:
+        #
+        #     /*
+        #     #import "main.typ": *
+        #     */
+        #
+        # from being treated as real dependencies.
+        # --------------------------------------------------------
+
+        text = remove_comments(text)
+
         for match in IMPORT_RE.finditer(text):
 
+            import_path = match.group(1)
+
+            # ----------------------------------------------------
+            # Ignore Typst package imports.
+            #
+            # Examples:
+            #
+            #     @preview/cetz:0.3.4
+            #     @preview/gentle-clues:1.2.0
+            #     @preview/theorion:0.6.0
+            #
+            # These are handled by Typst's package system and are
+            # not local project files.
+            # ----------------------------------------------------
+
+            if import_path.startswith("@"):
+                continue
+
             target = (
-                path.parent / match.group(1)
+                path.parent / import_path
             ).resolve()
 
             graph[path].append(target)
