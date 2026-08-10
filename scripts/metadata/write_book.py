@@ -44,6 +44,7 @@ def write_imports(file, title=None):
         '#import "../generated/lectures.typ": lectures\n\n'
     )
 
+
 def write_header_and_imports(file, title=None):
     """Write the standard header and imports."""
 
@@ -121,23 +122,17 @@ def write_book(lectures, title=None):
             if not category_lectures:
                 continue
 
-            # ------------------------------------------------
-            # Category divider
-            # ------------------------------------------------
-
+            # Category title page
             file.write(
                 f"""
 #pagebreak()
 
-#part[{category}]
+{category}
 
 """
             )
 
-            # ------------------------------------------------
-            # Lectures in this category
-            # ------------------------------------------------
-
+            # Lectures belonging to this category
             for lecture in category_lectures:
 
                 write_lecture(
@@ -149,13 +144,12 @@ def write_book(lectures, title=None):
         f"Wrote {BOOK_TYP}"
     )
 
-
 # ============================================================
 # Category grouping
 # ============================================================
 
 def group_by_category(lectures):
-    """Group lectures and pages by category."""
+    """Group lectures by category."""
 
     categories = {}
 
@@ -171,6 +165,18 @@ def group_by_category(lectures):
             [],
         ).append(
             lecture
+        )
+
+    for category in categories:
+
+        categories[category].sort(
+            key=lambda lecture: (
+                lecture.get("number") is None,
+                lecture.get("number")
+                if lecture.get("number") is not None
+                else 10**9,
+                lecture.get("file"),
+            )
         )
 
     return categories
