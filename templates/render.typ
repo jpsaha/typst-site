@@ -80,7 +80,7 @@
   }
 }
 
-#let page-header(lecture) = {
+#let page-header(lecture, chap: false) = {
   
   if is-html {
     html-nav-header()
@@ -106,19 +106,22 @@
 
   } else {
 
-    align(center)[
-      #text(size: 20pt, weight: "bold")[
-        #if lecture.number != none {
-          [Lecture #lecture.number: ]
-        }
-        #lecture.title
-      ]
+    // align(center)[
+    //   #text(size: 20pt, weight: "bold")[
+    //     #if lecture.number != none {
+    //       [Lecture #lecture.number: ]
+    //     }
+    //     #lecture.title
+    //   ]
 
-      #lecture-info(lecture)
+    //   #lecture-info(lecture)
 
-      #v(1cm)
-    ]
+    //   #v(1cm)
+    // ]
 
+    if chap {
+      text[= #lecture.title]
+    }
   }
 }
 
@@ -320,7 +323,7 @@ block(
 // book and for category-specific books.
 
 #let include-lecture(lecture, body) = [
-  // #pagebreak()
+  #pagebreak()
 
   // Reset counters only when a lecture number exists.
   // This keeps the function safe for future non-numbered
@@ -329,30 +332,31 @@ block(
     reset-counters(lecture.number)
   }
 
-  #align(center)[
-    #text(
-      size: 1.8em,
-      weight: "bold",
-    )[
-      #if lecture.number != none [
-        Lecture #lecture.number
-      ] else [
-        #lecture.title
-      ]
-    ]
+  // #align(center)[
+  //   #text(
+  //     size: 1.8em,
+  //     weight: "bold",
+  //   )[
+  //     #if lecture.number != none [
+  //       Lecture #lecture.number
+  //     ] else [
+  //       #lecture.title
+  //     ]
+  //   ]
 
-    #v(0.4em)
+  //   #v(0.4em)
 
-    #if lecture.number != none [
-      #text(
-        size: 1.4em,
-      )[
-        #lecture.title
-      ]
-    ]
+  //   #if lecture.number != none [
+  //     #text(
+  //       size: 1.4em,
+  //     )[
+  //       #lecture.title
+  //     ]
+  //   ]
 
-    #v(1em)
-  ]
+  //   #v(1em)
+  // ]
 
+  = #lecture.title
   #body
 ]
