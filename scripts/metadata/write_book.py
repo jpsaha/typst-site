@@ -64,12 +64,18 @@ def write_lecture(file, lecture):
         else "none"
     )
 
+    category = lecture.get(
+        "category",
+        "Uncategorized",
+    )
+
     file.write(
         f"""#include-lecture(
   (
     file: "{lecture["file"]}",
     number: {number_value},
     title: "{lecture["title"]}",
+    category: "{category}",
   ),
   [
     #include "../content/{content}"
@@ -84,7 +90,7 @@ def write_lecture(file, lecture):
 # Complete course book
 # ============================================================
 
-def write_book(lectures, title = None):
+def write_book(lectures, title=None):
     """Generate generated/book.typ."""
 
     with BOOK_TYP.open(
@@ -92,23 +98,52 @@ def write_book(lectures, title = None):
         encoding="utf-8",
     ) as file:
 
-        write_header_and_imports(file, title = title)
+        write_header_and_imports(
+            file,
+            title=title,
+        )
 
-        for lecture in lectures:
+        categories = group_by_category(
+            lectures
+        )
 
-            if lecture.get("number") is None:
+        for category in sorted(
+            categories,
+            key=str.casefold,
+        ):
 
-                print(
-                    f"Skipping {lecture['file']}: "
-                    "no lecture number."
-                )
+            category_lectures = [
+                lecture
+                for lecture in categories[category]
+                if lecture.get("number") is not None
+            ]
 
+            if not category_lectures:
                 continue
 
-            write_lecture(
-                file,
-                lecture,
+            # ------------------------------------------------
+            # Category divider
+            # ------------------------------------------------
+
+            file.write(
+                f"""
+#pagebreak()
+
+#part[{category}]
+
+"""
             )
+
+            # ------------------------------------------------
+            # Lectures in this category
+            # ------------------------------------------------
+
+            for lecture in category_lectures:
+
+                write_lecture(
+                    file,
+                    lecture,
+                )
 
     print(
         f"Wrote {BOOK_TYP}"
@@ -141,6 +176,20 @@ def group_by_category(lectures):
     return categories
 
 
+def sort_category_lectures(lectures):
+    """Sort lectures by number within a category."""
+
+    return sorted(
+        lectures,
+        key=lambda lecture: (
+            lecture.get("number") is None,
+            lecture.get("number")
+            if lecture.get("number") is not None
+            else float("inf"),
+            lecture.get("file", ""),
+        ),
+    )
+
 # ============================================================
 # Category books
 # ============================================================
@@ -169,7 +218,7 @@ def write_category_book(
             title=category,
         )
 
-        for lecture in lectures:
+        for lecture in sort_category_lectures(lectures):
 
             write_lecture(
                 file,
