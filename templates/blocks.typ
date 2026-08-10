@@ -366,7 +366,7 @@
       )[
 
         #full-label
-        #full-label#if title != none [ (#title)].
+        #if title != none [ (#title)].
 
       ]
 
