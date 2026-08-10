@@ -709,3 +709,26 @@ diagnostics/
 ```
 
 for validation reports.
+
+---
+
+# Future Improvements
+
+The project is functional, but there are several areas that can be improved or extended over time.
+
+Possible directions include:
+
+* **Website search** — add client-side search across lectures, courses, and problem collections.
+* **Richer homepage** — improve categorization, filtering, and presentation of available material.
+* **Build diagnostics** — expand the final build summary with more detailed timing, file counts, and validation statistics.
+* **Metadata tooling** — add stronger validation, duplicate detection, and clearer metadata error messages.
+* **Navigation** — further improve breadcrumbs, previous/next navigation, category navigation, and cross-references.
+* **PDF presentation** — continue refining typography, page layout, title pages, headers, footers, and category-book design.
+* **HTML presentation** — polish responsive layouts, mathematical typography, theorem blocks, code blocks, and mobile presentation.
+* **Accessibility** — improve semantic HTML, keyboard navigation, contrast, and screen-reader support.
+* **Testing** — introduce more automated checks for generated HTML, PDFs, metadata, links, and Typst imports.
+* **CI/CD** — further improve automated builds, deployment checks, and build failure diagnostics.
+* **Performance** — reduce unnecessary compilation and improve incremental development workflows.
+* **Documentation** — expand documentation as the project architecture and authoring workflow evolve.
+
+These are intentionally ongoing areas of development rather than fixed requirements. The project can evolve incrementally as new content and requirements emerge.
