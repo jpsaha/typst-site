@@ -121,6 +121,7 @@
 
   }
 }
+
 #let block-container(
   counter,
   number-function,
@@ -143,27 +144,35 @@
       attrs: (
         class: "math-card " + class-name,
         style:
-          "border-left: 5px solid "
+          "width: 100%;"
+          + "border: 1px solid "
           + primary-color
-          + "; background-color: "
-          + bg-color
-          + "; padding: 18px; margin: 24px 0; border-radius: 0 4px 4px 0;"
+          + ";"
+          + "background: none;"
+          + "padding: 12px;"
+          + "margin: 18px 0;"
+          + "border-radius: 5px;"
+          + "box-sizing: border-box;"
       ),
     )[
 
       #html.elem(
-        "strong",
+        "div",
         attrs: (
           class: "math-card-title",
           style:
-            "color: "
-            + primary-color
-            + "; display:block; font-size:1.1em;"
+            "display: block;"
+            + "font-size: 0.9em;"
+            + "margin-bottom: 4px;"
         ),
       )[
-        #full-label#if title != none [ (#title)].
+        #html.elem("strong")[
+          #full-label
+        ]
+        #if title != none [
+          (#title).
+        ]
       ]
-
 
       #html.elem(
         "div",
@@ -177,6 +186,48 @@
 
 
   } else {
+
+  // if sys.inputs.at("format", default: "pdf") == "html" {
+
+  //   html.elem(
+  //     "div",
+  //     attrs: (
+  //       class: "math-card " + class-name,
+  //       style:
+  //         "border-left: 5px solid "
+  //         + primary-color
+  //         + "; background-color: "
+  //         + bg-color
+  //         + "; padding: 18px; margin: 24px 0; border-radius: 0 4px 4px 0;"
+  //     ),
+  //   )[
+
+  //     #html.elem(
+  //       "strong",
+  //       attrs: (
+  //         class: "math-card-title",
+  //         style:
+  //           "color: "
+  //           + primary-color
+  //           + "; display:block; font-size:1.1em;"
+  //       ),
+  //     )[
+  //       #full-label#if title != none [ (#title)].
+  //     ]
+
+
+  //     #html.elem(
+  //       "div",
+  //       attrs: (
+  //         class: "math-card-body",
+  //       ),
+  //     )[
+  //       #content
+  //     ]
+  //   ]
+
+
+  // } else {
 
     // block(
     //   width: 100%,
