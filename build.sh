@@ -74,18 +74,21 @@ die() {
 # ============================================================
 # Timing helpers
 #
-# Records the start time of a build stage and prints its
-# elapsed time when the stage finishes.
+# macOS does not support date +%s.%N reliably.
+# Use whole-second timestamps for portable shell timing.
 # ============================================================
 
 stage_start() {
-    STAGE_START=$(date +%s.%N)
+    STAGE_START=$(date +%s)
 }
 
 stage_end() {
+    local variable="$1"
     local elapsed
-    elapsed=$(awk "BEGIN {printf \"%.2f\", $(date +%s.%N) - $STAGE_START}")
-    echo "⏱ $1: ${elapsed}s"
+
+    elapsed=$(( $(date +%s) - STAGE_START ))
+
+    printf -v "$variable" '%s' "$elapsed"
 }
 
 # ============================================================
@@ -98,9 +101,7 @@ stage_start
 
 python3 scripts/build/generate_metadata.py
 
-TIME_METADATA=$(awk "BEGIN {printf \"%.2f\", $(date +%s.%N) - $STAGE_START}")
-
-stage_end "Metadata generation"
+stage_end TIME_METADATA
 
 # ============================================================
 # 2. Check source metadata
@@ -115,9 +116,7 @@ if ! python3 scripts/lint/check_metadata.py; then
     die "metadata validation failed."
 fi
 
-TIME_METADATA_CHECK=$(awk "BEGIN {printf \"%.2f\", $(date +%s.%N) - $STAGE_START}")
-
-stage_end "Metadata validation"
+stage_end TIME_METADATA_CHECK
 
 # ============================================================
 # 3. Check generated files
@@ -132,9 +131,7 @@ if ! python3 scripts/lint/check_generated.py; then
     die "generated consistency check failed."
 fi
 
-TIME_GENERATED_CHECK=$(awk "BEGIN {printf \"%.2f\", $(date +%s.%N) - $STAGE_START}")
-
-stage_end "Generated-file validation"
+stage_end TIME_GENERATED_CHECK
 
 # ============================================================
 # 4. Check Typst imports
@@ -157,9 +154,7 @@ if ! python3 scripts/lint/check_imports.py; then
     die "Typst import validation failed."
 fi
 
-TIME_IMPORT_CHECK=$(awk "BEGIN {printf \"%.2f\", $(date +%s.%N) - $STAGE_START}")
-
-stage_end "Typst import validation"
+stage_end TIME_IMPORT_CHECK
 
 # ============================================================
 # 5. Initialize dist
@@ -215,9 +210,7 @@ stage_start
 
 python3 scripts/build/build_pages.py
 
-TIME_HTML=$(awk "BEGIN {printf \"%.2f\", $(date +%s.%N) - $STAGE_START}")
-
-stage_end "HTML pages"
+stage_end TIME_HTML
 
 # ============================================================
 # 9. Build category books
@@ -248,9 +241,7 @@ for CATEGORY_SOURCE in generated/category_*.typ; do
 
 done
 
-TIME_CATEGORIES=$(awk "BEGIN {printf \"%.2f\", $(date +%s.%N) - $STAGE_START}")
-
-stage_end "Category PDFs"
+stage_end TIME_CATEGORIES
 
 # ============================================================
 # 10. Build complete course PDF
@@ -267,9 +258,7 @@ typst compile \
     "$PDF_DIR/book.pdf" \
     --input format=pdf
 
-TIME_BOOK=$(awk "BEGIN {printf \"%.2f\", $(date +%s.%N) - $STAGE_START}")
-
-stage_end "Book PDF"
+stage_end TIME_BOOK
 
 # ============================================================
 # 11. Build complete pages PDF
@@ -286,9 +275,7 @@ typst compile \
     "$PDF_DIR/pages.pdf" \
     --input format=pdf
 
-TIME_PAGES=$(awk "BEGIN {printf \"%.2f\", $(date +%s.%N) - $STAGE_START}")
-
-stage_end "Pages PDF"
+stage_end TIME_PAGES
 
 # ============================================================
 # 12. Check links
@@ -305,9 +292,7 @@ if ! python3 scripts/lint/check_links.py; then
 
 fi
 
-TIME_LINKS=$(awk "BEGIN {printf \"%.2f\", $(date +%s.%N) - $STAGE_START}")
-
-stage_end "Link checking"
+stage_end TIME_LINKS
 
 # ============================================================
 # 13. Build diagnostics summary
