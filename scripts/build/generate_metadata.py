@@ -53,6 +53,7 @@ from metadata.write_book import (
 
 from metadata.config import (
     CATEGORY_BOOK_DIR,
+    GENERATED_DIR,
 )
 
 # ------------------------------------------------------------
@@ -60,6 +61,15 @@ from metadata.config import (
 # ------------------------------------------------------------
 
 def main():
+
+    # --------------------------------------------------------
+    # Prepare generated directory
+    # --------------------------------------------------------
+
+    GENERATED_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
     # --------------------------------------------------------
     # Discover
