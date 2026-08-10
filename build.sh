@@ -85,7 +85,26 @@ if ! python3 scripts/lint/check_generated.py; then
 fi
 
 # ============================================================
-# 4. Initialize dist
+# 4. Check Typst imports
+#
+# Verify that all imported Typst files exist and that there
+# are no circular import dependencies.
+#
+# The detailed dependency graph is written to:
+#
+#     diagnostics/imports.dot
+#
+# ============================================================
+
+echo
+echo "🔗 Checking Typst imports..."
+
+if ! python3 scripts/lint/check_imports.py; then
+    die "Typst import validation failed."
+fi
+
+# ============================================================
+# 5. Initialize dist
 # ============================================================
 
 echo "📁 Preparing dist/..."
@@ -100,7 +119,7 @@ mkdir -p \
     "$ASSETS_DIR/images"
 
 # ============================================================
-# 5. Copy assets
+# 6. Copy assets
 # ============================================================
 
 if [ -f "assets/css/style.css" ]; then
@@ -118,7 +137,7 @@ else
 fi
 
 # ============================================================
-# 6. Check generated metadata
+# 7. Check generated metadata
 # ============================================================
 
 if [ ! -f "$HOMEPAGE_JSON" ]; then
@@ -128,7 +147,7 @@ if [ ! -f "$HOMEPAGE_JSON" ]; then
 fi
 
 # ============================================================
-# 7. Generate homepage and compile pages
+# 8. Generate homepage and compile pages
 # ============================================================
 
 echo
@@ -137,7 +156,7 @@ echo "🌐 Building course pages..."
 python3 scripts/build/build_pages.py
 
 # ============================================================
-# 8. Build category books
+# 9. Build category books
 # ============================================================
 
 echo
@@ -164,7 +183,7 @@ for CATEGORY_SOURCE in generated/category_*.typ; do
 done
 
 # ============================================================
-# 9. Build complete course PDF
+# 10. Build complete course PDF
 # ============================================================
 
 echo
@@ -177,7 +196,7 @@ typst compile \
     --input format=pdf
 
 # ============================================================
-# 10. Build complete pages PDF
+# 11. Build complete pages PDF
 # ============================================================
 
 echo
@@ -190,7 +209,7 @@ typst compile \
     --input format=pdf
 
 # ============================================================
-# 11. Check links
+# 12. Check links
 # ============================================================
 
 echo
@@ -203,7 +222,7 @@ if ! python3 scripts/lint/check_links.py; then
 fi
 
 # ============================================================
-# 12. Build diagnostics summary
+# 13. Build diagnostics summary
 #
 # The individual reports are still produced at their normal
 # stages above. This final section gives a compact overview
