@@ -475,9 +475,8 @@
       )[
 
         #full-label
-        #if title != none [ (#title)]
-
       ]
+        #if title != none [ (#title)].
 
       #v(4pt)
 
@@ -516,52 +515,81 @@
 
 // #let defn(title, content) = make-block("definition", "Definition", title, content)
 
-#let defn(..args) = {
-  let args = args.pos()
+// #let defn(..args) = {
+//   let args = args.pos()
 
-  if args.len() == 1 {
-    make-block("definition", "Definition", none, args.at(0))
-  } else {
-    make-block("definition", "Definition", args.at(0), args.at(1))
+//   if args.len() == 1 {
+//     make-block("definition", "Definition", none, args.at(0))
+//   } else {
+//     make-block("definition", "Definition", args.at(0), args.at(1))
+//   }
+// }
+// #let thm(..args) = {
+//   let args = args.pos()
+
+//   if args.len() == 1 {
+//     make-block("thm", "Theorem", none, args.at(0))
+//   } else {
+//     make-block("thm", "Theorem", args.at(0), args.at(1))
+//   }
+// }
+// #let exer(..args) = {
+//   let args = args.pos()
+
+//   if args.len() == 1 {
+//     make-block("exer", "Exercise", none, args.at(0))
+//   } else {
+//     make-block("exer", "Exercise", args.at(0), args.at(1))
+//   }
+// }
+// 
+
+#let make-block-arg(kind, label) = {
+  (..args) => {
+    let args = args.pos()
+
+    if args.len() == 1 {
+      make-block(kind, label, none, args.at(0))
+    } else {
+      make-block(kind, label, args.at(0), args.at(1))
+    }
   }
 }
-#let thm(..args) = {
-  let args = args.pos()
 
-  if args.len() == 1 {
-    make-block("thm", "Theorem", none, args.at(0))
-  } else {
-    make-block("thm", "Theorem", args.at(0), args.at(1))
-  }
-}
-#let exer(..args) = {
-  let args = args.pos()
+#let theorem = make-block-arg("theorem", "Theorem")
+#let thm = make-block-arg("theorem", "Theorem")
+#let definition = make-block-arg("definition", "Definition")
+#let defn = make-block-arg("definition", "Definition")
+// #let exercise = make-block-arg("exercise", "Exercise")
+#let exer = make-block-arg("exercise", "Exercise")
+#let lemma = make-block-arg("lemma", "Lemma")
+#let proposition = make-block-arg("proposition", "Proposition")
+#let corollary = make-block-arg("corollary", "Corollary")
+#let claim = make-block-arg("claim", "Claim")
+#let example = make-block-arg("example", "Example")
+#let note = make-block-arg("note", "Note")
+#let warning = make-block-arg("warning", "Warning")
+#let remark = make-block-arg("remark", "Remark")
+#let history = make-block-arg("history", "History")
 
-  if args.len() == 1 {
-    make-block("exer", "Exercise", none, args.at(0))
-  } else {
-    make-block("exer", "Exercise", args.at(0), args.at(1))
-  }
-}
+// #let theorem(title: "", content) = make-block("theorem", "Theorem", title, content)
 
-#let theorem(title: "", content) = make-block("theorem", "Theorem", title, content)
+// #let definition(title: "", content) = make-block("definition", "Definition", title, content)
 
-#let definition(title: "", content) = make-block("definition", "Definition", title, content)
+// #let lemma(title: "", content) = make-block("lemma", "Lemma", title, content)
 
-#let lemma(title: "", content) = make-block("lemma", "Lemma", title, content)
+// #let proposition(title: "", content) = make-block("proposition", "Proposition", title, content)
 
-#let proposition(title: "", content) = make-block("proposition", "Proposition", title, content)
+// #let corollary(title: "", content) = make-block("corollary", "Corollary", title, content)
 
-#let corollary(title: "", content) = make-block("corollary", "Corollary", title, content)
+// #let claim(title: "", content) = make-block("claim", "Claim", title, content)
 
-#let claim(title: "", content) = make-block("claim", "Claim", title, content)
+// #let example(title: "", content) = make-block("example", "Example", title, content)
 
-#let example(title: "", content) = make-block("example", "Example", title, content)
+// #let note(title: "", content) = make-block("note", "Note", title, content)
 
-#let note(title: "", content) = make-block("note", "Note", title, content)
+// #let warning(title: "", content) = make-block("warning", "Warning", title, content)
 
-#let warning(title: "", content) = make-block("warning", "Warning", title, content)
+// #let remark(title: "", content) = make-block("remark", "Remark", title, content)
 
-#let remark(title: "", content) = make-block("remark", "Remark", title, content)
-
-#let history(title: "", content) = make-block("history", "History", title, content)
+// #let history(title: "", content) = make-block("history", "History", title, content)
