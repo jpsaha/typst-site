@@ -134,9 +134,7 @@
 
   counter.step()
 
-  let full-label = context [
-    #label-text #number-function()
-  ]
+  let full-label = context [#label-text #number-function()]
 
   if sys.inputs.at("format", default: "pdf") == "html" {
 
@@ -210,8 +208,7 @@ block(
   radius: 5pt,
   breakable: true,
 )[
-  #text(weight: "bold", size: 0.9em)[#full-label]
-  #if title != "" [ (#title)] . 
+  #text(weight: "bold", size: 0.9em)[#full-label]#if title != none [ (#title)].
   #content
 ]
 
