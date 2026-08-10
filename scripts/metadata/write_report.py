@@ -237,5 +237,6 @@ def write_metadata_report(lectures, pages):
     )
 
     print(
+        "Report     : "
         f"📋 Wrote metadata report: {output}"
     )
