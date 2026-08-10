@@ -1,8 +1,10 @@
 #import "../../templates/course.typ": *
 
-= Core Definitions
+== Core Definitions
 
 In this session, we analyze how linear transformations scale specific vector subspaces.
+
+=== some defn
 
 #defn("Eigenvalues and Eigenvectors")[
   Let $T: V -> V$ be a linear operator on a vector space $V$ over a field $F$. 
@@ -14,7 +16,7 @@ In this session, we analyze how linear transformations scale specific vector sub
   The scalar $lambda$ is called the *eigenvalue* corresponding to the eigenvector $v$.
 ]
 
-= Fundamental Theorems
+== Fundamental Theorems
 
 #thm("Linear Independence of Eigenvectors")[
   Let $T: V -> V$ be a linear operator. If $v_1, v_2, ..., v_m$ are eigenvectors 
@@ -22,7 +24,7 @@ In this session, we analyze how linear transformations scale specific vector sub
   then the set $\{v_1, v_2, ..., v_m\}$ is linearly independent.
 ]
 
-= Homework Practice
+== Homework Practice
 
 #exer("Characteristic Polynomial Evaluation")[
   Consider the $2 times 2$ matrix $A$ representing a linear transformation on $RR^2$:

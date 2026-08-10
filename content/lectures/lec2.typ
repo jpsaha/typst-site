@@ -4,33 +4,16 @@
 #let lecture = (
   file: "lec2",
   number: 2,
-  title: "Eigenvalues & Spectral Mapping",
-  category: "lecture",
+  title: "Field extensions",
+  category: "Fields and Galois theory",
 )
+
 
 #show: doc => {
   reset-counters(lecture.number)
-  setup-document(doc)
+  // setup-document(doc)
+  doc
 }
-
-// #if is-html {
-//   html-nav-header()
-//   html.elem(
-//     "h1",
-//     attrs: (
-//       style: "font-family: system-ui, sans-serif; color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px;"
-//     ),
-//   )[
-//     Lecture #lecture.number: #lecture.title
-//   ]
-// } else {
-//   align(center)[
-//     #text(size: 20pt, weight: "bold")[
-//       Lecture #lecture.number: #lecture.title
-//     ]
-//     #v(1cm)
-//   ]
-// }
 
 #page-header(lecture)
 
