@@ -52,6 +52,10 @@ from metadata.write_book import (
     write_category_books,
 )
 
+from metadata.write_report import (
+    write_metadata_report,
+)
+
 from metadata.config import (
     CATEGORY_BOOK_DIR,
     GENERATED_DIR,
@@ -161,6 +165,11 @@ def main():
         all_content,
         CATEGORY_BOOK_DIR,
     )
+
+    write_metadata_report(
+    lectures,
+    pages,
+)
 
 
 if __name__ == "__main__":

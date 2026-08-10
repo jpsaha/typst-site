@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 
 CONTENT_DIR = ROOT / "content"
 GENERATED_DIR = ROOT / "generated"
+DIAGNOSTICS_DIR = ROOT / "diagnostics"
 
 # ============================================================
 # Generated files
