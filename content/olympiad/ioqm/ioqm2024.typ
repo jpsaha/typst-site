@@ -2,9 +2,9 @@
 #import "../../../templates/course.typ": *
 
 #let lecture = (
-  file: "ioqm2025",
+  file: "ioqm2024",
   number: none,
-  title: "IOQM 2025",
+  title: "IOQM 2024",
   category: "IOQM",
 )
 
@@ -17,6 +17,6 @@
 
 #page-header(lecture)
 
-#include "ioqm2025_content.typ"
+#include "ioqm2024_content.typ"
 
 #previous-next(lecture)

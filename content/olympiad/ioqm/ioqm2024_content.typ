@@ -1,4 +1,4 @@
 #import "../../../templates/course.typ": *
 
 
-ioqm 2025 = 45 square 
+ioqm 2024 = not a perfect square
