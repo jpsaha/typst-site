@@ -33,8 +33,8 @@ def safe_filename(name):
 # Typst writers
 # ============================================================
 
-def write_imports(file):
-    """Write imports required by generated book files."""
+def write_imports(file, title=None):
+    """Write imports required by generated Typst files."""
 
     file.write(
         '#import "../templates/render.typ": include-lecture\n'
@@ -44,12 +44,11 @@ def write_imports(file):
         '#import "../generated/lectures.typ": lectures\n\n'
     )
 
-
-def write_header_and_imports(file):
+def write_header_and_imports(file, title=None):
     """Write the standard header and imports."""
 
     write_header(file)
-    write_imports(file)
+    write_imports(file, title)
 
 
 def write_lecture(file, lecture):
@@ -85,7 +84,7 @@ def write_lecture(file, lecture):
 # Complete course book
 # ============================================================
 
-def write_book(lectures):
+def write_book(lectures, title = None):
     """Generate generated/book.typ."""
 
     with BOOK_TYP.open(
@@ -93,7 +92,7 @@ def write_book(lectures):
         encoding="utf-8",
     ) as file:
 
-        write_header_and_imports(file)
+        write_header_and_imports(file, title = title)
 
         for lecture in lectures:
 
@@ -165,7 +164,10 @@ def write_category_book(
         encoding="utf-8",
     ) as file:
 
-        write_header_and_imports(file)
+        write_header_and_imports(
+            file,
+            title=category,
+        )
 
         for lecture in lectures:
 
