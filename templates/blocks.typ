@@ -489,6 +489,40 @@
 }
 
 
+// #let exer(title: none, content) = make-block("exer", "Exercise", title, content)
+
+// #let thm(title: none, content) = make-block("thm", "Theorem", title, content)
+
+// #let defn(title, content) = make-block("definition", "Definition", title, content)
+
+#let defn(..args) = {
+  let args = args.pos()
+
+  if args.len() == 1 {
+    make-block("definition", "Definition", none, args.at(0))
+  } else {
+    make-block("definition", "Definition", args.at(0), args.at(1))
+  }
+}
+#let thm(..args) = {
+  let args = args.pos()
+
+  if args.len() == 1 {
+    make-block("thm", "Theorem", none, args.at(0))
+  } else {
+    make-block("thm", "Theorem", args.at(0), args.at(1))
+  }
+}
+#let exer(..args) = {
+  let args = args.pos()
+
+  if args.len() == 1 {
+    make-block("exer", "Exercise", none, args.at(0))
+  } else {
+    make-block("exer", "Exercise", args.at(0), args.at(1))
+  }
+}
+
 #let theorem(title: "", content) = make-block("theorem", "Theorem", title, content)
 
 #let definition(title: "", content) = make-block("definition", "Definition", title, content)

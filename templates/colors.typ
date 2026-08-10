@@ -7,7 +7,17 @@
     bg: "#f0f7ff",
   ),
 
+  thm: (
+    border: "#0066cc",
+    bg: "#f0f7ff",
+  ),
+
   definition: (
+    border: "#2e7d32",
+    bg: "#f1f8e9",
+  ),
+
+  defn: (
     border: "#2e7d32",
     bg: "#f1f8e9",
   ),
@@ -62,6 +72,10 @@
     bg: "#ffebee",
   ),
 
+  exer: (
+    border: "#c62828",
+    bg: "#ffebee",
+  ),
 )
 
 #let code-colors = (

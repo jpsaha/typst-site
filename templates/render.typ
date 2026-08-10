@@ -163,7 +163,7 @@
             + "; display:block; font-size:1.1em;"
         ),
       )[
-        #full-label#if title != "" [: #title]
+        #full-label#if title != none [ (#title)].
       ]
 
 
@@ -180,27 +180,63 @@
 
   } else {
 
-    block(
-      width: 100%,
-      stroke: (left: 4pt + rgb(primary-color)),
-      fill: rgb(bg-color),
-      inset: 12pt,
-      radius: (right: 4pt),
-      breakable: true,
-    )[
+    // block(
+    //   width: 100%,
+    //   stroke: (left: 4pt + rgb(primary-color)),
+    //   fill: rgb(bg-color),
+    //   inset: 12pt,
+    //   radius: (right: 4pt),
+    //   breakable: true,
+    // )[
 
-      #text(
-        weight: "bold",
-        fill: rgb(primary-color),
-        size: 1.1em,
-      )[
-        #full-label#if title != "" [: #title]
-      ]
+    //   #text(
+    //     weight: "bold",
+    //     fill: rgb(primary-color),
+    //     size: 1.1em,
+    //   )[
+    //     #full-label#if title != "" [: #title]
+    //   ]
 
-      #v(4pt)
+    //   #v(4pt)
 
-      #content
-    ]
+    //   #content
+    // ]
+
+block(
+  width: 100%,
+  stroke: 0.9pt + rgb(primary-color),
+  fill: none,
+  inset: 9pt,
+  radius: 5pt,
+  breakable: true,
+)[
+  #text(weight: "bold", size: 0.9em)[#full-label]
+  #if title != "" [ (#title)] . 
+  #content
+]
+
+    // block(
+    //   width: 100%,
+    //   stroke: rgb(primary-color) + 0.9pt,
+    //   fill: none,
+    //   inset: 9pt,
+    //   radius: 5pt,
+    //   breakable: true,
+    //   // fill: none, stroke: rgb("#ead116e4"), 
+    // )[
+
+    //   #text(
+    //     weight: "bold",
+    //     // fill: rgb(primary-color),
+    //     size: 0.9em,
+    //   )[
+    //     #full-label
+    //   ]
+    //   #if title != "" [(#title)]
+    //   .
+    //   // #v(4pt)
+    //   #content
+    // ]
 
   }
 }
