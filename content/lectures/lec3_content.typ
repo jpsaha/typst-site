@@ -1,9 +1,9 @@
 #import "../../templates/course.typ": *
 
-
 = Core Definitions
 
 
-#theorem[
+#thm[
   There are infinitely many prime numbers.
 ]
+

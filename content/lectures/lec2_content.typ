@@ -4,7 +4,7 @@
 
 In this session, we analyze how linear transformations scale specific vector subspaces.
 
-#definition(title: "Eigenvalues and Eigenvectors")[
+#defn("Eigenvalues and Eigenvectors")[
   Let $T: V -> V$ be a linear operator on a vector space $V$ over a field $F$. 
   A non-zero vector $v in V$ is called an *eigenvector* of $T$ if there exists a 
   scalar $lambda in F$ such that:
@@ -16,7 +16,7 @@ In this session, we analyze how linear transformations scale specific vector sub
 
 = Fundamental Theorems
 
-#theorem(title: "Linear Independence of Eigenvectors")[
+#thm("Linear Independence of Eigenvectors")[
   Let $T: V -> V$ be a linear operator. If $v_1, v_2, ..., v_m$ are eigenvectors 
   corresponding to *distinct* eigenvalues $lambda_1, lambda_2, ..., lambda_m$, 
   then the set $\{v_1, v_2, ..., v_m\}$ is linearly independent.
@@ -24,7 +24,7 @@ In this session, we analyze how linear transformations scale specific vector sub
 
 = Homework Practice
 
-#exercise(title: "Characteristic Polynomial Evaluation")[
+#exer("Characteristic Polynomial Evaluation")[
   Consider the $2 times 2$ matrix $A$ representing a linear transformation on $RR^2$:
   
   $ A = mat(4, 2; 1, 3) $
