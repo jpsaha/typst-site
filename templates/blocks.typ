@@ -358,7 +358,7 @@
         attrs: (
           class: "math-card-title",
           style:
-            "color: c62828;
+            "color: #c62828;
              display: block;
              font-size: 1.1em;
              margin-bottom: 8px;"
@@ -403,7 +403,7 @@
             attrs: (
               style:
                 "font-weight: bold;
-                 color: c62828;
+                 color: #c62828;
                  cursor: pointer;"
             ),
           )[
