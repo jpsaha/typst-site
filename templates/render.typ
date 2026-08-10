@@ -269,7 +269,7 @@ block(
 // book and for category-specific books.
 
 #let include-lecture(lecture, body) = [
-  #pagebreak()
+  // #pagebreak()
 
   // Reset counters only when a lecture number exists.
   // This keeps the function safe for future non-numbered
