@@ -4,9 +4,10 @@ set -euo pipefail
 
 export TYPST_FEATURES=html
 
-
 # ============================================================
+
 # Configuration
+
 # ============================================================
 
 DIST="dist"
@@ -17,28 +18,57 @@ ASSETS_DIR="$DIST/assets"
 
 HOMEPAGE_JSON="generated/homepage.json"
 
-
 # ============================================================
+
 # Helpers
+
 # ============================================================
 
 die() {
-    echo "❌ $1"
-    exit 1
+echo "Build failed: $1"
+exit 1
 }
 
-
 # ============================================================
+
 # 1. Generate metadata
+
 # ============================================================
 
 echo "📋 Generating metadata..."
 
 python3 scripts/build/generate_metadata.py
 
+# ============================================================
+
+# 2. Check source metadata
 
 # ============================================================
-# 2. Initialize dist
+
+echo
+echo "🔗 Checking source metadata..."
+
+if ! python3 scripts/lint/check_metadata.py; then
+die "metadata validation failed."
+fi
+
+# ============================================================
+
+# 3. Check generated files
+
+# ============================================================
+
+echo
+echo "🔗 Checking generated files..."
+
+if ! python3 scripts/lint/check_generated.py; then
+die "generated consistency check failed."
+fi
+
+# ============================================================
+
+# 4. Initialize dist
+
 # ============================================================
 
 echo "📁 Preparing dist/..."
@@ -50,9 +80,8 @@ mkdir -p \
     "$ASSETS_DIR/js" \
     "$ASSETS_DIR/images"
 
-
 # ============================================================
-# 3. Copy assets
+# 5. Copy assets
 # ============================================================
 
 if [ -f "assets/css/style.css" ]; then
@@ -69,9 +98,8 @@ else
 
 fi
 
-
 # ============================================================
-# 4. Check generated metadata
+# 6. Check generated metadata
 # ============================================================
 
 if [ ! -f "$HOMEPAGE_JSON" ]; then
@@ -80,18 +108,19 @@ if [ ! -f "$HOMEPAGE_JSON" ]; then
 
 fi
 
-
-# ============================================================
-# 5. Generate homepage and compile pages
 # ============================================================
 
+# 7. Generate homepage and compile pages
+
+# ============================================================
+
+echo
 echo "🌐 Building course pages..."
 
 python3 scripts/build/build_pages.py
 
-
 # ============================================================
-# 6. Build category books
+# 8. Build category books
 # ============================================================
 
 echo
@@ -114,13 +143,15 @@ for CATEGORY_SOURCE in generated/category_*.typ; do
 
 done
 
-
 # ============================================================
-# 7. Build complete course PDF
+
+# 9. Build complete course PDF
+
 # ============================================================
 
 echo
 echo "📚 Building complete course book..."
+
 
 typst compile \
     --root . \
@@ -128,9 +159,10 @@ typst compile \
     "$PDF_DIR/book.pdf" \
     --input format=pdf
 
-
 # ============================================================
-# 8. Build complete pages PDF
+
+# 10. Build complete pages PDF
+
 # ============================================================
 
 echo
@@ -142,9 +174,10 @@ typst compile \
     "$PDF_DIR/pages.pdf" \
     --input format=pdf
 
-
 # ============================================================
-# 9. Check links
+
+# 11. Check links
+
 # ============================================================
 
 echo
@@ -152,13 +185,14 @@ echo "🔗 Checking links..."
 
 if ! python3 scripts/lint/check_links.py; then
 
-    die "Build failed: broken links detected."
+die "broken links detected."
 
 fi
 
-
 # ============================================================
+
 # Done
+
 # ============================================================
 
 echo
