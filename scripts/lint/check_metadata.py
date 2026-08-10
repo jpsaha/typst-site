@@ -254,6 +254,7 @@ def main():
         path
         for path in CONTENT_DIR.rglob("*.typ")
         if not path.stem.endswith("_content")
+        and "motypprog" not in path.relative_to(CONTENT_DIR).parts
     )
 
     if not wrapper_files:

@@ -165,7 +165,9 @@ def discover_source_metadata():
         )
 
     for path in sorted(
-        CONTENT_DIR.rglob("*.typ")
+        path
+        for path in CONTENT_DIR.rglob("*.typ")
+        if "motypprog" not in path.parts
     ):
 
         # ----------------------------------------------------
