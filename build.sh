@@ -240,10 +240,13 @@ if [ -f "$METADATA_REPORT" ]; then
         "$METADATA_REPORT" \
         || true
 
+    echo "Report        : $METADATA_REPORT"
+
 else
 
     echo
     echo "📋 Metadata report not found"
+
 fi
 
 # ------------------------------------------------------------
@@ -261,10 +264,13 @@ if [ -f "$LINK_REPORT" ]; then
         "$LINK_REPORT" \
         || true
 
+    echo "Report        : $LINK_REPORT"
+
 else
 
     echo
     echo "🔗 Link report not found"
+
 fi
 
 # ------------------------------------------------------------
