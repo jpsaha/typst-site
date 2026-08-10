@@ -55,7 +55,7 @@ We begin by establishing the properties of fields mapping vector components.
   Let $T: RR^3 -> RR^2$ be defined by $T(x, y, z) = (x + y, z)$. 
   Find the dimension of the null space.
 ]
-/*
+
 #note[
 Remember that every basis is linearly independent.
 ]
@@ -88,4 +88,3 @@ The Rank-Nullity theorem appeared in the nineteenth century.
 #proposition[proposition statement]
 #claim[claim statement]
 #corollary[corollary statement]
-*/
