@@ -61,6 +61,21 @@ def write_pages_meta(pages):
                 "  (\n"
             )
 
+            # ------------------------------------------------
+            # Page identifier
+            # ------------------------------------------------
+
+            write_field(
+                file,
+                "file",
+                page["file"],
+                indent=4,
+            )
+
+            # ------------------------------------------------
+            # Generated output paths
+            # ------------------------------------------------
+
             write_field(
                 file,
                 "html",
@@ -74,6 +89,10 @@ def write_pages_meta(pages):
                 f'{page["file"]}.pdf',
                 indent=4,
             )
+
+            # ------------------------------------------------
+            # Page metadata
+            # ------------------------------------------------
 
             write_field(
                 file,
