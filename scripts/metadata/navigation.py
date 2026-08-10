@@ -3,10 +3,19 @@ def sort_lectures(lectures):
 
     lectures.sort(
         key=lambda lecture: (
+            str(
+                lecture.get(
+                    "category",
+                    "Uncategorized",
+                )
+            ).casefold(),
+
             lecture.get("number") is None,
+
             lecture.get("number")
             if lecture.get("number") is not None
             else 10**9,
+
             lecture.get("file"),
         )
     )
@@ -14,52 +23,82 @@ def sort_lectures(lectures):
 
 def add_navigation(lectures):
     """
+    Add previous/next links within each category.
     Add previous/next links to numbered lectures.
 
     Non-numbered pages are not included.
+
+    Lecture numbers are category-local and therefore
+    navigation never crosses category boundaries.
     """
 
-    numbered = [
-        lecture
-        for lecture in lectures
-        if lecture.get("number") is not None
-    ]
+    categories = {}
 
-    for index, lecture in enumerate(numbered):
+    for lecture in lectures:
 
-        # Previous
-        if index > 0:
+        if lecture.get("number") is None:
+            continue
 
-            previous = numbered[index - 1]
+        category = lecture.get(
+            "category",
+            "Uncategorized",
+        )
 
-            lecture["previous"] = {
-                "title": previous["title"],
-                "html": (
-                    previous["file"]
-                    + ".html"
-                ),
-            }
+        categories.setdefault(
+            category,
+            [],
+        ).append(
+            lecture
+        )
 
-        else:
+    for category_lectures in categories.values():
 
-            lecture["previous"] = None
+        category_lectures.sort(
+            key=lambda lecture: (
+                lecture.get("number"),
+                lecture.get("file"),
+            )
+        )
 
-        # Next
-        if index < len(numbered) - 1:
+        for index, lecture in enumerate(
+            category_lectures
+        ):
 
-            next_lecture = numbered[index + 1]
+            if index > 0:
 
-            lecture["next"] = {
-                "title": next_lecture["title"],
-                "html": (
-                    next_lecture["file"]
-                    + ".html"
-                ),
-            }
+                previous = category_lectures[
+                    index - 1
+                ]
 
-        else:
+                lecture["previous"] = {
+                    "title": previous["title"],
+                    "html": (
+                        previous["file"]
+                        + ".html"
+                    ),
+                }
 
-            lecture["next"] = None
+            else:
+
+                lecture["previous"] = None
+
+            if index < len(category_lectures) - 1:
+
+                next_lecture = category_lectures[
+                    index + 1
+                ]
+
+                lecture["next"] = {
+                    "title": next_lecture["title"],
+                    "html": (
+                        next_lecture["file"]
+                        + ".html"
+                    ),
+                }
+
+            else:
+
+                lecture["next"] = None
 
 
 def add_page_navigation(pages):
