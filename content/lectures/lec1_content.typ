@@ -8,7 +8,7 @@
 
 #exer[funn]
 
-= Core Definitions
+== Fields
 
 We begin by establishing the properties of fields mapping vector components.
 
@@ -24,7 +24,7 @@ We begin by establishing the properties of fields mapping vector components.
   ...
 ]<def-vector-space>
 
-= Fundamental Theorems
+== Degree of an extension
 
 #thm("Rank-Nullity Theorem")[
   Let $V$ and $W$ be vector spaces, where $V$ is finite-dimensional. 
@@ -33,7 +33,7 @@ We begin by establishing the properties of fields mapping vector components.
   $ dim("null" T) + dim("range" T) = dim V $
 ]<thm-rank>
 
-= Homework Practice
+== Exercises
 
 // See @def-vector-space.
 
