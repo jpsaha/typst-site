@@ -11,6 +11,7 @@ scripts/metadata/
 """
 
 import sys
+import shutil
 from pathlib import Path
 
 # ------------------------------------------------------------
@@ -57,6 +58,21 @@ from metadata.config import (
 )
 
 # ------------------------------------------------------------
+# Helpers
+# ------------------------------------------------------------
+
+def prepare_generated_dir():
+    """Remove previous generated files and recreate the directory."""
+
+    if GENERATED_DIR.exists():
+        shutil.rmtree(GENERATED_DIR)
+
+    GENERATED_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+# ------------------------------------------------------------
 # Main
 # ------------------------------------------------------------
 
@@ -66,10 +82,7 @@ def main():
     # Prepare generated directory
     # --------------------------------------------------------
 
-    GENERATED_DIR.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
+    prepare_generated_dir()
 
     # --------------------------------------------------------
     # Discover
