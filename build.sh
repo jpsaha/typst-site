@@ -73,6 +73,8 @@ fi
 
 echo "📁 Preparing dist/..."
 
+rm -rf "$PAGES_DIR" "$PDF_DIR" "$ASSETS_DIR"
+
 mkdir -p \
     "$PAGES_DIR" \
     "$PDF_DIR" \
