@@ -8,6 +8,22 @@
   category: "Olympiad",
 )
 
+#let pdf-layout = (
+  if sys.inputs.at("format", default: "pdf") == "pdf" {
+    import "../../templates/pdflayout.typ": *
+    pdflayout.with(
+      title: lecture.title,
+      report-style: true,
+      flipp: false,
+    )
+  } else {
+    doc => doc
+  }
+)
+
+#show: pdf-layout
+
+
 #show: doc => {
   reset-counters(lecture.number)
   // setup-document(doc)

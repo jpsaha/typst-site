@@ -3,10 +3,25 @@
 
 #let lecture = (
   file: "ioqm2025",
-  number: none,
+  number: 2025,
   title: "IOQM 2025",
   category: "IOQM",
 )
+
+#let pdf-layout = (
+  if sys.inputs.at("format", default: "pdf") == "pdf" {
+    import "../../../templates/pdflayout.typ": *
+    pdflayout.with(
+      title: lecture.title,
+      report-style: true,
+      flipp: false,
+    )
+  } else {
+    doc => doc
+  }
+)
+
+#show: pdf-layout
 
 #show: doc => {
   reset-counters(lecture.number)
@@ -15,7 +30,7 @@
 }
 
 
-#page-header(lecture)
+#page-header(lecture, chap: true)
 
 #include "ioqm2025_content.typ"
 
