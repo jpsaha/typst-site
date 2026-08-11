@@ -44,6 +44,28 @@ def write_imports(file, title=None):
         '#import "../generated/lectures.typ": lectures\n\n'
     )
 
+    file.write(
+        '#import "../templates/pdflayout.typ":*\n\n'
+    )
+
+    file.write(
+        '#show: pdflayout.with(\n'
+    )
+
+    if title is not None:
+        file.write(
+            f'  title: [{title}],\n'
+        )
+
+    file.write(
+        '  // subtitle: [2025],\n'
+        '  // author: "Jyoti Prakash Saha",\n'
+        '  // date: datetime.today(),\n'
+        '  report-style: true,\n'
+        '  flipp: false,\n'
+        ')\n\n'
+    )
+
 
 def write_header_and_imports(file, title=None):
     """Write the standard header and imports."""
@@ -127,7 +149,7 @@ def write_book(lectures, title=None):
                 f"""
 #pagebreak()
 
-{category}
+#part[{category}]
 
 """
             )
