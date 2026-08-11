@@ -1,6 +1,6 @@
 /* The following is from https://github.com/vEnhance/dotfiles/blob/main/local/share/typst/packages/local/evan/1.0.0/evan.typ with some modifications */
 #import "@preview/gentle-clues:1.2.0": *
-#import "templates/theorems.typ": *
+#import "theorems.typ": *
 #import "@preview/euler-math:0.1.0": *
 // Apply the typography rule to the whole document
 #show: setup-typography
