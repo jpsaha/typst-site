@@ -1,3 +1,5 @@
+/* The following is from https://github.com/vEnhance/dotfiles/blob/main/local/share/typst/packages/local/evan/1.0.0/theorems.typ with some modifications */
+
 /* Copied from https://github.com/sahasatvik/typst-theorems/blob/v2.0.0/theorems.typ */
 
 // Store theorem environment numbering
