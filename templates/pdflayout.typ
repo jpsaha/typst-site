@@ -18,7 +18,8 @@
 
 #let fonts = (
   text: ("Libertinus Serif", "Noto Serif CJK TC", "Noto Color Emoji"),
-  sans: ("Noto Sans", "Noto Sans CJK TC", "Noto Color Emoji"),
+  // sans: ("Noto Sans", "Noto Sans CJK TC", "Noto Color Emoji"), // Noto Color Emoji is for emoji support, and removed it for typst v15
+  sans: ("Noto Sans", "Noto Sans CJK TC"),
   mono: ("Inconsolata"),
 )
 #let colors = (
