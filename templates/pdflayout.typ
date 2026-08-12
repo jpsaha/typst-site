@@ -480,10 +480,43 @@ Old version of boxed.
 // BEGIN: Later addition/modification
 // ============================================================
 
-  show heading: set text(font:fonts.sans, size: headsize)
-  show heading: set par(justify: false)
-  show heading.where(level: 1): set text(size: headsize + 3pt)
-  show heading.where(level: 2): set text(size: headsize + 1pt)
+  // show heading: set text(font:fonts.sans, size: headsize)
+  // show heading.where(level: 1): set text(size: headsize + 3pt)
+  // show heading.where(level: 2): set text(size: headsize + 1pt)
+
+  show heading: it => {
+    block(
+      above: 0.8em,
+      below: 0.4em,
+      sticky: true,
+    )[
+      #set par(justify: false)
+
+      #if it.numbering != none [
+        #text(
+          fill: colors.headers,
+          (
+            if report-style and it.level == 1 {
+              "Chapter "
+            } else {
+              "§"
+            }
+          )
+          + counter(heading).display()
+          + (
+            if report-style and it.level == 1 {
+              "."
+            } else {
+              ""
+            }
+          )
+        )
+        #h(0.2em)
+      ]
+
+      #it.body
+    ]
+  }
 
 // ============================================================
 // END: Later addition/modification
