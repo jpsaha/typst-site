@@ -460,20 +460,50 @@ Old version of boxed.
   set list(indent: 1em)
 
   // Section headers
+  // set heading(numbering: "1.1")
+  // show heading: it => {
+  //   block([
+  //     #if (it.numbering != none) [
+  //       #text(fill:colors.headers,
+  //         (if (report-style and it.level == 1) { "Chapter " } else { "§" })
+  //         + counter(heading).display()
+  //         + (if (report-style and it.level == 1) { "." } else { "" })
+  //       )
+  //       #h(0.2em)
+  //     ]
+  //     #it.body
+  //     #v(0.4em)
+  //   ])
+  // }
+
   set heading(numbering: "1.1")
+
   show heading: it => {
-    block([
-      #if (it.numbering != none) [
-        #text(fill:colors.headers,
-          (if (report-style and it.level == 1) { "Chapter " } else { "§" })
+    block(
+      above: 0.8em,
+      below: 0.4em,
+      sticky: true,
+    )[
+      #if it.numbering != none [
+        #text(
+          fill: colors.headers,
+          (if report-style and it.level == 1 {
+            "Chapter "
+          } else {
+            "§"
+          })
           + counter(heading).display()
-          + (if (report-style and it.level == 1) { "." } else { "" })
+          + (if report-style and it.level == 1 {
+            "."
+          } else {
+            ""
+          })
         )
         #h(0.2em)
       ]
+
       #it.body
-      #v(0.4em)
-    ])
+    ]
   }
 
 // ============================================================
