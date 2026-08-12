@@ -11,7 +11,7 @@ Output:
 
 from collections import defaultdict
 
-from .config import DIAGNOSTICS_DIR
+from scripts.lint.config import DIAGNOSTICS_DIR
 
 
 # ============================================================

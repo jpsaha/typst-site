@@ -52,9 +52,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 
-from scripts.metadata.config import CONTENT_DIR
+from scripts.lint.config import CONTENT_DIR
 from scripts.metadata.parser import parse_lecture
-
 
 # ============================================================
 # Metadata rules
