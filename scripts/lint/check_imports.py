@@ -31,7 +31,7 @@ import sys
 # Project root
 # ============================================================
 
-ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 # Allow imports such as:
 #
@@ -39,8 +39,8 @@ ROOT = Path(__file__).resolve().parents[2]
 #
 # when this file is executed directly.
 
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 # ============================================================
 # Paths

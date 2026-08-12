@@ -37,7 +37,7 @@ import sys
 # Paths
 # ============================================================
 
-ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 # ============================================================
@@ -46,12 +46,13 @@ ROOT = Path(__file__).resolve().parents[2]
 
 # When this file is executed directly, Python places
 # scripts/lint/ on sys.path rather than the project root.
-# Add ROOT so that scripts.metadata can be imported.
+# Add PROJECT_ROOT so that scripts.metadata can be imported.
 
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 
+from scripts.config import ROOT
 from scripts.config import CONTENT_DIR
 from scripts.metadata.parser import parse_lecture
 
