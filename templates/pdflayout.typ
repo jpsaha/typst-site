@@ -554,6 +554,20 @@ Old version of boxed.
     set block(spacing: 2em)
 
     // DEBUG TITLE
+    set par(justify: false)
+
+    block[
+      #set align(center)
+      #set text(
+        size: 2.5em,
+        font: fonts.sans,
+        weight: "bold",
+      )
+
+      #text[
+        THIS IS A DEBUG TITLE, second 
+      ]
+    ]
     box(
       text(
         fill: colors.title,
