@@ -519,7 +519,7 @@ Old version of boxed.
 // BEGIN: Later addition/modification
 // ============================================================
 
-  show heading: set text(font:fonts.sans, size: headsize)
+  // show heading: set text(font:fonts.sans, size: headsize)
   show heading.where(level: 1): set text(size: headsize + 3pt)
   show heading.where(level: 2): set text(size: headsize + 1pt)
 
