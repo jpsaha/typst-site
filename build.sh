@@ -172,6 +172,9 @@ validate_imports() {
 
 # ============================================================
 # 5. Initialize dist
+#
+# Initialize the output directories, copy assets, and verify
+# that the generated homepage metadata is available.
 # ============================================================
 
 prepare_dist() {
@@ -188,7 +191,7 @@ prepare_dist() {
         "$ASSETS_DIR/images"
 
     # ============================================================
-    # 6. Copy assets
+    # Copy assets
     # ============================================================
 
     if [ -f "assets/css/style.css" ]; then
@@ -206,7 +209,7 @@ prepare_dist() {
     fi
 
     # ============================================================
-    # 7. Check generated metadata
+    # Check generated metadata
     # ============================================================
 
     if [ ! -f "$HOMEPAGE_JSON" ]; then
@@ -217,7 +220,7 @@ prepare_dist() {
 }
 
 # ============================================================
-# 8. Generate homepage and compile pages
+# 6. Generate homepage and compile pages
 # ============================================================
 
 build_html() {
@@ -233,7 +236,7 @@ build_html() {
 }
 
 # ============================================================
-# 9. Build category books
+# 7. Build category books
 # ============================================================
 
 build_categories() {
@@ -267,7 +270,7 @@ build_categories() {
 }
 
 # ============================================================
-# 10. Build complete course PDF
+# 8. Build complete course PDF
 # ============================================================
 
 build_book() {
@@ -287,7 +290,7 @@ build_book() {
 }
 
 # ============================================================
-# 11. Build complete pages PDF
+# 9. Build complete pages PDF
 # ============================================================
 
 build_pages_pdf() {
@@ -307,7 +310,7 @@ build_pages_pdf() {
 }
 
 # ============================================================
-# 12. Check links
+# 10. Check links
 # ============================================================
 
 validate_links() {
@@ -327,7 +330,7 @@ validate_links() {
 }
 
 # ============================================================
-# 13. Build diagnostics summary
+# 11. Build diagnostics summary
 #
 # The individual reports are still produced at their normal
 # stages above. This final section gives a compact overview
@@ -472,7 +475,7 @@ print_summary() {
 }
 
 # ============================================================
-# Build
+# 12. Build
 #
 # Run each build stage in dependency order.
 # ============================================================
