@@ -13,8 +13,6 @@
 //   exercise, problem, solution, proof
 // )
 
-#show heading: set par(justify: false)
-
 #let headsize = 15pt; //20pt // 11pt
 #let thmarglevel = 1; // 0 for no indentation, 1 for indentation
 
