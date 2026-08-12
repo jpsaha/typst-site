@@ -3,22 +3,13 @@
 """
 Check consistency between source metadata and generated Typst files.
 
-Checks:
+The actual checking logic is implemented in:
 
-1. Scans content/**/*.typ wrapper files.
-2. Ignores *_content.typ files.
-3. Parses source metadata using the normal metadata parser.
-4. Verifies generated/lectures.typ contains every lecture.
-5. Verifies generated/pages.typ contains every page.
-6. Verifies generated/pages_meta.typ contains every page.
-7. Verifies generated category books match current categories.
-8. Detects stale generated category books.
-9. Detects missing generated files.
-10. Returns non-zero when generated output is inconsistent.
+    scripts/generated/
 
-This checker does NOT regenerate anything.
+This script is the command-line entry point.
 
-Use:
+Usage:
 
     python3 scripts/lint/check_generated.py
 
@@ -28,9 +19,43 @@ Exit status:
     1   inconsistencies were found
 """
 
-from pathlib import Path
-import re
 import sys
+
+# ============================================================
+# Project root
+# ============================================================
+
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+
+# Allow imports such as:
+#
+#     from scripts.generated.source import ...
+#
+# when this file is executed directly.
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+
+# ============================================================
+# Generated consistency checks
+# ============================================================
+
+from scripts.generated.source import (
+    discover_source_metadata,
+)
+
+from scripts.generated.checks import (
+    check_lectures,
+    check_pages,
+    check_category_books,
+)
+
+from scripts.generated.report import (
+    display_path,
+)
 
 
 # ============================================================
