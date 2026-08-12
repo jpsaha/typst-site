@@ -491,3 +491,14 @@ build_book
 build_pages_pdf
 validate_links
 print_summary
+
+# ============================================================
+# 13. Cleanup
+# ============================================================
+
+echo
+echo "🧹 Cleaning Python bytecode..."
+
+find scripts -type d -name "__pycache__" -prune -exec rm -rf {} +
+
+echo "✓ Python bytecode removed."
