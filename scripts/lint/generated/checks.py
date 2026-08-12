@@ -1,5 +1,5 @@
 import re
-from scripts.lint.config import (
+from scripts.config import (
     CONTENT_DIR,
     LECTURES_TYP,
     PAGES_TYP,

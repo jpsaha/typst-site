@@ -57,7 +57,7 @@ if str(ROOT) not in sys.path:
 # Paths
 # ============================================================
 
-from scripts.lint.config import (
+from scripts.config import (
     CONTENT_DIR,
     GENERATED_DIR,
     TEMPLATES_DIR,

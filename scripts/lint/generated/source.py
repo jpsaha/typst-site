@@ -1,4 +1,4 @@
-from scripts.lint.config import CONTENT_DIR
+from scripts.config import CONTENT_DIR
 from scripts.metadata.parser import parse_lecture
 
 # ============================================================

@@ -1,4 +1,4 @@
-from scripts.lint.config import ROOT
+from scripts.config import ROOT
 
 # ============================================================
 # Path formatting

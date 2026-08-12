@@ -3,7 +3,7 @@
 # Project paths
 # ============================================================
 
-from scripts.lint.config import GENERATED_DIR
+from scripts.config import GENERATED_DIR
 
 # ============================================================
 # Generated files
