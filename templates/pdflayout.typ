@@ -3,7 +3,7 @@
 #import "theorems.typ": *
 #import "@preview/euler-math:0.1.0": *
 // Apply the typography rule to the whole document
-#show: setup-typography
+// #show: setup-typography
 // #import "templates/eul/styles/colors.typ" : neo-blue-sec
 // #import "templates/eul/styles/typography.typ": setup-typography
 // #import "templates/eul/styles/headings.typ": setup-headings
@@ -341,7 +341,7 @@ Old version of boxed.
   body
 ) = {
   // B. Apply theme
-  show: setup-typography // Uncommenting this line will apply the typography setup from eul/styles/typography.typ (turnings toc chapter, sec color to blue). An effect of uncommenting this line is that the Table of Contents will not show the #part[] stuff if eul/styles/typography.typ has `show outline.entry.where(level: 1)` in line no 16. Now this level has been set to 2.
+  // show: setup-typography // Uncommenting this line will apply the typography setup from eul/styles/typography.typ (turnings toc chapter, sec color to blue). An effect of uncommenting this line is that the Table of Contents will not show the #part[] stuff if eul/styles/typography.typ has `show outline.entry.where(level: 1)` in line no 16. Now this level has been set to 2.
   // show: setup-headings
   // show: setup-page
   // show: setup-theorems
