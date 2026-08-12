@@ -43,17 +43,17 @@ if str(ROOT) not in sys.path:
 # Generated consistency checks
 # ============================================================
 
-from scripts.generated.source import (
+from scripts.lint.generated.source import (
     discover_source_metadata,
 )
 
-from scripts.generated.checks import (
+from scripts.lint.generated.checks import (
     check_lectures,
     check_pages,
     check_category_books,
 )
 
-from scripts.generated.report import (
+from scripts.lint.generated.report import (
     display_path,
 )
 
