@@ -425,7 +425,7 @@ Old version of boxed.
       amount: 0.85em,
       all: false,
     ),
-    justify: true,
+    justify: false,
     spacing: 0.75em
     
   )
