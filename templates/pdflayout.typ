@@ -556,6 +556,10 @@ Old version of boxed.
     // DEBUG TITLE
     set par(justify: false)
 
+    text(
+      font: "Libertinus Serif",
+      size: 25pt,
+    )[THIS IS A DEBUG TITLE- libe serif]
     block[
       #set align(center)
       #set text(
