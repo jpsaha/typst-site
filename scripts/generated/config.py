@@ -1,8 +1,6 @@
-
 from pathlib import Path
 import re
 import sys
-
 
 # ============================================================
 # Project root
@@ -27,14 +25,8 @@ if str(ROOT) not in sys.path:
 # ============================================================
 
 from scripts.metadata.config import (
-    CONTENT_DIR,
     GENERATED_DIR,
 )
-
-from scripts.metadata.parser import (
-    parse_lecture,
-)
-
 
 # ============================================================
 # Paths

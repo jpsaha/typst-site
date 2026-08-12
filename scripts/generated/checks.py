@@ -1,6 +1,5 @@
 import re
 from scripts.metadata.config import CONTENT_DIR
-from scripts.metadata.parser import parse_lecture
 from .config import (
     GENERATED_DIR,
     LECTURES_TYP,
