@@ -557,6 +557,23 @@ Old version of boxed.
     set par(justify: false)
 
     text(
+      font: "Noto Sans",
+      size: 25pt,
+      weight: "bold",
+    )[THIS IS NOTO SANS]
+
+    text(
+      font: "Noto Sans CJK TC",
+      size: 25pt,
+      weight: "bold",
+    )[THIS IS NOTO CJK]
+
+    text(
+      font: "Noto Color Emoji",
+      size: 25pt,
+    )[THIS IS EMOJI]
+
+    text(
       font: "Libertinus Serif",
       size: 25pt,
     )[THIS IS A DEBUG TITLE- libe serif]
