@@ -498,10 +498,6 @@ Old version of boxed.
                 "§"
               }
             )
-            // + context {
-            //   let nums = counter(heading).at(it.location())
-            //   numbering("1.1", ..nums)
-            // }
             + counter(heading).display()
             + (
               if report-style and it.level == 1 {
@@ -556,6 +552,7 @@ Old version of boxed.
     v(2.5em)
     set align(center)
     set block(spacing: 2em)
+    set par(justify: false)
     block(text(fill:colors.title, size:2.5em, font:fonts.sans, weight:"bold", title))
     if (subtitle != none) {
       block(text(size:2em, font:fonts.sans, weight:"bold", subtitle))
