@@ -1,3 +1,5 @@
+# Refactored `build.sh`
+
 #!/usr/bin/env bash
 
 set -euo pipefail
@@ -95,43 +97,52 @@ stage_end() {
 # 1. Generate metadata
 # ============================================================
 
-echo "📋 Generating metadata..."
+generate_metadata() {
 
-stage_start
+    echo "📋 Generating metadata..."
 
-python3 scripts/build/generate_metadata.py
+    stage_start
 
-stage_end TIME_METADATA
+    python3 scripts/build/generate_metadata.py
+
+    stage_end TIME_METADATA
+}
 
 # ============================================================
 # 2. Check source metadata
 # ============================================================
 
-echo
-echo "🔗 Checking source metadata..."
+validate_metadata() {
 
-stage_start
+    echo
+    echo "🔗 Checking source metadata..."
 
-if ! python3 scripts/lint/check_metadata.py; then
-    die "metadata validation failed."
-fi
+    stage_start
 
-stage_end TIME_METADATA_CHECK
+    if ! python3 scripts/lint/check_metadata.py; then
+        die "metadata validation failed."
+    fi
+
+    stage_end TIME_METADATA_CHECK
+}
 
 # ============================================================
 # 3. Check generated files
 # ============================================================
 
-echo
-echo "🔗 Checking generated files..."
+validate_generated() {
 
-stage_start
+    echo
+    echo "🔗 Checking generated files..."
 
-if ! python3 scripts/lint/check_generated.py; then
-    die "generated consistency check failed."
-fi
+    stage_start
 
-stage_end TIME_GENERATED_CHECK
+    if ! python3 scripts/lint/check_generated.py; then
+        die "generated consistency check failed."
+    fi
+
+    stage_end TIME_GENERATED_CHECK
+}
 
 # ============================================================
 # 4. Check Typst imports
@@ -145,154 +156,175 @@ stage_end TIME_GENERATED_CHECK
 #
 # ============================================================
 
-echo
-echo "🔗 Checking Typst imports..."
+validate_imports() {
 
-stage_start
+    echo
+    echo "🔗 Checking Typst imports..."
 
-if ! python3 scripts/lint/check_imports.py; then
-    die "Typst import validation failed."
-fi
+    stage_start
 
-stage_end TIME_IMPORT_CHECK
+    if ! python3 scripts/lint/check_imports.py; then
+        die "Typst import validation failed."
+    fi
+
+    stage_end TIME_IMPORT_CHECK
+}
 
 # ============================================================
 # 5. Initialize dist
 # ============================================================
 
-echo "📁 Preparing dist/..."
+prepare_dist() {
 
-rm -rf "$PAGES_DIR" "$PDF_DIR" "$ASSETS_DIR"
+    echo "📁 Preparing dist/..."
 
-mkdir -p \
-    "$PAGES_DIR" \
-    "$PDF_DIR" \
-    "$ASSETS_DIR/css" \
-    "$ASSETS_DIR/js" \
-    "$ASSETS_DIR/images"
+    rm -rf "$PAGES_DIR" "$PDF_DIR" "$ASSETS_DIR"
 
-# ============================================================
-# 6. Copy assets
-# ============================================================
+    mkdir -p \
+        "$PAGES_DIR" \
+        "$PDF_DIR" \
+        "$ASSETS_DIR/css" \
+        "$ASSETS_DIR/js" \
+        "$ASSETS_DIR/images"
 
-if [ -f "assets/css/style.css" ]; then
+    # ============================================================
+    # 6. Copy assets
+    # ============================================================
 
-    cp \
-        assets/css/style.css \
-        "$ASSETS_DIR/css/style.css"
+    if [ -f "assets/css/style.css" ]; then
 
-    echo "📋 Copied style.css"
+        cp \
+            assets/css/style.css \
+            "$ASSETS_DIR/css/style.css"
 
-else
+        echo "📋 Copied style.css"
 
-    echo "⚠️ Warning: assets/css/style.css not found"
+    else
 
-fi
+        echo "⚠️ Warning: assets/css/style.css not found"
 
-# ============================================================
-# 7. Check generated metadata
-# ============================================================
+    fi
 
-if [ ! -f "$HOMEPAGE_JSON" ]; then
+    # ============================================================
+    # 7. Check generated metadata
+    # ============================================================
 
-    die "Missing $HOMEPAGE_JSON"
+    if [ ! -f "$HOMEPAGE_JSON" ]; then
 
-fi
+        die "Missing $HOMEPAGE_JSON"
+
+    fi
+}
 
 # ============================================================
 # 8. Generate homepage and compile pages
 # ============================================================
 
-echo
-echo "🌐 Building course pages..."
+build_html() {
 
-stage_start
+    echo
+    echo "🌐 Building course pages..."
 
-python3 scripts/build/build_pages.py
+    stage_start
 
-stage_end TIME_HTML
+    python3 scripts/build/build_pages.py
+
+    stage_end TIME_HTML
+}
 
 # ============================================================
 # 9. Build category books
 # ============================================================
 
-echo
-echo "📚 Building category books..."
+build_categories() {
 
-stage_start
+    echo
+    echo "📚 Building category books..."
 
-for CATEGORY_SOURCE in generated/category_*.typ; do
+    stage_start
 
-    # If no category files exist, skip the loop.
-    [ -e "$CATEGORY_SOURCE" ] || continue
+    for CATEGORY_SOURCE in generated/category_*.typ; do
 
-    CATEGORY_NAME="$(basename "$CATEGORY_SOURCE" .typ)"
+        # If no category files exist, skip the loop.
+        [ -e "$CATEGORY_SOURCE" ] || continue
 
-    echo "  📖 Building $CATEGORY_NAME..."
+        CATEGORY_NAME="$(basename "$CATEGORY_SOURCE" .typ)"
 
-    typst compile \
-        --root . \
-        "$CATEGORY_SOURCE" \
-        "$PDF_DIR/${CATEGORY_NAME}.pdf" \
-        --input format=pdf
+        echo "  📖 Building $CATEGORY_NAME..."
 
-    # Count successfully compiled category books.
-    CATEGORY_COUNT=$((CATEGORY_COUNT + 1))
+        typst compile \
+            --root . \
+            "$CATEGORY_SOURCE" \
+            "$PDF_DIR/${CATEGORY_NAME}.pdf" \
+            --input format=pdf
 
-done
+        # Count successfully compiled category books.
+        CATEGORY_COUNT=$((CATEGORY_COUNT + 1))
 
-stage_end TIME_CATEGORIES
+    done
+
+    stage_end TIME_CATEGORIES
+}
 
 # ============================================================
 # 10. Build complete course PDF
 # ============================================================
 
-echo
-echo "📚 Building complete course book..."
+build_book() {
 
-stage_start
+    echo
+    echo "📚 Building complete course book..."
 
-typst compile \
-    --root . \
-    book_source.typ \
-    "$PDF_DIR/book.pdf" \
-    --input format=pdf
+    stage_start
 
-stage_end TIME_BOOK
+    typst compile \
+        --root . \
+        book_source.typ \
+        "$PDF_DIR/book.pdf" \
+        --input format=pdf
+
+    stage_end TIME_BOOK
+}
 
 # ============================================================
 # 11. Build complete pages PDF
 # ============================================================
 
-echo
-echo "📚 Building complete pages.pdf..."
+build_pages_pdf() {
 
-stage_start
+    echo
+    echo "📚 Building complete pages.pdf..."
 
-typst compile \
-    --root . \
-    pages_source.typ \
-    "$PDF_DIR/pages.pdf" \
-    --input format=pdf
+    stage_start
 
-stage_end TIME_PAGES
+    typst compile \
+        --root . \
+        pages_source.typ \
+        "$PDF_DIR/pages.pdf" \
+        --input format=pdf
+
+    stage_end TIME_PAGES
+}
 
 # ============================================================
 # 12. Check links
 # ============================================================
 
-echo
-echo "🔗 Checking links..."
+validate_links() {
 
-stage_start
+    echo
+    echo "🔗 Checking links..."
 
-if ! python3 scripts/lint/check_links.py; then
+    stage_start
 
-    die "broken links detected."
+    if ! python3 scripts/lint/check_links.py; then
 
-fi
+        die "broken links detected."
 
-stage_end TIME_LINKS
+    fi
+
+    stage_end TIME_LINKS
+}
 
 # ============================================================
 # 13. Build diagnostics summary
@@ -305,133 +337,154 @@ stage_end TIME_LINKS
 # NOT executed again.
 # ============================================================
 
-BUILD_END=$(date +%s)
-BUILD_TIME=$((BUILD_END - BUILD_START))
+print_summary() {
 
-PAGE_COUNT=$(find "$PAGES_DIR" -type f -name "*.html" | wc -l | tr -d ' ')
-PDF_COUNT=$(find "$PDF_DIR" -type f -name "*.pdf" | wc -l | tr -d ' ')
+    BUILD_END=$(date +%s)
+    BUILD_TIME=$((BUILD_END - BUILD_START))
 
-echo
-echo "=============================================="
-echo "📊 Build diagnostics summary"
-echo "=============================================="
-
-# ------------------------------------------------------------
-# Metadata report
-# ------------------------------------------------------------
-
-if [ -f "$METADATA_REPORT" ]; then
+    PAGE_COUNT=$(find "$PAGES_DIR" -type f -name "*.html" | wc -l | tr -d ' ')
+    PDF_COUNT=$(find "$PDF_DIR" -type f -name "*.pdf" | wc -l | tr -d ' ')
 
     echo
-    echo "## 📋 Metadata"
+    echo "=============================================="
+    echo "📊 Build diagnostics summary"
+    echo "=============================================="
+
+    # ------------------------------------------------------------
+    # Metadata report
+    # ------------------------------------------------------------
+
+    if [ -f "$METADATA_REPORT" ]; then
+
+        echo
+        echo "## 📋 Metadata"
+        echo
+
+        grep -E \
+            '^(Total items|Lectures[[:space:]]*:|Pages[[:space:]]*:|Categories[[:space:]]*:)' \
+            "$METADATA_REPORT" \
+            || true
+
+        echo "Report      : $METADATA_REPORT"
+
+    else
+
+        echo
+        echo "## 📋 Metadata"
+        echo
+        echo "Metadata report not found"
+    fi
+
+    # ------------------------------------------------------------
+    # Link report
+    # ------------------------------------------------------------
+
+    if [ -f "$LINK_REPORT" ]; then
+
+        echo
+        echo "## 🔗 Links"
+        echo
+
+        grep -E \
+            '^(Links checked|Broken links|Working links)' \
+            "$LINK_REPORT" \
+            || true
+
+        echo "Report      : $LINK_REPORT"
+
+    else
+
+        echo
+        echo "## 🔗 Links"
+        echo
+        echo "Link report not found"
+    fi
+
+    # ------------------------------------------------------------
+    # Build statistics
+    # ------------------------------------------------------------
+
     echo
+    echo "## 📦 Build"
+    echo
+    echo "🌐 HTML pages:      $PAGE_COUNT"
+    echo "📚 Category books:  $CATEGORY_COUNT"
+    echo "📄 PDF files:       $PDF_COUNT"
+    echo "⏱ Build time:       ${BUILD_TIME}s"
 
-    grep -E \
-        '^(Total items|Lectures[[:space:]]*:|Pages[[:space:]]*:|Categories[[:space:]]*:)' \
-        "$METADATA_REPORT" \
-        || true
-
-    echo "Report      : $METADATA_REPORT"
-
-else
+    # ------------------------------------------------------------
+    # Build timing
+    #
+    # Shows how much time was spent in each major stage.
+    # ------------------------------------------------------------
 
     echo
-    echo "## 📋 Metadata"
+    echo "## ⏱ Build timing"
     echo
-    echo "Metadata report not found"
-fi
+    printf "Metadata generation       %6ss\n" "$TIME_METADATA"
+    printf "Metadata validation       %6ss\n" "$TIME_METADATA_CHECK"
+    printf "Generated validation      %6ss\n" "$TIME_GENERATED_CHECK"
+    printf "Typst import validation   %6ss\n" "$TIME_IMPORT_CHECK"
+    printf "HTML pages                %6ss\n" "$TIME_HTML"
+    printf "Category PDFs             %6ss\n" "$TIME_CATEGORIES"
+    printf "Book PDF                  %6ss\n" "$TIME_BOOK"
+    printf "Pages PDF                 %6ss\n" "$TIME_PAGES"
+    printf "Link checking             %6ss\n" "$TIME_LINKS"
+    printf "Total                     %6ss\n" "$BUILD_TIME"
 
-# ------------------------------------------------------------
-# Link report
-# ------------------------------------------------------------
+    # ------------------------------------------------------------
+    # Compact one-line summary
+    #
+    # Extract the link count from the link report so that the
+    # final line gives the most useful overall build statistics.
+    # ------------------------------------------------------------
 
-if [ -f "$LINK_REPORT" ]; then
+    LINK_COUNT=0
+    BROKEN_COUNT=0
+
+    if [ -f "$LINK_REPORT" ]; then
+
+        LINK_COUNT=$(
+            grep '^Links checked' "$LINK_REPORT" |
+            awk -F: '{gsub(/[[:space:]]/, "", $2); print $2}'
+        )
+
+        BROKEN_COUNT=$(
+            grep '^Broken links' "$LINK_REPORT" |
+            awk -F: '{gsub(/[[:space:]]/, "", $2); print $2}'
+        )
+
+        LINK_COUNT=${LINK_COUNT:-0}
+        BROKEN_COUNT=${BROKEN_COUNT:-0}
+    fi
 
     echo
-    echo "## 🔗 Links"
-    echo
+    echo "$PAGE_COUNT HTML · $PDF_COUNT PDFs · $CATEGORY_COUNT categories · $LINK_COUNT links · $BROKEN_COUNT broken"
 
-    grep -E \
-        '^(Links checked|Broken links|Working links)' \
-        "$LINK_REPORT" \
-        || true
-
-    echo "Report      : $LINK_REPORT"
-
-else
+    # ------------------------------------------------------------
+    # Final status
+    # ------------------------------------------------------------
 
     echo
-    echo "## 🔗 Links"
-    echo
-    echo "Link report not found"
-fi
+    echo "=============================================="
+    echo "✅ Build completed successfully in ${BUILD_TIME}s"
+    echo "=============================================="
+}
 
-# ------------------------------------------------------------
-# Build statistics
-# ------------------------------------------------------------
-
-echo
-echo "## 📦 Build"
-echo
-echo "🌐 HTML pages:      $PAGE_COUNT"
-echo "📚 Category books:  $CATEGORY_COUNT"
-echo "📄 PDF files:       $PDF_COUNT"
-echo "⏱ Build time:       ${BUILD_TIME}s"
-
-# ------------------------------------------------------------
-# Build timing
+# ============================================================
+# Build
 #
-# Shows how much time was spent in each major stage.
-# ------------------------------------------------------------
+# Run each build stage in dependency order.
+# ============================================================
 
-echo
-echo "## ⏱ Build timing"
-echo
-printf "Metadata generation       %6ss\n" "$TIME_METADATA"
-printf "Metadata validation       %6ss\n" "$TIME_METADATA_CHECK"
-printf "Generated validation      %6ss\n" "$TIME_GENERATED_CHECK"
-printf "Typst import validation   %6ss\n" "$TIME_IMPORT_CHECK"
-printf "HTML pages                %6ss\n" "$TIME_HTML"
-printf "Category PDFs             %6ss\n" "$TIME_CATEGORIES"
-printf "Book PDF                  %6ss\n" "$TIME_BOOK"
-printf "Pages PDF                 %6ss\n" "$TIME_PAGES"
-printf "Link checking             %6ss\n" "$TIME_LINKS"
-printf "Total                     %6ss\n" "$BUILD_TIME"
-
-# ------------------------------------------------------------
-# Compact one-line summary
-#
-# Extract the link count from the link report so that the
-# final line gives the most useful overall build statistics.
-# ------------------------------------------------------------
-
-LINK_COUNT=0
-BROKEN_COUNT=0
-
-if [ -f "$LINK_REPORT" ]; then
-
-    LINK_COUNT=$(
-        grep '^Links checked' "$LINK_REPORT" |
-        awk -F: '{gsub(/[[:space:]]/, "", $2); print $2}'
-    )
-
-    BROKEN_COUNT=$(
-        grep '^Broken links' "$LINK_REPORT" |
-        awk -F: '{gsub(/[[:space:]]/, "", $2); print $2}'
-    )
-
-    LINK_COUNT=${LINK_COUNT:-0}
-    BROKEN_COUNT=${BROKEN_COUNT:-0}
-fi
-
-echo
-echo "$PAGE_COUNT HTML · $PDF_COUNT PDFs · $CATEGORY_COUNT categories · $LINK_COUNT links · $BROKEN_COUNT broken"
-
-# ------------------------------------------------------------
-# Final status
-# ------------------------------------------------------------
-
-echo
-echo "=============================================="
-echo "✅ Build completed successfully in ${BUILD_TIME}s"
-echo "=============================================="
+generate_metadata
+validate_metadata
+validate_generated
+validate_imports
+prepare_dist
+build_html
+build_categories
+build_book
+build_pages_pdf
+validate_links
+print_summary
