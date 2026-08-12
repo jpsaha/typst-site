@@ -33,7 +33,7 @@
   doc
 }
 
-#page-header(lecture)
+#page-header(lecture, chap: true)
 
 #include "lec1_content.typ"
 

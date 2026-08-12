@@ -30,7 +30,7 @@
   doc
 }
 
-#page-header(lecture)
+#page-header(lecture, chap: true)
 
 #include "lec3_content.typ"
 

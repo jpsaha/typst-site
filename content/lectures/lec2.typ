@@ -29,7 +29,7 @@
   doc
 }
 
-#page-header(lecture)
+#page-header(lecture, chap: true)
 
 #include "lec2_content.typ"
 
