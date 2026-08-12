@@ -25,6 +25,7 @@ BOOK_SOURCE = ROOT / "book_source.typ"
 PAGES_SOURCE = ROOT / "pages_source.typ"
 PDFLAYOUT = ROOT / "pdflayout.typ"
 
+DOT = DIAGNOSTICS_DIR / "imports.dot"
 
 # ============================================================
 # Generated files
