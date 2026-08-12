@@ -23,6 +23,23 @@ SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
+# ============================================================
+# Project root
+# ============================================================
+
+ROOT = Path(__file__).resolve().parents[2]
+
+# ============================================================
+# Import project metadata package
+# ============================================================
+
+# When this file is executed directly, Python places
+# scripts/build/ on sys.path rather than the project root.
+# Add ROOT so that scripts.metadata can be imported.
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 # ------------------------------------------------------------
 # Import metadata modules
 # ------------------------------------------------------------

@@ -39,26 +39,47 @@ from imports.report import (
 )
 
 # ============================================================
+# Project root
+# ============================================================
+
+ROOT = Path(__file__).resolve().parents[2]
+
+# Allow imports such as:
+#
+#     from scripts.generated.source import ...
+#
+# when this file is executed directly.
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+# ============================================================
 # Paths
 # ============================================================
 
-from imports.config import ROOT
-
+from scripts.lint.config import (
+    CONTENT_DIR,
+    GENERATED_DIR,
+    TEMPLATES_DIR,
+    BOOK_SOURCE,
+    PAGES_SOURCE,
+    PDFLAYOUT,
+)
 
 # ============================================================
 # Configuration
 # ============================================================
 
 TYPST_DIRS = (
-    ROOT / "content",
-    ROOT / "templates",
-    ROOT / "generated",
+    CONTENT_DIR,
+    TEMPLATES_DIR,
+    GENERATED_DIR,
 )
 
 TYPST_FILES = (
-    ROOT / "book_source.typ",
-    ROOT / "pages_source.typ",
-    ROOT / "pdflayout.typ",
+    BOOK_SOURCE,
+    PAGES_SOURCE,
+    PDFLAYOUT,
 )
 
 # ============================================================
