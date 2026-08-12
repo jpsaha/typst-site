@@ -1,7 +1,7 @@
-from pathlib import Path
+from scripts.config import (
+    ROOT,
+    DIAGNOSTICS_DIR,
+)
 
-ROOT = Path(__file__).resolve().parents[3]
-
-DIAGNOSTICS = ROOT / "diagnostics"
-
+DIAGNOSTICS = DIAGNOSTICS_DIR
 DOT = DIAGNOSTICS / "imports.dot"
