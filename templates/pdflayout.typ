@@ -484,6 +484,8 @@ Old version of boxed.
   // show heading.where(level: 1): set text(size: headsize + 3pt)
   // show heading.where(level: 2): set text(size: headsize + 1pt)
 
+  set heading(numbering: "1.1")
+
   show heading: it => {
     block(
       above: 0.8em,
@@ -492,29 +494,30 @@ Old version of boxed.
     )[
       #set par(justify: false)
 
-      #if it.numbering != none [
-        #text(
-          fill: colors.headers,
-          (
-            if report-style and it.level == 1 {
-              "Chapter "
-            } else {
-              "§"
-            }
+      #box[
+        #if it.numbering != none [
+          #text(
+            fill: colors.headers,
+            (
+              if report-style and it.level == 1 {
+                "Chapter "
+              } else {
+                "§"
+              }
+            )
+            + counter(heading).display()
+            + (
+              if report-style and it.level == 1 {
+                "."
+              } else {
+                ""
+              }
+            )
           )
-          + counter(heading).display()
-          + (
-            if report-style and it.level == 1 {
-              "."
-            } else {
-              ""
-            }
-          )
-        )
-        #h(0.2em)
+          #h(0.2em)
+        ]
+        #it.body
       ]
-
-      #it.body
     ]
   }
 
