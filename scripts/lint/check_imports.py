@@ -27,17 +27,6 @@ Exit status:
 from pathlib import Path
 import sys
 
-from imports.graph import build_graph, find_cycles
-from imports.report import (
-    print_dependency_tree,
-    print_missing,
-    print_unreadable,
-    print_cycles,
-    print_roots,
-    print_leaves,
-    write_graphviz,
-)
-
 # ============================================================
 # Project root
 # ============================================================
@@ -64,6 +53,17 @@ from scripts.config import (
     BOOK_SOURCE,
     PAGES_SOURCE,
     PDFLAYOUT,
+)
+
+from imports.graph import build_graph, find_cycles
+from imports.report import (
+    print_dependency_tree,
+    print_missing,
+    print_unreadable,
+    print_cycles,
+    print_roots,
+    print_leaves,
+    write_graphviz,
 )
 
 # ============================================================
