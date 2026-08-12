@@ -554,6 +554,15 @@ Old version of boxed.
     set block(spacing: 2em)
 
     // DEBUG TITLE
+    box(
+      text(
+        fill: colors.title,
+        size: 2.5em,
+        font: fonts.sans,
+        weight: "bold",
+      )[THIS IS A DEBUG box TITLE]
+    )
+
     block(
       text(
         size: 2.5em,
