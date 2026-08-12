@@ -460,29 +460,24 @@ Old version of boxed.
   set list(indent: 1em)
 
   // Section headers
+  // 
+  // set heading(numbering: "1.1")
+  // show heading: it => {
+  //   block([
+  //     #if (it.numbering != none) [
+  //       #text(fill:colors.headers,
+  //         (if (report-style and it.level == 1) { "Chapter " } else { "§" })
+  //         + counter(heading).display()
+  //         + (if (report-style and it.level == 1) { "." } else { "" })
+  //       )
+  //       #h(0.2em)
+  //     ]
+  //     #it.body
+  //     #v(0.4em)
+  //   ])
+  // }
+
   set heading(numbering: "1.1")
-  show heading: it => {
-    block([
-      #if (it.numbering != none) [
-        #text(fill:colors.headers,
-          (if (report-style and it.level == 1) { "Chapter " } else { "§" })
-          + counter(heading).display()
-          + (if (report-style and it.level == 1) { "." } else { "" })
-        )
-        #h(0.2em)
-      ]
-      #it.body
-      #v(0.4em)
-    ])
-  }
-
-// ============================================================
-// BEGIN: Later addition/modification
-// ============================================================
-
-  // show heading: set text(font:fonts.sans, size: headsize)
-  // show heading.where(level: 1): set text(size: headsize + 3pt)
-  // show heading.where(level: 2): set text(size: headsize + 1pt)
 
   show heading: it => {
     block(
@@ -515,9 +510,18 @@ Old version of boxed.
           #h(0.2em)
         ]
         #it.body
+        #v(0.4em)
       ]
     ]
   }
+
+// ============================================================
+// BEGIN: Later addition/modification
+// ============================================================
+
+  show heading: set text(font:fonts.sans, size: headsize)
+  show heading.where(level: 1): set text(size: headsize + 3pt)
+  show heading.where(level: 2): set text(size: headsize + 1pt)
 
 // ============================================================
 // END: Later addition/modification
