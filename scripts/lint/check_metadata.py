@@ -32,26 +32,6 @@ Exit status:
 from pathlib import Path
 import sys
 
-
-# ============================================================
-# Paths
-# ============================================================
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-
-# ============================================================
-# Import project metadata package
-# ============================================================
-
-# When this file is executed directly, Python places
-# scripts/lint/ on sys.path rather than the project root.
-# Add PROJECT_ROOT so that scripts.metadata can be imported.
-
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-
 from scripts.config import ROOT
 from scripts.config import CONTENT_DIR
 from scripts.metadata.parser import parse_lecture

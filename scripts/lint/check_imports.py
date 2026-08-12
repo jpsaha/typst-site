@@ -24,23 +24,7 @@ Exit status:
     1   missing imports, unreadable files, or circular imports
 """
 
-from pathlib import Path
 import sys
-
-# ============================================================
-# Project root
-# ============================================================
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-# Allow imports such as:
-#
-#     from scripts.generated.source import ...
-#
-# when this file is executed directly.
-
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 # ============================================================
 # Paths
@@ -55,8 +39,8 @@ from scripts.config import (
     PDFLAYOUT,
 )
 
-from imports.graph import build_graph, find_cycles
-from imports.report import (
+from scripts.lint.imports.graph import build_graph, find_cycles
+from scripts.lint.imports.report import (
     print_dependency_tree,
     print_missing,
     print_unreadable,

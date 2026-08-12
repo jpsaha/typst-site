@@ -103,7 +103,7 @@ generate_metadata() {
 
     stage_start
 
-    python3 scripts/build/generate_metadata.py
+    python3 scripts/run.py metadata
 
     stage_end TIME_METADATA
 }
@@ -119,7 +119,7 @@ validate_metadata() {
 
     stage_start
 
-    if ! python3 scripts/lint/check_metadata.py; then
+    if ! python3 scripts/run.py metadata-check; then
         die "metadata validation failed."
     fi
 
@@ -137,7 +137,7 @@ validate_generated() {
 
     stage_start
 
-    if ! python3 scripts/lint/check_generated.py; then
+    if ! python3 scripts/run.py generated; then
         die "generated consistency check failed."
     fi
 
@@ -163,7 +163,7 @@ validate_imports() {
 
     stage_start
 
-    if ! python3 scripts/lint/check_imports.py; then
+    if ! python3 scripts/run.py imports; then
         die "Typst import validation failed."
     fi
 
@@ -230,7 +230,7 @@ build_html() {
 
     stage_start
 
-    python3 scripts/build/build_pages.py
+    python3 scripts/run.py pages
 
     stage_end TIME_HTML
 }
@@ -320,7 +320,7 @@ validate_links() {
 
     stage_start
 
-    if ! python3 scripts/lint/check_links.py; then
+    if ! python3 scripts/run.py links; then
 
         die "broken links detected."
 

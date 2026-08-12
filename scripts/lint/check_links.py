@@ -21,22 +21,6 @@ from html.parser import HTMLParser
 from urllib.parse import urlparse, unquote
 import sys
 
-# ============================================================
-# Project root
-# ============================================================
-
-# Allow imports such as:
-#
-#     from scripts.generated.source import ...
-#
-# when this file is executed directly.
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-
 from scripts.config import ROOT
 
 DIST = ROOT / "dist"
