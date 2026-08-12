@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
 
-import sys
 import subprocess
-
+import sys
 
 COMMANDS = {
+    # Generation
     "metadata": "scripts.build.generate_metadata",
+
+    # Output
+    "html": "scripts.build.build_html",
+    "book": "scripts.build.build_book",
+    "pages-pdf": "scripts.build.build_pages_pdf",
+    "categories": "scripts.build.build_categories",
+
+    # Validation
     "metadata-check": "scripts.lint.check_metadata",
     "generated": "scripts.lint.check_generated",
     "imports": "scripts.lint.check_imports",
-    "pages": "scripts.build.build_pages",
     "links": "scripts.lint.check_links",
 }
 
@@ -19,8 +26,10 @@ def main():
         print("Usage: python3 scripts/run.py <command>")
         print()
         print("Commands:")
-        for name in COMMANDS:
-            print(f"  {name}")
+
+        for command in COMMANDS:
+            print(f"  {command}")
+
         return 1
 
     module = COMMANDS[sys.argv[1]]

@@ -1,39 +1,33 @@
 #!/usr/bin/env python3
 
 """
-Build individual HTML and PDF pages from generated homepage metadata.
+Build individual HTML pages and the homepage.
 
 Reads:
-generated/homepage.json
+    generated/homepage.json
 
 Generates:
-dist/index.html
-dist/pages/*.html
-dist/pdf/*.pdf
+    dist/index.html
+    dist/pages/*.html
 
-Also adds a complete PDF download button for each category.
+Category PDF buttons are added to the homepage, but the
+category PDFs themselves are built separately.
 """
 
 import json
 import re
 import subprocess
-from pathlib import Path
 
-
-# ============================================================
-# Paths
-# ============================================================
-
-ROOT = Path(__file__).resolve().parents[2]
-
-GENERATED = ROOT / "generated"
-DIST = ROOT / "dist"
-
-HOMEPAGE_JSON = GENERATED / "homepage.json"
-INDEX_HTML = DIST / "index.html"
-
-PAGES_DIR = DIST / "pages"
-PDF_DIR = DIST / "pdf"
+from scripts.config import (
+    ROOT,
+    GENERATED_DIR,
+    DIST_DIR,
+    PAGES_DIR,
+    PDF_DIR,
+    CONTENT_DIR,
+    HOMEPAGE_JSON, 
+    INDEX_HTML,
+)
 
 
 # ============================================================
@@ -48,7 +42,7 @@ def compile_page(lecture):
     pdf = lecture["pdf"]
     source = lecture["source"]
 
-    source_path = ROOT / "content" / source
+    source_path = CONTENT_DIR / source
 
     html_path = PAGES_DIR / html
     pdf_path = PDF_DIR / pdf
@@ -63,6 +57,8 @@ def compile_page(lecture):
         [
             "typst",
             "compile",
+            "--features",
+            "html",
             "--root",
             str(ROOT),
             str(source_path),
@@ -91,9 +87,8 @@ def compile_page(lecture):
         check=True,
     )
 
-
 # ============================================================
-# Write one homepage entry
+# Homepage entry
 # ============================================================
 
 def write_homepage_entry(file, lecture):
@@ -139,8 +134,7 @@ def write_homepage_entry(file, lecture):
 
 def category_pdf_filename(category):
     """
-    Convert a category name into the same safe filename
-    convention used by write_book.py.
+    Convert a category name into the category PDF filename.
 
     Examples:
 
@@ -160,37 +154,6 @@ def category_pdf_filename(category):
     name = name.strip("_")
 
     return f"category_{name}.pdf"
-
-
-# ============================================================
-# Write category PDF button
-# ============================================================
-
-def write_category_pdf_entry(file, category):
-    """
-    Write the complete category PDF button.
-
-    This deliberately uses the existing button classes.
-    No new CSS classes are introduced.
-    """
-
-    pdf = category_pdf_filename(category)
-
-    file.write(
-        f"""
-<div class="lecture-links">
-
-    <a
-        href="pdf/{pdf}"
-        class="btn btn-pdf"
-        target="_blank"
-    >
-        📚 Download Complete PDF
-    </a>
-
-</div>
-"""
-    )
 
 
 # ============================================================
@@ -239,14 +202,6 @@ def build_homepage(categories):
         # ----------------------------------------------------
 
         for category, lectures in categories.items():
-
-            # ------------------------------------------------
-            # Category heading + complete category PDF
-            #
-            # Keep the category visually distinct from lecture
-            # rows. The inline flex layout puts the PDF button
-            # at the far right without changing the stylesheet.
-            # ------------------------------------------------
 
             index.write(
                 f"""
@@ -314,10 +269,6 @@ def build_homepage(categories):
 
 def main():
 
-    # --------------------------------------------------------
-    # Check metadata
-    # --------------------------------------------------------
-
     if not HOMEPAGE_JSON.exists():
 
         raise FileNotFoundError(
@@ -325,7 +276,7 @@ def main():
         )
 
     # --------------------------------------------------------
-    # Prepare output directories
+    # Prepare output directory
     # --------------------------------------------------------
 
     PAGES_DIR.mkdir(

@@ -230,7 +230,7 @@ build_html() {
 
     stage_start
 
-    python3 scripts/run.py pages
+    python3 scripts/run.py html
 
     stage_end TIME_HTML
 }
@@ -246,25 +246,7 @@ build_categories() {
 
     stage_start
 
-    for CATEGORY_SOURCE in generated/category_*.typ; do
-
-        # If no category files exist, skip the loop.
-        [ -e "$CATEGORY_SOURCE" ] || continue
-
-        CATEGORY_NAME="$(basename "$CATEGORY_SOURCE" .typ)"
-
-        echo "  📖 Building $CATEGORY_NAME..."
-
-        typst compile \
-            --root . \
-            "$CATEGORY_SOURCE" \
-            "$PDF_DIR/${CATEGORY_NAME}.pdf" \
-            --input format=pdf
-
-        # Count successfully compiled category books.
-        CATEGORY_COUNT=$((CATEGORY_COUNT + 1))
-
-    done
+    python3 scripts/run.py categories
 
     stage_end TIME_CATEGORIES
 }
@@ -276,15 +258,11 @@ build_categories() {
 build_book() {
 
     echo
-    echo "📚 Building complete course book..."
+    echo "📚 Building together complete course book..."
 
     stage_start
 
-    typst compile \
-        --root . \
-        book_source.typ \
-        "$PDF_DIR/book.pdf" \
-        --input format=pdf
+    python3 scripts/run.py book
 
     stage_end TIME_BOOK
 }
@@ -296,15 +274,11 @@ build_book() {
 build_pages_pdf() {
 
     echo
-    echo "📚 Building complete pages.pdf..."
+    echo "📚 Building together complete pages.pdf..."
 
     stage_start
 
-    typst compile \
-        --root . \
-        pages_source.typ \
-        "$PDF_DIR/pages.pdf" \
-        --input format=pdf
+    python3 scripts/run.py pages-pdf
 
     stage_end TIME_PAGES
 }

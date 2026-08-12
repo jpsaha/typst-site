@@ -36,3 +36,13 @@ LECTURES_TYP = GENERATED_DIR / "lectures.typ"
 PAGES_TYP = GENERATED_DIR / "pages.typ"
 
 PAGES_META_TYP = GENERATED_DIR / "pages_meta.typ"
+
+HOMEPAGE_JSON = GENERATED_DIR / "homepage.json"
+
+DIST_DIR =  ROOT / "dist"
+
+PAGES_DIR = DIST_DIR / "pages"
+PDF_DIR = DIST_DIR / "pdf"
+ASSETS_DIR = DIST_DIR / "assets"
+
+INDEX_HTML = DIST_DIR / "index.html"
