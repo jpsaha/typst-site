@@ -498,6 +498,10 @@ Old version of boxed.
                 "§"
               }
             )
+            // + context {
+            //   let nums = counter(heading).at(it.location())
+            //   numbering("1.1", ..nums)
+            // }
             + counter(heading).display()
             + (
               if report-style and it.level == 1 {
