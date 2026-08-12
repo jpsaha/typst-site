@@ -42,11 +42,7 @@ from imports.report import (
 # Paths
 # ============================================================
 
-ROOT = Path(__file__).resolve().parents[2]
-
-DIAGNOSTICS = ROOT / "diagnostics"
-
-DOT = DIAGNOSTICS / "imports.dot"
+from imports.config import ROOT
 
 
 # ============================================================

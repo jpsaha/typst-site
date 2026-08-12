@@ -1,5 +1,5 @@
 from collections import defaultdict
-from .parser import remove_comments
+from .parser import remove_comments, find_imports
 
 # ============================================================
 # Build dependency graph
@@ -67,9 +67,7 @@ def build_graph(files):
 
         text = remove_comments(text)
 
-        for match in IMPORT_RE.finditer(text):
-
-            import_path = match.group(1)
+        for import_path in find_imports(text):
 
             # ----------------------------------------------------
             # Ignore Typst package imports.
