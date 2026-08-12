@@ -1,9 +1,9 @@
 /* The following is from https://github.com/vEnhance/dotfiles/blob/main/local/share/typst/packages/local/evan/1.0.0/evan.typ with some modifications */
-#import "@preview/gentle-clues:1.3.1": *
+#import "@preview/gentle-clues:1.2.0": *
 #import "theorems.typ": *
 #import "@preview/euler-math:0.1.0": *
 // Apply the typography rule to the whole document
-// #show: setup-typography
+#show: setup-typography
 // #import "templates/eul/styles/colors.typ" : neo-blue-sec
 // #import "templates/eul/styles/typography.typ": setup-typography
 // #import "templates/eul/styles/headings.typ": setup-headings
@@ -18,7 +18,7 @@
 
 #let fonts = (
   text: ("Libertinus Serif", "Noto Serif CJK TC", "Noto Color Emoji"),
-  sans: ("Noto Sans", "Noto Sans CJK TC"),
+  sans: ("Noto Sans", "Noto Sans CJK TC", "Noto Color Emoji"),
   mono: ("Inconsolata"),
 )
 #let colors = (
@@ -341,7 +341,7 @@ Old version of boxed.
   body
 ) = {
   // B. Apply theme
-  // show: setup-typography // Uncommenting this line will apply the typography setup from eul/styles/typography.typ (turnings toc chapter, sec color to blue). An effect of uncommenting this line is that the Table of Contents will not show the #part[] stuff if eul/styles/typography.typ has `show outline.entry.where(level: 1)` in line no 16. Now this level has been set to 2.
+  show: setup-typography // Uncommenting this line will apply the typography setup from eul/styles/typography.typ (turnings toc chapter, sec color to blue). An effect of uncommenting this line is that the Table of Contents will not show the #part[] stuff if eul/styles/typography.typ has `show outline.entry.where(level: 1)` in line no 16. Now this level has been set to 2.
   // show: setup-headings
   // show: setup-page
   // show: setup-theorems
@@ -460,66 +460,27 @@ Old version of boxed.
   set list(indent: 1em)
 
   // Section headers
-  // 
-  // set heading(numbering: "1.1")
-  // show heading: it => {
-  //   block([
-  //     #if (it.numbering != none) [
-  //       #text(fill:colors.headers,
-  //         (if (report-style and it.level == 1) { "Chapter " } else { "§" })
-  //         + counter(heading).display()
-  //         + (if (report-style and it.level == 1) { "." } else { "" })
-  //       )
-  //       #h(0.2em)
-  //     ]
-  //     #it.body
-  //     #v(0.4em)
-  //   ])
-  // }
-
   set heading(numbering: "1.1")
-
   show heading: it => {
-    block(
-      above: 0.8em,
-      below: 0.4em,
-      sticky: true,
-    )[
-      #set par(justify: false)
-
-      #box[
-        #if it.numbering != none [
-          #text(
-            fill: colors.headers,
-            (
-              if report-style and it.level == 1 {
-                "Chapter "
-              } else {
-                "§"
-              }
-            )
-            + counter(heading).display()
-            + (
-              if report-style and it.level == 1 {
-                "."
-              } else {
-                ""
-              }
-            )
-          )
-          #h(0.2em)
-        ]
-        #it.body
-        #v(0.4em)
+    block([
+      #if (it.numbering != none) [
+        #text(fill:colors.headers,
+          (if (report-style and it.level == 1) { "Chapter " } else { "§" })
+          + counter(heading).display()
+          + (if (report-style and it.level == 1) { "." } else { "" })
+        )
+        #h(0.2em)
       ]
-    ]
+      #it.body
+      #v(0.4em)
+    ])
   }
 
 // ============================================================
 // BEGIN: Later addition/modification
 // ============================================================
 
-  // show heading: set text(font:fonts.sans, size: headsize)
+  show heading: set text(font:fonts.sans, size: headsize)
   show heading.where(level: 1): set text(size: headsize + 3pt)
   show heading.where(level: 2): set text(size: headsize + 1pt)
 
@@ -552,61 +513,6 @@ Old version of boxed.
     v(2.5em)
     set align(center)
     set block(spacing: 2em)
-
-    // DEBUG TITLE
-    set par(justify: false)
-
-    text(
-      font: "Noto Sans",
-      size: 25pt,
-      weight: "bold",
-    )[THIS IS NOTO SANS]
-
-    text(
-      font: "Noto Sans CJK TC",
-      size: 25pt,
-      weight: "bold",
-    )[THIS IS NOTO CJK]
-
-    text(
-      font: "Noto Color Emoji",
-      size: 25pt,
-    )[THIS IS EMOJI]
-
-    text(
-      font: "Libertinus Serif",
-      size: 25pt,
-    )[THIS IS A DEBUG TITLE- libe serif]
-    block[
-      #set align(center)
-      #set text(
-        size: 2.5em,
-        font: fonts.sans,
-        weight: "bold",
-      )
-
-      #text[
-        THIS IS A DEBUG TITLE, second 
-      ]
-    ]
-    box(
-      text(
-        fill: colors.title,
-        size: 2.5em,
-        font: fonts.sans,
-        weight: "bold",
-      )[THIS IS A DEBUG box TITLE]
-    )
-
-    block(
-      text(
-        size: 2.5em,
-        font: fonts.sans,
-        weight: "bold",
-        fill: red,
-      )[THIS IS A DEBUG TITLE]
-    )
-
     block(text(fill:colors.title, size:2.5em, font:fonts.sans, weight:"bold", title))
     if (subtitle != none) {
       block(text(size:2em, font:fonts.sans, weight:"bold", subtitle))
