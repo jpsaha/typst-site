@@ -498,7 +498,7 @@ Old version of boxed.
                 "§"
               }
             )
-            + counter(heading).display()
+            + context counter(heading).at(it.location()).display()
             + (
               if report-style and it.level == 1 {
                 "."
