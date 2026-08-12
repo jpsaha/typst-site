@@ -484,8 +484,6 @@ Old version of boxed.
   // show heading.where(level: 1): set text(size: headsize + 3pt)
   // show heading.where(level: 2): set text(size: headsize + 1pt)
 
-  set heading(numbering: "1.1")
-
   show heading: it => {
     block(
       above: 0.8em,
