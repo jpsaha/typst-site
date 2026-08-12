@@ -81,6 +81,11 @@ body {
     font-size: 1.1em;
     margin-bottom: 8px;
 }
+
+.math-card-body {
+display: block;
+}
+
 .theorem .math-card-title { color: var(--theorem-stroke); }
 .definition .math-card-title { color: var(--definition-stroke); }
 .exercise .math-card-title { color: var(--exercise-stroke); }
