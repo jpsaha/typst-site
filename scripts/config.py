@@ -16,6 +16,13 @@ TEMPLATES_DIR = ROOT / "templates"
 GENERATED_DIR = ROOT / "generated"
 DIAGNOSTICS_DIR = ROOT / "diagnostics"
 
+ASSETS_SOURCE_DIR = ROOT / "assets"
+
+DIST_DIR = ROOT / "dist"
+PAGES_DIR = DIST_DIR / "pages"
+PDF_DIR = DIST_DIR / "pdf"
+ASSETS_DIR = DIST_DIR / "assets"
+
 
 # ============================================================
 # Project files
@@ -27,22 +34,22 @@ PDFLAYOUT = ROOT / "pdflayout.typ"
 
 DOT = DIAGNOSTICS_DIR / "imports.dot"
 
+
 # ============================================================
 # Generated files
 # ============================================================
 
 LECTURES_TYP = GENERATED_DIR / "lectures.typ"
-
 PAGES_TYP = GENERATED_DIR / "pages.typ"
-
 PAGES_META_TYP = GENERATED_DIR / "pages_meta.typ"
-
 HOMEPAGE_JSON = GENERATED_DIR / "homepage.json"
 
-DIST_DIR =  ROOT / "dist"
-
-PAGES_DIR = DIST_DIR / "pages"
-PDF_DIR = DIST_DIR / "pdf"
-ASSETS_DIR = DIST_DIR / "assets"
-
 INDEX_HTML = DIST_DIR / "index.html"
+
+
+# ============================================================
+# Diagnostic reports
+# ============================================================
+
+METADATA_REPORT = DIAGNOSTICS_DIR / "metadata_report.txt"
+LINK_REPORT = DIAGNOSTICS_DIR / "link_report.txt"
