@@ -86,18 +86,15 @@ The default target is:
 EOF
 }
 
+
 # ============================================================
 # Handle command-line help
 # ============================================================
 
-case "$TARGET" in
-
-    -h|--help)
-        print_help
-        exit 0
-        ;;
-
-esac
+if [[ "$TARGET" == "-h" || "$TARGET" == "--help" ]]; then
+    print_help
+    exit 0
+fi
 
 # ============================================================
 # Build timing
@@ -257,10 +254,9 @@ validate_imports() {
 }
 
 # ============================================================
-# 5. Initialize dist
+# 5. Prepare dist
 #
-# Initialize the output directories, copy assets, and verify
-# that the generated homepage metadata is available.
+# Delegate dist preparation to the Python build layer.
 # ============================================================
 
 prepare_dist() {
@@ -386,12 +382,7 @@ validate_links() {
 # ============================================================
 # 13. Build diagnostics summary
 #
-# The individual reports are still produced at their normal
-# stages above. This final section gives a compact overview
-# so the build result can be checked without scrolling back.
-#
-# The existing diagnostic files are read here; the checks are
-# NOT executed again.
+# Delegate report generation to the Python build layer.
 # ============================================================
 
 print_summary() {
