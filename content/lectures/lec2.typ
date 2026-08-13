@@ -8,20 +8,7 @@
   category: "Fields and Galois theory",
 )
 
-#let pdf-layout = (
-  if sys.inputs.at("format", default: "pdf") == "pdf" {
-    import "../../templates/pdflayout.typ": *
-    pdflayout.with(
-      title: lecture.title,
-      report-style: true,
-      flipp: false,
-    )
-  } else {
-    doc => doc
-  }
-)
-
-#show: pdf-layout
+#show: lecture-layout(lecture)
 
 #show: doc => {
   reset-counters(lecture.number)
