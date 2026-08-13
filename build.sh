@@ -19,6 +19,24 @@ ASSETS_DIR="$DIST/assets"
 HOMEPAGE_JSON="generated/homepage.json"
 
 # ============================================================
+# Build target
+#
+# Usage:
+#
+#     ./build.sh
+#     ./build.sh all
+#     ./build.sh html
+#     ./build.sh pdf
+#     ./build.sh categories
+#     ./build.sh book
+#     ./build.sh pages-pdf
+#
+# The default target is "all".
+# ============================================================
+
+TARGET="${1:-all}"
+
+# ============================================================
 # Build timing
 #
 # Record the time at which the build starts.
@@ -26,15 +44,6 @@ HOMEPAGE_JSON="generated/homepage.json"
 # ============================================================
 
 BUILD_START=$(date +%s)
-
-# ============================================================
-# Build statistics
-#
-# These counters are updated during the build and displayed
-# in the final build summary.
-# ============================================================
-
-# CATEGORY_COUNT=0
 
 # ============================================================
 # Stage timings
@@ -214,9 +223,9 @@ prepare_dist() {
         "$ASSETS_DIR/js" \
         "$ASSETS_DIR/images"
 
-    # ============================================================
+    # ========================================================
     # Copy assets
-    # ============================================================
+    # ========================================================
 
     if [ -f "assets/css/style.css" ]; then
 
@@ -232,9 +241,9 @@ prepare_dist() {
 
     fi
 
-    # ============================================================
+    # ========================================================
     # Check generated metadata
-    # ============================================================
+    # ========================================================
 
     if [ ! -f "$HOMEPAGE_JSON" ]; then
 
@@ -494,19 +503,124 @@ print_summary() {
 }
 
 # ============================================================
-# 12. Build
+# 12. Build targets
 #
-# Run each build stage in dependency order.
+# All targets perform the common metadata and validation
+# stages first.
+#
+# Target-specific stages are then executed.
 # ============================================================
 
-generate_metadata
-validate_metadata
-validate_generated
-validate_imports
-prepare_dist
-build_html
-build_categories
-build_book
-build_pages_pdf
-validate_links
+run_common_checks() {
+
+    generate_metadata
+    validate_metadata
+    validate_generated
+    validate_imports
+    prepare_dist
+}
+
+run_all() {
+
+    run_common_checks
+
+    build_html
+    build_categories
+    build_book
+    build_pages_pdf
+    validate_links
+}
+
+run_html() {
+
+    run_common_checks
+
+    build_html
+    validate_links
+}
+
+run_pdf() {
+
+    run_common_checks
+
+    # build_html currently produces the individual HTML pages
+    # and their corresponding individual PDFs.
+    build_html
+
+    build_categories
+    build_book
+    build_pages_pdf
+}
+
+run_categories() {
+
+    run_common_checks
+
+    build_categories
+}
+
+run_book() {
+
+    run_common_checks
+
+    build_book
+}
+
+run_pages_pdf() {
+
+    run_common_checks
+
+    build_pages_pdf
+}
+
+# ============================================================
+# 13. Select build target
+# ============================================================
+
+case "$TARGET" in
+
+    all)
+        run_all
+        ;;
+
+    html)
+        run_html
+        ;;
+
+    pdf)
+        run_pdf
+        ;;
+
+    categories)
+        run_categories
+        ;;
+
+    book)
+        run_book
+        ;;
+
+    pages-pdf)
+        run_pages_pdf
+        ;;
+
+    *)
+        echo "Unknown build target: $TARGET"
+        echo
+        echo "Usage:"
+        echo "  ./build.sh"
+        echo "  ./build.sh all"
+        echo "  ./build.sh html"
+        echo "  ./build.sh pdf"
+        echo "  ./build.sh categories"
+        echo "  ./build.sh book"
+        echo "  ./build.sh pages-pdf"
+        exit 1
+        ;;
+
+esac
+
+# ============================================================
+# 14. Print summary
+# ============================================================
+
 print_summary
