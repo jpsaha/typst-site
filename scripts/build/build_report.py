@@ -1,11 +1,47 @@
 #!/usr/bin/env python3
 
+"""
+Build diagnostics report.
+
+Reads:
+    dist/pages/*.html
+    dist/pdf/*.pdf
+    diagnostics/metadata_report.txt
+    diagnostics/link_report.txt
+
+Timing information is supplied by build.sh through environment
+variables.
+
+Prints:
+    Build statistics
+    Diagnostic report summaries
+    Stage timings
+    Compact final summary
+"""
+
+import os
+
 from scripts.config import (
     PAGES_DIR,
     PDF_DIR,
     METADATA_REPORT,
     LINK_REPORT,
 )
+
+
+# ============================================================
+# Helpers
+# ============================================================
+
+def env_int(name):
+    """Return an integer environment variable, defaulting to 0."""
+
+    return int(
+        os.environ.get(
+            name,
+            "0",
+        )
+    )
 
 
 def count_files(directory, pattern):
@@ -21,142 +57,149 @@ def count_files(directory, pattern):
     )
 
 
-def read_report_value(report, label):
-    """Read a numeric value from a diagnostic report."""
+def report_value(report, label):
+    """
+    Read a numeric value from a diagnostic report.
+
+    Expected format:
+
+        Links checked : 136
+        Broken links  : 0
+    """
 
     if not report.exists():
         return 0
 
-    prefix = f"{label}:"
+    prefix = label
 
-    with report.open(encoding="utf-8") as file:
+    with report.open(
+        encoding="utf-8"
+    ) as file:
 
         for line in file:
 
-            if line.startswith(prefix):
+            if not line.startswith(prefix):
+                continue
 
-                value = line.split(":", 1)[1].strip()
+            if ":" not in line:
+                continue
 
-                try:
-                    return int(value)
+            value = line.split(
+                ":",
+                1,
+            )[1].strip()
 
-                except ValueError:
-                    return 0
+            try:
+                return int(value)
+
+            except ValueError:
+                return 0
 
     return 0
 
 
-def print_summary(
-    build_time,
-    time_metadata,
-    time_metadata_check,
-    time_generated_check,
-    time_import_check,
-    time_html,
-    time_pdf,
-    time_categories,
-    time_book,
-    time_pages,
-    time_links,
+def print_report_lines(
+    report,
+    labels,
 ):
-    """Print the final build diagnostics summary."""
+    """Print selected lines from a diagnostic report."""
 
-    page_count = count_files(
-        PAGES_DIR,
-        "*.html",
-    )
+    if not report.exists():
+        return
 
-    pdf_count = count_files(
-        PDF_DIR,
-        "*.pdf",
-    )
+    with report.open(
+        encoding="utf-8"
+    ) as file:
 
-    category_count = count_files(
-        PDF_DIR,
-        "category_*.pdf",
-    )
+        for line in file:
 
-    print()
-    print("==============================================")
-    print("📊 Build diagnostics summary")
-    print("==============================================")
+            if line.startswith(labels):
+                print(
+                    line,
+                    end="",
+                )
 
-    # --------------------------------------------------------
-    # Metadata report
-    # --------------------------------------------------------
 
-    if METADATA_REPORT.exists():
+# ============================================================
+# Metadata report
+# ============================================================
 
-        print()
-        print("## 📋 Metadata")
-        print()
+def print_metadata_report():
+    """Print the relevant metadata diagnostic information."""
 
-        with METADATA_REPORT.open(
-            encoding="utf-8"
-        ) as file:
-
-            for line in file:
-
-                if line.startswith(
-                    (
-                        "Total items",
-                        "Lectures",
-                        "Pages",
-                        "Categories",
-                    )
-                ):
-                    print(line, end="")
-
-        print(
-            f"Report      : {METADATA_REPORT}"
-        )
-
-    else:
+    if not METADATA_REPORT.exists():
 
         print()
         print("## 📋 Metadata")
         print()
         print("Metadata report not found")
 
-    # --------------------------------------------------------
-    # Link report
-    # --------------------------------------------------------
+        return
 
-    if LINK_REPORT.exists():
+    print()
+    print("## 📋 Metadata")
+    print()
 
-        print()
-        print("## 🔗 Links")
-        print()
+    print_report_lines(
+        METADATA_REPORT,
+        (
+            "Total items",
+            "Lectures",
+            "Pages",
+            "Categories",
+        ),
+    )
 
-        with LINK_REPORT.open(
-            encoding="utf-8"
-        ) as file:
+    print(
+        f"Report      : {METADATA_REPORT}"
+    )
 
-            for line in file:
 
-                if line.startswith(
-                    (
-                        "Links checked",
-                        "Broken links",
-                        "Working links",
-                    )
-                ):
-                    print(line, end="")
+# ============================================================
+# Link report
+# ============================================================
 
-        print(
-            f"Report      : {LINK_REPORT}"
-        )
+def print_link_report():
+    """Print the relevant link diagnostic information."""
 
-    else:
+    if not LINK_REPORT.exists():
 
         print()
         print("## 🔗 Links")
         print()
         print("Link report not found")
 
-    # --------------------------------------------------------
-    # Build statistics
-    # --------------------------------------------------------
+        return
+
+    print()
+    print("## 🔗 Links")
+    print()
+
+    print_report_lines(
+        LINK_REPORT,
+        (
+            "Links checked",
+            "Broken links",
+            "Working links",
+        ),
+    )
+
+    print(
+        f"Report      : {LINK_REPORT}"
+    )
+
+
+# ============================================================
+# Build statistics
+# ============================================================
+
+def print_build_statistics(
+    page_count,
+    pdf_count,
+    category_count,
+    build_time,
+):
+    """Print generated-output statistics."""
 
     print()
     print("## 📦 Build")
@@ -178,9 +221,25 @@ def print_summary(
         f"⏱ Build time:       {build_time}s"
     )
 
-    # --------------------------------------------------------
-    # Build timing
-    # --------------------------------------------------------
+
+# ============================================================
+# Build timing
+# ============================================================
+
+def print_build_timing(
+    time_metadata,
+    time_metadata_check,
+    time_generated_check,
+    time_import_check,
+    time_html,
+    time_pdf,
+    time_categories,
+    time_book,
+    time_pages,
+    time_links,
+    build_time,
+):
+    """Print elapsed time for each build stage."""
 
     print()
     print("## ⏱ Build timing")
@@ -230,16 +289,24 @@ def print_summary(
         f"Total                     {build_time:>6}s"
     )
 
-    # --------------------------------------------------------
-    # Compact summary
-    # --------------------------------------------------------
 
-    link_count = read_report_value(
+# ============================================================
+# Compact summary
+# ============================================================
+
+def print_compact_summary(
+    page_count,
+    pdf_count,
+    category_count,
+):
+    """Print the compact one-line build summary."""
+
+    link_count = report_value(
         LINK_REPORT,
         "Links checked",
     )
 
-    broken_count = read_report_value(
+    broken_count = report_value(
         LINK_REPORT,
         "Broken links",
     )
@@ -254,9 +321,13 @@ def print_summary(
         f"{broken_count} broken"
     )
 
-    # --------------------------------------------------------
-    # Final status
-    # --------------------------------------------------------
+
+# ============================================================
+# Final status
+# ============================================================
+
+def print_final_status(build_time):
+    """Print the final successful-build message."""
 
     print()
     print("==============================================")
@@ -267,13 +338,148 @@ def print_summary(
     print("==============================================")
 
 
+# ============================================================
+# Main report
+# ============================================================
+
 def main():
-    # This command is normally called by build.sh,
-    # which supplies the timing information.
-    raise SystemExit(
-        "report.py is intended to be called through scripts/run.py"
+    """Generate the complete build diagnostics report."""
+
+    # --------------------------------------------------------
+    # Timing information
+    # --------------------------------------------------------
+
+    build_time = env_int(
+        "BUILD_TIME"
     )
 
+    time_metadata = env_int(
+        "TIME_METADATA"
+    )
+
+    time_metadata_check = env_int(
+        "TIME_METADATA_CHECK"
+    )
+
+    time_generated_check = env_int(
+        "TIME_GENERATED_CHECK"
+    )
+
+    time_import_check = env_int(
+        "TIME_IMPORT_CHECK"
+    )
+
+    time_html = env_int(
+        "TIME_HTML"
+    )
+
+    time_pdf = env_int(
+        "TIME_PDF"
+    )
+
+    time_categories = env_int(
+        "TIME_CATEGORIES"
+    )
+
+    time_book = env_int(
+        "TIME_BOOK"
+    )
+
+    time_pages = env_int(
+        "TIME_PAGES"
+    )
+
+    time_links = env_int(
+        "TIME_LINKS"
+    )
+
+    # --------------------------------------------------------
+    # Count generated files
+    # --------------------------------------------------------
+
+    page_count = count_files(
+        PAGES_DIR,
+        "*.html",
+    )
+
+    pdf_count = count_files(
+        PDF_DIR,
+        "*.pdf",
+    )
+
+    category_count = count_files(
+        PDF_DIR,
+        "category_*.pdf",
+    )
+
+    # --------------------------------------------------------
+    # Header
+    # --------------------------------------------------------
+
+    print()
+    print("==============================================")
+    print("📊 Build diagnostics summary")
+    print("==============================================")
+
+    # --------------------------------------------------------
+    # Reports
+    # --------------------------------------------------------
+
+    print_metadata_report()
+
+    print_link_report()
+
+    # --------------------------------------------------------
+    # Build statistics
+    # --------------------------------------------------------
+
+    print_build_statistics(
+        page_count=page_count,
+        pdf_count=pdf_count,
+        category_count=category_count,
+        build_time=build_time,
+    )
+
+    # --------------------------------------------------------
+    # Timing
+    # --------------------------------------------------------
+
+    print_build_timing(
+        time_metadata=time_metadata,
+        time_metadata_check=time_metadata_check,
+        time_generated_check=time_generated_check,
+        time_import_check=time_import_check,
+        time_html=time_html,
+        time_pdf=time_pdf,
+        time_categories=time_categories,
+        time_book=time_book,
+        time_pages=time_pages,
+        time_links=time_links,
+        build_time=build_time,
+    )
+
+    # --------------------------------------------------------
+    # Compact summary
+    # --------------------------------------------------------
+
+    print_compact_summary(
+        page_count=page_count,
+        pdf_count=pdf_count,
+        category_count=category_count,
+    )
+
+    # --------------------------------------------------------
+    # Final status
+    # --------------------------------------------------------
+
+    print_final_status(
+        build_time
+    )
+
+
+# ============================================================
+# Entry point
+# ============================================================
 
 if __name__ == "__main__":
     main()
