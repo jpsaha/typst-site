@@ -1,156 +1,279 @@
+#!/usr/bin/env python3
 
-print_summary() {
+from scripts.config import (
+    PAGES_DIR,
+    PDF_DIR,
+    METADATA_REPORT,
+    LINK_REPORT,
+)
 
-    BUILD_END=$(date +%s)
-    BUILD_TIME=$((BUILD_END - BUILD_START))
 
-    PAGE_COUNT=$(
-        find "$PAGES_DIR" \
-            -type f \
-            -name "*.html" |
-        wc -l |
-        tr -d ' '
+def count_files(directory, pattern):
+    """Count files matching a glob pattern."""
+
+    if not directory.exists():
+        return 0
+
+    return sum(
+        1
+        for path in directory.rglob(pattern)
+        if path.is_file()
     )
 
-    PDF_COUNT=$(
-        find "$PDF_DIR" \
-            -type f \
-            -name "*.pdf" |
-        wc -l |
-        tr -d ' '
+
+def read_report_value(report, label):
+    """Read a numeric value from a diagnostic report."""
+
+    if not report.exists():
+        return 0
+
+    prefix = f"{label}:"
+
+    with report.open(encoding="utf-8") as file:
+
+        for line in file:
+
+            if line.startswith(prefix):
+
+                value = line.split(":", 1)[1].strip()
+
+                try:
+                    return int(value)
+
+                except ValueError:
+                    return 0
+
+    return 0
+
+
+def print_summary(
+    build_time,
+    time_metadata,
+    time_metadata_check,
+    time_generated_check,
+    time_import_check,
+    time_html,
+    time_pdf,
+    time_categories,
+    time_book,
+    time_pages,
+    time_links,
+):
+    """Print the final build diagnostics summary."""
+
+    page_count = count_files(
+        PAGES_DIR,
+        "*.html",
     )
 
-    CATEGORY_COUNT=$(
-        find "$PDF_DIR" \
-            -type f \
-            -name "category_*.pdf" |
-        wc -l |
-        tr -d ' '
+    pdf_count = count_files(
+        PDF_DIR,
+        "*.pdf",
     )
 
-    echo
-    echo "=============================================="
-    echo "📊 Build diagnostics summary"
-    echo "=============================================="
+    category_count = count_files(
+        PDF_DIR,
+        "category_*.pdf",
+    )
 
-    # ------------------------------------------------------------
+    print()
+    print("==============================================")
+    print("📊 Build diagnostics summary")
+    print("==============================================")
+
+    # --------------------------------------------------------
     # Metadata report
-    # ------------------------------------------------------------
+    # --------------------------------------------------------
 
-    if [ -f "$METADATA_REPORT" ]; then
+    if METADATA_REPORT.exists():
 
-        echo
-        echo "## 📋 Metadata"
-        echo
+        print()
+        print("## 📋 Metadata")
+        print()
 
-        grep -E \
-            '^(Total items|Lectures[[:space:]]*:|Pages[[:space:]]*:|Categories[[:space:]]*:)' \
-            "$METADATA_REPORT" \
-            || true
+        with METADATA_REPORT.open(
+            encoding="utf-8"
+        ) as file:
 
-        echo "Report      : $METADATA_REPORT"
+            for line in file:
 
-    else
+                if line.startswith(
+                    (
+                        "Total items",
+                        "Lectures",
+                        "Pages",
+                        "Categories",
+                    )
+                ):
+                    print(line, end="")
 
-        echo
-        echo "## 📋 Metadata"
-        echo
-        echo "Metadata report not found"
-    fi
+        print(
+            f"Report      : {METADATA_REPORT}"
+        )
 
-    # ------------------------------------------------------------
+    else:
+
+        print()
+        print("## 📋 Metadata")
+        print()
+        print("Metadata report not found")
+
+    # --------------------------------------------------------
     # Link report
-    # ------------------------------------------------------------
+    # --------------------------------------------------------
 
-    if [ -f "$LINK_REPORT" ]; then
+    if LINK_REPORT.exists():
 
-        echo
-        echo "## 🔗 Links"
-        echo
+        print()
+        print("## 🔗 Links")
+        print()
 
-        grep -E \
-            '^(Links checked|Broken links|Working links)' \
-            "$LINK_REPORT" \
-            || true
+        with LINK_REPORT.open(
+            encoding="utf-8"
+        ) as file:
 
-        echo "Report      : $LINK_REPORT"
+            for line in file:
 
-    else
+                if line.startswith(
+                    (
+                        "Links checked",
+                        "Broken links",
+                        "Working links",
+                    )
+                ):
+                    print(line, end="")
 
-        echo
-        echo "## 🔗 Links"
-        echo
-        echo "Link report not found"
-    fi
+        print(
+            f"Report      : {LINK_REPORT}"
+        )
 
-    # ------------------------------------------------------------
+    else:
+
+        print()
+        print("## 🔗 Links")
+        print()
+        print("Link report not found")
+
+    # --------------------------------------------------------
     # Build statistics
-    # ------------------------------------------------------------
+    # --------------------------------------------------------
 
-    echo
-    echo "## 📦 Build"
-    echo
-    echo "🌐 HTML pages:      $PAGE_COUNT"
-    echo "📚 Category books:  $CATEGORY_COUNT"
-    echo "📄 PDF files:       $PDF_COUNT"
-    echo "⏱ Build time:       ${BUILD_TIME}s"
+    print()
+    print("## 📦 Build")
+    print()
 
-    # ------------------------------------------------------------
+    print(
+        f"🌐 HTML pages:      {page_count}"
+    )
+
+    print(
+        f"📚 Category books:  {category_count}"
+    )
+
+    print(
+        f"📄 PDF files:       {pdf_count}"
+    )
+
+    print(
+        f"⏱ Build time:       {build_time}s"
+    )
+
+    # --------------------------------------------------------
     # Build timing
-    #
-    # Shows how much time was spent in each major stage.
-    # ------------------------------------------------------------
+    # --------------------------------------------------------
 
-    echo
-    echo "## ⏱ Build timing"
-    echo
-    printf "Metadata generation       %6ss\n" "$TIME_METADATA"
-    printf "Metadata validation       %6ss\n" "$TIME_METADATA_CHECK"
-    printf "Generated validation      %6ss\n" "$TIME_GENERATED_CHECK"
-    printf "Typst import validation   %6ss\n" "$TIME_IMPORT_CHECK"
-    printf "HTML pages                %6ss\n" "$TIME_HTML"
-    printf "Individual PDFs           %6ss\n" "$TIME_PDF"
-    printf "Category PDFs             %6ss\n" "$TIME_CATEGORIES"
-    printf "Book PDF                  %6ss\n" "$TIME_BOOK"
-    printf "Pages PDF                 %6ss\n" "$TIME_PAGES"
-    printf "Link checking             %6ss\n" "$TIME_LINKS"
-    printf "Total                     %6ss\n" "$BUILD_TIME"
+    print()
+    print("## ⏱ Build timing")
+    print()
 
-    # ------------------------------------------------------------
-    # Compact one-line summary
-    #
-    # Extract the link count from the link report so that the
-    # final line gives the most useful overall build statistics.
-    # ------------------------------------------------------------
+    print(
+        f"Metadata generation       {time_metadata:>6}s"
+    )
 
-    LINK_COUNT=0
-    BROKEN_COUNT=0
+    print(
+        f"Metadata validation       {time_metadata_check:>6}s"
+    )
 
-    if [ -f "$LINK_REPORT" ]; then
+    print(
+        f"Generated validation      {time_generated_check:>6}s"
+    )
 
-        LINK_COUNT=$(
-            grep '^Links checked' "$LINK_REPORT" |
-            awk -F: '{gsub(/[[:space:]]/, "", $2); print $2}'
-        )
+    print(
+        f"Typst import validation   {time_import_check:>6}s"
+    )
 
-        BROKEN_COUNT=$(
-            grep '^Broken links' "$LINK_REPORT" |
-            awk -F: '{gsub(/[[:space:]]/, "", $2); print $2}'
-        )
+    print(
+        f"HTML pages                {time_html:>6}s"
+    )
 
-        LINK_COUNT=${LINK_COUNT:-0}
-        BROKEN_COUNT=${BROKEN_COUNT:-0}
-    fi
+    print(
+        f"Individual PDFs           {time_pdf:>6}s"
+    )
 
-    echo
-    echo "$PAGE_COUNT HTML · $PDF_COUNT PDFs · $CATEGORY_COUNT categories · $LINK_COUNT links · $BROKEN_COUNT broken"
+    print(
+        f"Category PDFs             {time_categories:>6}s"
+    )
 
-    # ------------------------------------------------------------
+    print(
+        f"Book PDF                  {time_book:>6}s"
+    )
+
+    print(
+        f"Pages PDF                 {time_pages:>6}s"
+    )
+
+    print(
+        f"Link checking             {time_links:>6}s"
+    )
+
+    print(
+        f"Total                     {build_time:>6}s"
+    )
+
+    # --------------------------------------------------------
+    # Compact summary
+    # --------------------------------------------------------
+
+    link_count = read_report_value(
+        LINK_REPORT,
+        "Links checked",
+    )
+
+    broken_count = read_report_value(
+        LINK_REPORT,
+        "Broken links",
+    )
+
+    print()
+
+    print(
+        f"{page_count} HTML · "
+        f"{pdf_count} PDFs · "
+        f"{category_count} categories · "
+        f"{link_count} links · "
+        f"{broken_count} broken"
+    )
+
+    # --------------------------------------------------------
     # Final status
-    # ------------------------------------------------------------
+    # --------------------------------------------------------
 
-    echo
-    echo "=============================================="
-    echo "✅ Build completed successfully in ${BUILD_TIME}s"
-    echo "=============================================="
-}
+    print()
+    print("==============================================")
+    print(
+        f"✅ Build completed successfully "
+        f"in {build_time}s"
+    )
+    print("==============================================")
+
+
+def main():
+    # This command is normally called by build.sh,
+    # which supplies the timing information.
+    raise SystemExit(
+        "report.py is intended to be called through scripts/run.py"
+    )
+
+
+if __name__ == "__main__":
+    main()
