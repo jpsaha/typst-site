@@ -27,6 +27,7 @@ HOMEPAGE_JSON="generated/homepage.json"
 #     ./build.sh all
 #     ./build.sh html
 #     ./build.sh pdf
+#     ./build.sh allpdf
 #     ./build.sh categories
 #     ./build.sh book
 #     ./build.sh pages-pdf
@@ -57,6 +58,7 @@ TIME_METADATA_CHECK="0"
 TIME_GENERATED_CHECK="0"
 TIME_IMPORT_CHECK="0"
 TIME_HTML="0"
+TIME_PDF="0"
 TIME_CATEGORIES="0"
 TIME_BOOK="0"
 TIME_PAGES="0"
@@ -269,7 +271,35 @@ build_html() {
 }
 
 # ============================================================
-# 7. Build category books
+# 7. Build individual page PDFs
+# ============================================================
+
+build_pdf() {
+
+    echo
+    echo "📄 Building individual page PDFs..."
+
+    stage_start
+
+    python3 scripts/run.py pdf
+
+    stage_end TIME_PDF
+}
+
+# ============================================================
+# 7. Build all PDFs
+# ============================================================
+
+build_allpdf() {
+
+    build_pdf
+    build_categories
+    build_book
+    build_pages_pdf
+}
+
+# ============================================================
+# 8. Build category books
 # ============================================================
 
 build_categories() {
@@ -285,7 +315,7 @@ build_categories() {
 }
 
 # ============================================================
-# 8. Build complete course PDF
+# 9. Build complete course PDF
 # ============================================================
 
 build_book() {
@@ -301,7 +331,7 @@ build_book() {
 }
 
 # ============================================================
-# 9. Build complete pages PDF
+# 10. Build complete pages PDF
 # ============================================================
 
 build_pages_pdf() {
@@ -317,7 +347,7 @@ build_pages_pdf() {
 }
 
 # ============================================================
-# 10. Check links
+# 11. Check links
 # ============================================================
 
 validate_links() {
@@ -337,7 +367,7 @@ validate_links() {
 }
 
 # ============================================================
-# 11. Build diagnostics summary
+# 12. Build diagnostics summary
 #
 # The individual reports are still produced at their normal
 # stages above. This final section gives a compact overview
@@ -457,6 +487,7 @@ print_summary() {
     printf "Generated validation      %6ss\n" "$TIME_GENERATED_CHECK"
     printf "Typst import validation   %6ss\n" "$TIME_IMPORT_CHECK"
     printf "HTML pages                %6ss\n" "$TIME_HTML"
+    printf "Individual PDFs           %6ss\n" "$TIME_PDF"
     printf "Category PDFs             %6ss\n" "$TIME_CATEGORIES"
     printf "Book PDF                  %6ss\n" "$TIME_BOOK"
     printf "Pages PDF                 %6ss\n" "$TIME_PAGES"
@@ -503,7 +534,7 @@ print_summary() {
 }
 
 # ============================================================
-# 12. Build targets
+# 13. Build targets
 #
 # All targets perform the common metadata and validation
 # stages first.
@@ -525,9 +556,11 @@ run_all() {
     run_common_checks
 
     build_html
-    build_categories
-    build_book
-    build_pages_pdf
+    build_allpdf
+    # build_pdf
+    # build_categories
+    # build_book
+    # build_pages_pdf
     validate_links
 }
 
@@ -536,17 +569,20 @@ run_html() {
     run_common_checks
 
     build_html
-    validate_links
 }
 
 run_pdf() {
 
     run_common_checks
 
-    # build_html currently produces the individual HTML pages
-    # and their corresponding individual PDFs.
-    build_html
+    build_pdf
+}
 
+run_allpdf() {
+
+    run_common_checks
+
+    build_pdf
     build_categories
     build_book
     build_pages_pdf
@@ -574,7 +610,7 @@ run_pages_pdf() {
 }
 
 # ============================================================
-# 13. Select build target
+# 14. Select build target
 # ============================================================
 
 case "$TARGET" in
@@ -589,6 +625,10 @@ case "$TARGET" in
 
     pdf)
         run_pdf
+        ;;
+
+    allpdf)
+        run_allpdf
         ;;
 
     categories)
@@ -611,6 +651,7 @@ case "$TARGET" in
         echo "  ./build.sh all"
         echo "  ./build.sh html"
         echo "  ./build.sh pdf"
+        echo "  ./build.sh allpdf"
         echo "  ./build.sh categories"
         echo "  ./build.sh book"
         echo "  ./build.sh pages-pdf"
@@ -620,7 +661,7 @@ case "$TARGET" in
 esac
 
 # ============================================================
-# 14. Print summary
+# 15. Print summary
 # ============================================================
 
 print_summary

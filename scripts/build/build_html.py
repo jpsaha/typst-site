@@ -10,8 +10,8 @@ Generates:
     dist/index.html
     dist/pages/*.html
 
-Category PDF buttons are added to the homepage, but the
-category PDFs themselves are built separately.
+PDF files are built separately by build_pdfs.py,
+build_categories.py, build_book.py, and build_pages_pdf.py.
 """
 
 import json
@@ -20,12 +20,9 @@ import subprocess
 
 from scripts.config import (
     ROOT,
-    GENERATED_DIR,
-    DIST_DIR,
     PAGES_DIR,
-    PDF_DIR,
     CONTENT_DIR,
-    HOMEPAGE_JSON, 
+    HOMEPAGE_JSON,
     INDEX_HTML,
 )
 
@@ -35,23 +32,16 @@ from scripts.config import (
 # ============================================================
 
 def compile_page(lecture):
-    """Compile one content page to HTML and PDF."""
+    """Compile one content page to HTML."""
 
     title = lecture["title"]
     html = lecture["html"]
-    pdf = lecture["pdf"]
     source = lecture["source"]
 
     source_path = CONTENT_DIR / source
-
     html_path = PAGES_DIR / html
-    pdf_path = PDF_DIR / pdf
 
     print(f"📖 Compiling {title}")
-
-    # --------------------------------------------------------
-    # HTML
-    # --------------------------------------------------------
 
     subprocess.run(
         [
@@ -69,23 +59,6 @@ def compile_page(lecture):
         check=True,
     )
 
-    # --------------------------------------------------------
-    # PDF
-    # --------------------------------------------------------
-
-    subprocess.run(
-        [
-            "typst",
-            "compile",
-            "--root",
-            str(ROOT),
-            str(source_path),
-            str(pdf_path),
-            "--input",
-            "format=pdf",
-        ],
-        check=True,
-    )
 
 # ============================================================
 # Homepage entry
@@ -280,11 +253,6 @@ def main():
     # --------------------------------------------------------
 
     PAGES_DIR.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    PDF_DIR.mkdir(
         parents=True,
         exist_ok=True,
     )

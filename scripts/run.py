@@ -9,9 +9,10 @@ COMMANDS = {
 
     # Output
     "html": "scripts.build.build_html",
+    "pdf": "scripts.build.build_pdfs",
+    "categories": "scripts.build.build_categories",
     "book": "scripts.build.build_book",
     "pages-pdf": "scripts.build.build_pages_pdf",
-    "categories": "scripts.build.build_categories",
 
     # Validation
     "metadata-check": "scripts.lint.check_metadata",
@@ -19,7 +20,6 @@ COMMANDS = {
     "imports": "scripts.lint.check_imports",
     "links": "scripts.lint.check_links",
 }
-
 
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in COMMANDS:
