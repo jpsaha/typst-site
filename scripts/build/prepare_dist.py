@@ -1,42 +1,85 @@
+#!/usr/bin/env python3
 
-prepare_dist() {
+import shutil
 
-    echo "📁 Preparing dist/..."
+from scripts.config import (
+    PAGES_DIR,
+    PDF_DIR,
+    ASSETS_DIR,
+    ASSETS_SOURCE_DIR,
+    HOMEPAGE_JSON,
+)
 
-    rm -rf "$PAGES_DIR" "$PDF_DIR" "$ASSETS_DIR"
 
-    mkdir -p \
-        "$PAGES_DIR" \
-        "$PDF_DIR" \
-        "$ASSETS_DIR/css" \
-        "$ASSETS_DIR/js" \
-        "$ASSETS_DIR/images"
+def prepare_dist():
+    """Prepare the dist directory for a fresh build."""
 
-    # ========================================================
+    # --------------------------------------------------------
+    # Remove previous generated output
+    # --------------------------------------------------------
+
+    for directory in (
+        PAGES_DIR,
+        PDF_DIR,
+        ASSETS_DIR,
+    ):
+        shutil.rmtree(
+            directory,
+            ignore_errors=True,
+        )
+
+    # --------------------------------------------------------
+    # Create output directories
+    # --------------------------------------------------------
+
+    for directory in (
+        PAGES_DIR,
+        PDF_DIR,
+        ASSETS_DIR / "css",
+        ASSETS_DIR / "js",
+        ASSETS_DIR / "images",
+    ):
+        directory.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+    # --------------------------------------------------------
     # Copy assets
-    # ========================================================
+    # --------------------------------------------------------
 
-    if [ -f "assets/css/style.css" ]; then
+    source_css = ASSETS_SOURCE_DIR / "css" / "style.css"
+    target_css = ASSETS_DIR / "css" / "style.css"
 
-        cp \
-            assets/css/style.css \
-            "$ASSETS_DIR/css/style.css"
+    if source_css.exists():
 
-        echo "📋 Copied style.css"
+        shutil.copy2(
+            source_css,
+            target_css,
+        )
 
-    else
+        print("📋 Copied style.css")
 
-        echo "⚠️ Warning: assets/css/style.css not found"
+    else:
 
-    fi
+        print(
+            "⚠️ Warning: assets/css/style.css not found"
+        )
 
-    # ========================================================
+    # --------------------------------------------------------
     # Check generated metadata
-    # ========================================================
+    # --------------------------------------------------------
 
-    if [ ! -f "$HOMEPAGE_JSON" ]; then
+    if not HOMEPAGE_JSON.exists():
 
-        die "Missing $HOMEPAGE_JSON"
+        raise FileNotFoundError(
+            f"Missing {HOMEPAGE_JSON}"
+        )
 
-    fi
-}
+
+def main():
+    prepare_dist()
+
+
+if __name__ == "__main__":
+    main()
