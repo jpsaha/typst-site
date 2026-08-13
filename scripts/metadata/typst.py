@@ -9,6 +9,8 @@ def typst_value(value):
         return "[" + ", ".join(typst_value(x) for x in value) + "]"
 
     if isinstance(value, str):
+        if value.startswith("datetime(") and value.endswith(")"):
+            return value
         return '"' + value.replace('"', '\\"') + '"'
 
     return str(value)
