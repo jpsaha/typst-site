@@ -194,7 +194,7 @@ generate_metadata() {
 validate_metadata() {
 
     echo
-    echo "🔗 Checking source metadata..."
+    echo "📋 Validating source metadata..."
 
     stage_start
 
@@ -212,7 +212,7 @@ validate_metadata() {
 validate_generated() {
 
     echo
-    echo "🔗 Checking generated files..."
+    echo "🔍 Validating generated files..."
 
     stage_start
 
@@ -238,7 +238,7 @@ validate_generated() {
 validate_imports() {
 
     echo
-    echo "🔗 Checking Typst imports..."
+    echo "🔍 Validating Typst imports..."
 
     stage_start
 
@@ -296,7 +296,7 @@ build_pdf() {
 }
 
 # ============================================================
-# 8. Build all PDFs
+# 8. Composite PDF build
 # ============================================================
 
 build_allpdf() {
