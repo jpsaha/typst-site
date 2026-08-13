@@ -274,6 +274,19 @@ prepare_dist() {
 }
 
 # ============================================================
+# Prepare diagnostics
+# ============================================================
+
+prepare_diagnostics() {
+    echo "🧹 Preparing diagnostics..."
+
+    rm -rf diagnostics
+    mkdir -p diagnostics
+
+    echo "✓ Diagnostics directory prepared."
+}
+
+# ============================================================
 # 6. Generate homepage and compile pages
 # ============================================================
 
@@ -481,6 +494,8 @@ run_common_checks() {
 
 run_build() {
 
+    prepare_diagnostics
+    
     # --------------------------------------------------------
     # Common validation
     # --------------------------------------------------------
