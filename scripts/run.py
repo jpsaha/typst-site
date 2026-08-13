@@ -15,6 +15,22 @@ import sys
 # This file provides a single entry point for build.sh and
 # keeps the shell script independent of the individual Python
 # module names.
+# 
+# python3 scripts/run.py metadata
+# python3 scripts/run.py metadata-check
+# python3 scripts/run.py generated
+# python3 scripts/run.py imports
+
+# python3 scripts/run.py prepare-dist
+
+# python3 scripts/run.py html
+# python3 scripts/run.py pdf
+# python3 scripts/run.py categories
+# python3 scripts/run.py book
+# python3 scripts/run.py pages-pdf
+
+# python3 scripts/run.py links
+# python3 scripts/run.py report
 # ============================================================
 
 COMMANDS = {
