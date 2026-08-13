@@ -153,30 +153,6 @@ stage_end() {
 }
 
 # ============================================================
-# Cleanup
-# ============================================================
-
-cleanup() {
-
-    local status=$?
-
-    echo
-    echo "🧹 Cleaning Python bytecode..."
-
-    find scripts \
-        -type d \
-        -name "__pycache__" \
-        -prune \
-        -exec rm -rf {} +
-
-    echo "✓ Python bytecode removed."
-
-    return "$status"
-}
-
-trap cleanup EXIT
-
-# ============================================================
 # 1. Generate metadata
 # ============================================================
 
@@ -515,6 +491,29 @@ case "$TARGET" in
         ;;
 
 esac
+# ============================================================
+# Cleanup
+# ============================================================
+
+cleanup() {
+
+    local status=$?
+
+    echo
+    echo "🧹 Cleaning Python bytecode..."
+
+    find scripts \
+        -type d \
+        -name "__pycache__" \
+        -prune \
+        -exec rm -rf {} +
+
+    echo "✓ Python bytecode removed."
+
+    return "$status"
+}
+
+trap cleanup EXIT
 
 # ============================================================
 # 16. Print summary
