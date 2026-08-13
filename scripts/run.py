@@ -22,6 +22,7 @@ import sys
 # python3 scripts/run.py imports
 
 # python3 scripts/run.py prepare-dist
+# python3 scripts/run.py prepare-diagnostics
 
 # python3 scripts/run.py html
 # python3 scripts/run.py pdf
@@ -66,6 +67,12 @@ COMMANDS = {
 
     "prepare-dist": "scripts.build.prepare_dist",
     "report": "scripts.build.build_report",
+
+    # --------------------------------------------------------
+    # Prepare diagnostics
+    # --------------------------------------------------------
+    
+    "prepare-diagnostics": "scripts.build.prepare_diagnostics",
 }
 
 
