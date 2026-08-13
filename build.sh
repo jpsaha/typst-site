@@ -280,8 +280,7 @@ prepare_dist() {
 prepare_diagnostics() {
     echo "🧹 Preparing diagnostics..."
 
-    rm -rf diagnostics
-    mkdir -p diagnostics
+    python3 scripts/run.py prepare-diagnostics
 
     echo "✓ Diagnostics directory prepared."
 }
@@ -495,7 +494,7 @@ run_common_checks() {
 run_build() {
 
     prepare_diagnostics
-    
+
     # --------------------------------------------------------
     # Common validation
     # --------------------------------------------------------
