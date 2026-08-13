@@ -3,6 +3,7 @@
 import shutil
 
 from scripts.config import (
+    DIST_DIR,
     PAGES_DIR,
     PDF_DIR,
     ASSETS_DIR,
@@ -18,15 +19,10 @@ def prepare_dist():
     # Remove previous generated output
     # --------------------------------------------------------
 
-    for directory in (
-        PAGES_DIR,
-        PDF_DIR,
-        ASSETS_DIR,
-    ):
-        shutil.rmtree(
-            directory,
-            ignore_errors=True,
-        )
+    shutil.rmtree(
+        DIST_DIR,
+        ignore_errors=True,
+    )
 
     # --------------------------------------------------------
     # Create output directories
