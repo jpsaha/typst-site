@@ -150,22 +150,32 @@ stage_end() {
 
 # ============================================================
 # Cleanup
+#
+# Remove Python bytecode generated during the build.
+# Preserve the original exit status of the build.
 # ============================================================
 
 cleanup() {
 
     local status=$?
 
-    echo
-    echo "🧹 Cleaning Python bytecode..."
-
-    find scripts \
+    if find scripts \
         -type d \
         -name "__pycache__" \
-        -prune \
-        -exec rm -rf {} +
+        -print -quit |
+        grep -q .
+    then
+        echo
+        echo "🧹 Cleaning Python bytecode..."
 
-    echo "✓ Python bytecode removed."
+        find scripts \
+            -type d \
+            -name "__pycache__" \
+            -prune \
+            -exec rm -rf {} +
+
+        echo "✓ Python bytecode removed."
+    fi
 
     return "$status"
 }
@@ -424,8 +434,8 @@ print_summary() {
 #   3. Validate generated files.
 #   4. Validate Typst imports.
 #
-# Dist preparation is kept separate because it is a build
-# preparation step rather than a validation step.
+# Dist preparation is intentionally kept separate because it
+# is a build preparation step, not a validation step.
 # ============================================================
 
 run_common_checks() {
@@ -439,9 +449,11 @@ run_common_checks() {
 # ============================================================
 # Build dispatcher
 #
-# All build targets share the same preparation and validation
-# stages. The selected target then determines which actual
-# build stages are executed.
+# Every build target performs:
+#
+#   1. Common metadata and validation checks.
+#   2. Dist preparation.
+#   3. The build stages required by the selected target.
 #
 # Supported targets:
 #
@@ -470,10 +482,15 @@ run_common_checks() {
 run_build() {
 
     # --------------------------------------------------------
-    # Common preparation
+    # Common validation
     # --------------------------------------------------------
 
     run_common_checks
+
+    # --------------------------------------------------------
+    # Prepare output directories and assets
+    # --------------------------------------------------------
+
     prepare_dist
 
     # --------------------------------------------------------
@@ -483,39 +500,32 @@ run_build() {
     case "$TARGET" in
 
         all)
-
             build_html
             build_allpdf
             validate_links
             ;;
 
         html)
-
             build_html
             ;;
 
         pdf)
-
             build_pdf
             ;;
 
         allpdf)
-
             build_allpdf
             ;;
 
         categories)
-
             build_categories
             ;;
 
         book)
-
             build_book
             ;;
 
         pages-pdf)
-
             build_pages_pdf
             ;;
 
