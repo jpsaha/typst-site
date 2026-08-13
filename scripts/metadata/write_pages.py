@@ -21,7 +21,7 @@ def write_pages(pages):
         encoding="utf-8",
     ) as file:
 
-        write_header(file)
+        write_header(file, "python3 scripts/run.py metadata")
 
         for page in pages:
 
@@ -49,7 +49,7 @@ def write_pages_meta(pages):
         encoding="utf-8",
     ) as file:
 
-        write_header(file)
+        write_header(file, "python3 scripts/run.py metadata")
 
         file.write(
             "#let pages = (\n"

@@ -25,7 +25,7 @@ def write_homepage_typ(lectures):
         encoding="utf-8",
     ) as file:
 
-        write_header(file)
+        write_header(file, "python3 scripts/run.py metadata")
 
         file.write(
             "#let homepage = (\n"
