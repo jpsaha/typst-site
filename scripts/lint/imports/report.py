@@ -2,7 +2,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 
-from scripts.config import ROOT, DIAGNOSTICS_DIR, DOT
+from scripts.config import ROOT, DIAGNOSTICS_DIR, IMPORTS_DOT
 
 # ============================================================
 # Path formatting
@@ -267,14 +267,14 @@ def write_graphviz(
     files,
     graph,
 ):
-    """Write the import graph as Graphviz DOT."""
+    """Write the import graph as Graphviz IMPORTS_DOT."""
 
     DIAGNOSTICS_DIR.mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    with DOT.open(
+    with IMPORTS_DOT.open(
         "w",
         encoding="utf-8",
     ) as file:
@@ -324,5 +324,5 @@ def write_graphviz(
     )
 
     print(
-        f"Wrote {DOT.relative_to(ROOT)}"
+        f"Wrote {IMPORTS_DOT.relative_to(ROOT)}"
     )
