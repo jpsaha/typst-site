@@ -70,7 +70,7 @@ def write_imports(file, title=None):
 def write_header_and_imports(file, title=None):
     """Write the standard header and imports."""
 
-    write_header(file)
+    write_header(file, "python3 scripts/run.py metadata")
     write_imports(file, title)
 
 
