@@ -298,6 +298,15 @@ build_pdf() {
 # ============================================================
 # 8. Composite PDF build
 # ============================================================
+# Build all PDF outputs
+#
+# This is a composite operation consisting of:
+#
+#   1. Individual page PDFs
+#   2. Category PDFs
+#   3. Complete course book
+#   4. Complete pages PDF
+# ============================================================
 
 build_allpdf() {
 
@@ -401,12 +410,22 @@ print_summary() {
 }
 
 # ============================================================
-# 14. Build targets
+# Build pipeline
+# ============================================================
+
+# ============================================================
+# Common validation
 #
-# All targets perform the common metadata and validation
-# stages first.
+# These checks are performed before every build target.
 #
-# Target-specific stages are then executed.
+# They:
+#   1. Generate metadata.
+#   2. Validate source metadata.
+#   3. Validate generated files.
+#   4. Validate Typst imports.
+#
+# Dist preparation is kept separate because it is a build
+# preparation step rather than a validation step.
 # ============================================================
 
 run_common_checks() {
@@ -415,98 +434,102 @@ run_common_checks() {
     validate_metadata
     validate_generated
     validate_imports
+}
+
+# ============================================================
+# Build dispatcher
+#
+# All build targets share the same preparation and validation
+# stages. The selected target then determines which actual
+# build stages are executed.
+#
+# Supported targets:
+#
+#   all
+#       HTML + all PDFs + link validation
+#
+#   html
+#       HTML pages only
+#
+#   pdf
+#       Individual PDFs only
+#
+#   allpdf
+#       All PDF outputs
+#
+#   categories
+#       Category PDFs only
+#
+#   book
+#       Complete course PDF only
+#
+#   pages-pdf
+#       Complete pages PDF only
+# ============================================================
+
+run_build() {
+
+    # --------------------------------------------------------
+    # Common preparation
+    # --------------------------------------------------------
+
+    run_common_checks
     prepare_dist
-}
 
-run_all() {
+    # --------------------------------------------------------
+    # Target-specific build
+    # --------------------------------------------------------
 
-    run_common_checks
+    case "$TARGET" in
 
-    build_html
-    build_allpdf
-    validate_links
-}
+        all)
 
-run_html() {
+            build_html
+            build_allpdf
+            validate_links
+            ;;
 
-    run_common_checks
+        html)
 
-    build_html
-}
+            build_html
+            ;;
 
-run_pdf() {
+        pdf)
 
-    run_common_checks
+            build_pdf
+            ;;
 
-    build_pdf
-}
+        allpdf)
 
-run_allpdf() {
+            build_allpdf
+            ;;
 
-    run_common_checks
+        categories)
 
-    build_allpdf
-}
+            build_categories
+            ;;
 
-run_categories() {
+        book)
 
-    run_common_checks
+            build_book
+            ;;
 
-    build_categories
-}
+        pages-pdf)
 
-run_book() {
+            build_pages_pdf
+            ;;
 
-    run_common_checks
-
-    build_book
-}
-
-run_pages_pdf() {
-
-    run_common_checks
-
-    build_pages_pdf
+    esac
 }
 
 # ============================================================
-# 15. Select build target
+# Run selected build target
 # ============================================================
 
-case "$TARGET" in
-
-    all)
-        run_all
-        ;;
-
-    html)
-        run_html
-        ;;
-
-    pdf)
-        run_pdf
-        ;;
-
-    allpdf)
-        run_allpdf
-        ;;
-
-    categories)
-        run_categories
-        ;;
-
-    book)
-        run_book
-        ;;
-
-    pages-pdf)
-        run_pages_pdf
-        ;;
-
-esac
+run_build
 
 # ============================================================
-# 16. Print summary
+# Print summary
 # ============================================================
 
 print_summary
