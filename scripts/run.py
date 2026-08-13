@@ -3,6 +3,7 @@
 import subprocess
 import sys
 
+
 COMMANDS = {
     # Generation
     "metadata": "scripts.build.generate_metadata",
@@ -19,6 +20,9 @@ COMMANDS = {
     "generated": "scripts.lint.check_generated",
     "imports": "scripts.lint.check_imports",
     "links": "scripts.lint.check_links",
+
+    "prepare-dist": "scripts.build.prepare_dist",
+    "report": "scripts.build.build_report",
 }
 
 def main():
