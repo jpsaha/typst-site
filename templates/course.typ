@@ -17,3 +17,16 @@
   julia,
   asy,
 )
+
+#let lecture-layout(lecture) = {
+  if sys.inputs.at("format", default: "pdf") == "pdf" {
+    import "pdflayout.typ": *
+    pdflayout.with(
+      title: lecture.title,
+      report-style: true,
+      flipp: false,
+    )
+  } else {
+    doc => doc
+  }
+}
