@@ -44,10 +44,10 @@ def write_imports(file, title=None):
         '#import "../generated/lectures.typ": lectures\n\n'
     )
 
-    from scripts.config import PDFLAYOUT
+    from scripts.config import PDFLAYOUT, ROOT
 
     file.write(
-        f'#import "../templates/{PDFLAYOUT.name}":*\n\n'
+        f'#import "../{PDFLAYOUT.relative_to(ROOT)}":*\n\n'
     )
 
     file.write(
