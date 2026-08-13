@@ -10,44 +10,6 @@ def typst_value(value):
     if isinstance(value, int):
         return str(value)
 
-    # --------------------------------------------------------
-    # Lists / tuples
-    #
-    # Python:
-    #
-    #     ("linear-map", "matrices")
-    #
-    # becomes:
-    #
-    #     ("linear-map", "matrices")
-    # --------------------------------------------------------
-
-    if isinstance(value, (list, tuple)):
-        items = ", ".join(
-            typst_value(item)
-            for item in value
-        )
-
-        return f"({items})"
-
-    # --------------------------------------------------------
-    # Strings
-    # --------------------------------------------------------
-
-    if isinstance(value, str):
-        # Escape backslashes and quotation marks.
-        escaped = (
-            value
-            .replace("\\", "\\\\")
-            .replace('"', '\\"')
-        )
-
-        return f'"{escaped}"'
-
-    # --------------------------------------------------------
-    # Fallback
-    # --------------------------------------------------------
-
     return f'"{value}"'
 
 
