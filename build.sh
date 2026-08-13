@@ -99,6 +99,8 @@ stage_end() {
 
 cleanup() {
 
+    local status=$?
+
     echo
     echo "🧹 Cleaning Python bytecode..."
 
@@ -109,6 +111,8 @@ cleanup() {
         -exec rm -rf {} +
 
     echo "✓ Python bytecode removed."
+
+    exit "$status"
 }
 
 trap cleanup EXIT
