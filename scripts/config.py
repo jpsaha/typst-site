@@ -28,7 +28,7 @@ ASSETS_SOURCE_DIR = ROOT / "assets"
 
 BOOK_SOURCE = ROOT / "book_source.typ"
 PAGES_SOURCE = ROOT / "pages_source.typ"
-PDFLAYOUT = ROOT / "pdflayout.typ"
+PDFLAYOUT = ROOT / "templates" / "pdflayout.typ"
 
 
 # ============================================================
