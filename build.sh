@@ -112,7 +112,7 @@ cleanup() {
 
     echo "✓ Python bytecode removed."
 
-    exit "$status"
+    return "$status"
 }
 
 trap cleanup EXIT
