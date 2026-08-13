@@ -111,6 +111,60 @@ typst-site/
 
 The most important principle is that **generated artifacts are not the source of truth**. Source content and metadata are discovered and transformed by the build pipeline.
 
+```text
+typst-site/
+├── assets/
+│   └── css/
+│       └── style.css
+│
+├── content/
+│   ├── courses/
+│   ├── lectures/
+│   ├── mopss/
+│   └── olympiad/
+│
+├── diagnostics/
+│   ├── imports.dot
+│   ├── link_report.txt
+│   └── metadata_report.txt
+│
+├── figures/
+│
+├── generated/
+│   ├── book.typ
+│   ├── category_*.typ
+│   ├── homepage.json
+│   ├── homepage.typ
+│   ├── lectures.typ
+│   ├── pages.typ
+│   └── pages_meta.typ
+│
+├── scripts/
+│   ├── build/
+│   ├── lint/
+│   ├── metadata/
+│   └── utils/
+│
+├── templates/
+│   ├── block-engine.typ
+│   ├── blocks.typ
+│   ├── code.typ
+│   ├── colors.typ
+│   ├── config.typ
+│   ├── counters.typ
+│   ├── course.typ
+│   ├── math.typ
+│   ├── nav.typ
+│   ├── render.typ
+│   ├── theorems.typ
+│   └── utils.typ
+│
+├── book_source.typ
+├── pages_source.typ
+├── pdflayout.typ
+└── build.sh
+```
+
 ---
 
 # Content Organization
