@@ -34,7 +34,7 @@ BUILD_START=$(date +%s)
 # in the final build summary.
 # ============================================================
 
-CATEGORY_COUNT=0
+# CATEGORY_COUNT=0
 
 # ============================================================
 # Stage timings
@@ -343,8 +343,29 @@ print_summary() {
     BUILD_END=$(date +%s)
     BUILD_TIME=$((BUILD_END - BUILD_START))
 
-    PAGE_COUNT=$(find "$PAGES_DIR" -type f -name "*.html" | wc -l | tr -d ' ')
-    PDF_COUNT=$(find "$PDF_DIR" -type f -name "*.pdf" | wc -l | tr -d ' ')
+    PAGE_COUNT=$(
+        find "$PAGES_DIR" \
+            -type f \
+            -name "*.html" |
+        wc -l |
+        tr -d ' '
+    )
+
+    PDF_COUNT=$(
+        find "$PDF_DIR" \
+            -type f \
+            -name "*.pdf" |
+        wc -l |
+        tr -d ' '
+    )
+
+    CATEGORY_COUNT=$(
+        find "$PDF_DIR" \
+            -type f \
+            -name "category_*.pdf" |
+        wc -l |
+        tr -d ' '
+    )
 
     echo
     echo "=============================================="
