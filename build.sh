@@ -30,7 +30,6 @@ TARGET="${1:-all}"
 # ============================================================
 
 print_help() {
-
     cat <<'EOF'
 
 Build the Typst mathematics lecture website and PDFs.
@@ -40,10 +39,7 @@ Usage:
 
 Targets:
     all
-        Build everything:
-        HTML pages, individual PDFs, category PDFs,
-        complete course PDF, complete pages PDF,
-        and validate links.
+        Build everything.
 
     html
         Build HTML pages only.
@@ -52,9 +48,7 @@ Targets:
         Build individual page PDFs only.
 
     allpdf
-        Build all PDF outputs:
-        individual PDFs, category PDFs, course PDF,
-        and pages PDF.
+        Build all PDF outputs.
 
     categories
         Build category PDFs only.
@@ -69,32 +63,34 @@ Options:
     -h, --help
         Show this help message.
 
-Examples:
-    ./build.sh
-    ./build.sh all
-    ./build.sh html
-    ./build.sh pdf
-    ./build.sh allpdf
-    ./build.sh categories
-    ./build.sh book
-    ./build.sh pages-pdf
-    ./build.sh --help
-
-The default target is:
-    all
-
 EOF
 }
-
 
 # ============================================================
 # Handle command-line help
 # ============================================================
 
-if [[ "$TARGET" == "-h" || "$TARGET" == "--help" ]]; then
-    print_help
-    exit 0
-fi
+case "$TARGET" in
+    -h|--help)
+        print_help
+        exit 0
+        ;;
+esac
+
+# ============================================================
+# Validate command-line target
+# ============================================================
+
+case "$TARGET" in
+    all|html|pdf|allpdf|categories|book|pages-pdf)
+        ;;
+    *)
+        echo "Unknown build target: $TARGET"
+        echo
+        echo "Run './build.sh --help' for usage information."
+        exit 1
+        ;;
+esac
 
 # ============================================================
 # Build timing
