@@ -5,7 +5,7 @@ Check consistency between source metadata and generated Typst files.
 
 The actual checking logic is implemented in:
 
-    scripts/generated/
+    scripts/lint/generated/
 
 This script is the command-line entry point.
 
@@ -20,19 +20,10 @@ Exit status:
 """
 
 import sys
+from contextlib import redirect_stdout
+from io import StringIO
 
-# ============================================================
-# Project root
-# ============================================================
-
-from pathlib import Path
-import sys
-
-from scripts.config import ROOT
-
-# ============================================================
-# Generated consistency checks
-# ============================================================
+from scripts.config import GENERATED_REPORT
 
 from scripts.lint.generated.source import (
     discover_source_metadata,
@@ -50,10 +41,10 @@ from scripts.lint.generated.report import (
 
 
 # ============================================================
-# Main
+# Main check
 # ============================================================
 
-def main():
+def run_check():
 
     (
         wrappers,
@@ -90,91 +81,151 @@ def main():
         errors,
     )
 
-    # ========================================================
-    # Report
-    # ========================================================
-
-    print()
-    print(
-        "=============================="
-    )
-    print(
-        "Generated Consistency Check"
-    )
-    print(
-        "=============================="
-    )
-    print()
-
-    print(
-        f"Source wrappers : {len(wrappers)}"
+    return (
+        wrappers,
+        lectures,
+        pages,
+        errors,
     )
 
-    print(
-        f"Source metadata : {len(wrappers)}"
-    )
 
-    print(
-        f"Lectures        : {len(lectures)}"
-    )
+# ============================================================
+# Report
+# ============================================================
 
-    print(
-        f"Pages           : {len(pages)}"
-    )
+def make_report(
+    wrappers,
+    lectures,
+    pages,
+    errors,
+):
+    """
+    Build the human-readable generated consistency report.
+    """
 
-    print(
-        f"Errors          : {len(errors)}"
-    )
+    output = StringIO()
 
-    # --------------------------------------------------------
-    # Errors
-    # --------------------------------------------------------
-
-    if errors:
+    with redirect_stdout(output):
 
         print()
-        print(
-            "=============================="
-        )
-        print(
-            "Generated Consistency Errors"
-        )
-        print(
-            "=============================="
-        )
+        print("==============================")
+        print("Generated Consistency Check")
+        print("==============================")
         print()
 
-        for path, message in errors:
+        print(
+            f"Source wrappers : {len(wrappers)}"
+        )
+
+        print(
+            f"Source metadata : {len(wrappers)}"
+        )
+
+        print(
+            f"Lectures        : {len(lectures)}"
+        )
+
+        print(
+            f"Pages           : {len(pages)}"
+        )
+
+        print(
+            f"Errors          : {len(errors)}"
+        )
+
+        # ----------------------------------------------------
+        # Errors
+        # ----------------------------------------------------
+
+        if errors:
+
+            print()
+            print("==============================")
+            print("Generated Consistency Errors")
+            print("==============================")
+            print()
+
+            for path, message in errors:
+
+                print(
+                    display_path(path)
+                )
+
+                print(
+                    f"   -> {message}"
+                )
+
+                print()
 
             print(
-                display_path(path)
+                "Generated consistency check failed."
             )
 
+        # ----------------------------------------------------
+        # Success
+        # ----------------------------------------------------
+
+        else:
+
+            print()
             print(
-                f"   -> {message}"
+                "No generated consistency errors found."
             )
 
             print()
+            print(
+                "Generated consistency check passed."
+            )
 
-        print(
-            "Generated consistency check failed."
-        )
+    return output.getvalue()
 
+
+# ============================================================
+# Main
+# ============================================================
+
+def main():
+
+    (
+        wrappers,
+        lectures,
+        pages,
+        errors,
+    ) = run_check()
+
+    report = make_report(
+        wrappers,
+        lectures,
+        pages,
+        errors,
+    )
+
+    # --------------------------------------------------------
+    # Write diagnostic report
+    # --------------------------------------------------------
+
+    GENERATED_REPORT.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    GENERATED_REPORT.write_text(
+        report,
+        encoding="utf-8",
+    )
+
+    # --------------------------------------------------------
+    # Display the same report in the terminal
+    # --------------------------------------------------------
+
+    print(report, end="")
+
+    # --------------------------------------------------------
+    # Exit status
+    # --------------------------------------------------------
+
+    if errors:
         return 1
-
-    # --------------------------------------------------------
-    # Success
-    # --------------------------------------------------------
-
-    print()
-    print(
-        "No generated consistency errors found."
-    )
-
-    print()
-    print(
-        "Generated consistency check passed."
-    )
 
     return 0
 
