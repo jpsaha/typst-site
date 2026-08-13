@@ -287,7 +287,7 @@ build_pdf() {
 }
 
 # ============================================================
-# 7. Build all PDFs
+# 8. Build all PDFs
 # ============================================================
 
 build_allpdf() {
@@ -299,7 +299,7 @@ build_allpdf() {
 }
 
 # ============================================================
-# 8. Build category books
+# 9. Build category books
 # ============================================================
 
 build_categories() {
@@ -315,7 +315,7 @@ build_categories() {
 }
 
 # ============================================================
-# 9. Build complete course PDF
+# 10. Build complete course PDF
 # ============================================================
 
 build_book() {
@@ -331,7 +331,7 @@ build_book() {
 }
 
 # ============================================================
-# 10. Build complete pages PDF
+# 11. Build complete pages PDF
 # ============================================================
 
 build_pages_pdf() {
@@ -347,7 +347,7 @@ build_pages_pdf() {
 }
 
 # ============================================================
-# 11. Check links
+# 12. Check links
 # ============================================================
 
 validate_links() {
@@ -367,7 +367,7 @@ validate_links() {
 }
 
 # ============================================================
-# 12. Build diagnostics summary
+# 13. Build diagnostics summary
 #
 # The individual reports are still produced at their normal
 # stages above. This final section gives a compact overview
@@ -534,7 +534,7 @@ print_summary() {
 }
 
 # ============================================================
-# 13. Build targets
+# 14. Build targets
 #
 # All targets perform the common metadata and validation
 # stages first.
@@ -557,10 +557,6 @@ run_all() {
 
     build_html
     build_allpdf
-    # build_pdf
-    # build_categories
-    # build_book
-    # build_pages_pdf
     validate_links
 }
 
@@ -582,10 +578,7 @@ run_allpdf() {
 
     run_common_checks
 
-    build_pdf
-    build_categories
-    build_book
-    build_pages_pdf
+    build_allpdf
 }
 
 run_categories() {
@@ -610,7 +603,7 @@ run_pages_pdf() {
 }
 
 # ============================================================
-# 14. Select build target
+# 15. Select build target
 # ============================================================
 
 case "$TARGET" in
@@ -661,7 +654,7 @@ case "$TARGET" in
 esac
 
 # ============================================================
-# 15. Print summary
+# 16. Print summary
 # ============================================================
 
 print_summary
