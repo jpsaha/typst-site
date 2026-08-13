@@ -1,16 +1,17 @@
 def typst_value(value):
-    """Convert a Python value to a Typst value."""
-
     if value is None:
         return "none"
 
     if isinstance(value, bool):
         return "true" if value else "false"
 
-    if isinstance(value, int):
-        return str(value)
+    if isinstance(value, list):
+        return "[" + ", ".join(typst_value(x) for x in value) + "]"
 
-    return f'"{value}"'
+    if isinstance(value, str):
+        return '"' + value.replace('"', '\\"') + '"'
+
+    return str(value)
 
 
 def write_field(file, key, value, indent=4):
