@@ -85,6 +85,67 @@ die() {
 }
 
 # ============================================================
+# Help
+# ============================================================
+
+print_help() {
+
+    cat <<'EOF'
+
+Build the Typst mathematics lecture website and PDFs.
+
+Usage:
+    ./build.sh [TARGET]
+
+Targets:
+    all
+        Build everything:
+        HTML pages, individual PDFs, category PDFs,
+        complete course PDF, complete pages PDF,
+        and validate links.
+
+    html
+        Build HTML pages only.
+
+    pdf
+        Build individual page PDFs only.
+
+    allpdf
+        Build all PDF outputs:
+        individual PDFs, category PDFs, course PDF,
+        and pages PDF.
+
+    categories
+        Build category PDFs only.
+
+    book
+        Build the complete course PDF only.
+
+    pages-pdf
+        Build the complete pages PDF only.
+
+Options:
+    -h, --help
+        Show this help message.
+
+Examples:
+    ./build.sh
+    ./build.sh all
+    ./build.sh html
+    ./build.sh pdf
+    ./build.sh allpdf
+    ./build.sh categories
+    ./build.sh book
+    ./build.sh pages-pdf
+    ./build.sh --help
+
+The default target is:
+    all
+
+EOF
+}
+
+# ============================================================
 # Timing helpers
 #
 # macOS does not support date +%s.%N reliably.
@@ -608,6 +669,11 @@ run_pages_pdf() {
 
 case "$TARGET" in
 
+    -h|--help)
+        print_help
+        exit 0
+        ;;
+
     all)
         run_all
         ;;
@@ -639,15 +705,7 @@ case "$TARGET" in
     *)
         echo "Unknown build target: $TARGET"
         echo
-        echo "Usage:"
-        echo "  ./build.sh"
-        echo "  ./build.sh all"
-        echo "  ./build.sh html"
-        echo "  ./build.sh pdf"
-        echo "  ./build.sh allpdf"
-        echo "  ./build.sh categories"
-        echo "  ./build.sh book"
-        echo "  ./build.sh pages-pdf"
+        echo "Run './build.sh --help' for usage information."
         exit 1
         ;;
 
