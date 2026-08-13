@@ -3,29 +3,46 @@
 
 #let lecture = (
   file: "lec1",
+  type: "lecture",
   number: 1,
   title: "Polynomial rings",
   category: "Fields and Galois theory",
-  date: "2026-08-10",
-  reading: "Chapter 2",
-  duration: "75 minutes",
-  difficulty: "Intermediate",
+  tags: ["linear-map", "matrices"],
+  description: "Introduction to linear transformations and matrix representations.",
+  date: datetime(year: 2026, month: 8, day: 1),
+  status: "published",
+  // reading: "Chapter 2",
+  // duration: "75 minutes",
+  // difficulty: "Intermediate",
 )
 
-#let pdf-layout = (
-  if sys.inputs.at("format", default: "pdf") == "pdf" {
-    import "../../templates/pdflayout.typ": *
-    pdflayout.with(
-      title: lecture.title,
-      report-style: true,
-      flipp: false,
-    )
-  } else {
-    doc => doc
-  }
-)
+// #let lecture = (
+//   file: "lec1",
+//   number: 1,
+//   title: "Polynomial rings",
+//   category: "Fields and Galois theory",
+//   date: "2026-08-10",
+//   reading: "Chapter 2",
+//   duration: "75 minutes",
+//   difficulty: "Intermediate",
+// )
 
-#show: pdf-layout
+// #let pdf-layout = (
+//   if sys.inputs.at("format", default: "pdf") == "pdf" {
+//     import "../../templates/pdflayout.typ": *
+//     pdflayout.with(
+//       title: lecture.title,
+//       report-style: true,
+//       flipp: false,
+//     )
+//   } else {
+//     doc => doc
+//   }
+// )
+
+// #show: pdf-layout
+
+#show: lecture-layout(lecture)
 
 #show: doc => {
   reset-counters(lecture.number)
