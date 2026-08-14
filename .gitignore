@@ -2,10 +2,16 @@
 # Build output
 # ============================================================
 
-dist/
-diagnostics/
-generated/
+# Generated/publication output
+dist/*
 
+# Build diagnostics
+diagnostics/*
+
+# Machine-generated intermediate files
+generated/*
+
+# !scripts/lint/generated
 
 # ============================================================
 # Python
@@ -38,3 +44,6 @@ pdflayout_old.typ
 templates/euler/
 
 content/mopss
+
+
+coding/
