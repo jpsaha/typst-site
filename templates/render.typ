@@ -97,7 +97,8 @@
       ),
     )[
       #if lecture.number != none {
-        [Lecture #lecture.number: ]
+        [#lecture.number: ]
+        // [Lecture #lecture.number: ]
       }
       #lecture.title
     ]
