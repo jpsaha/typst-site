@@ -39,7 +39,7 @@ from scripts.metadata.seo import inject_seo
 # ============================================================
 
 def compile_page(lecture):
-    """Compile one content page to HTML."""
+    """Compile one content page to HTML and inject SEO metadata."""
 
     title = lecture["title"]
     html = lecture["html"]
@@ -64,6 +64,32 @@ def compile_page(lecture):
             "format=html",
         ],
         check=True,
+    )
+
+    # --------------------------------------------------------
+    # Inject SEO
+    # --------------------------------------------------------
+
+    html_content = html_path.read_text(
+        encoding="utf-8",
+    )
+
+    description = lecture.get(
+        "description",
+        SITE_DESCRIPTION,
+    )
+
+    html_content = inject_seo(
+        html_content,
+        title=title,
+        description=description,
+        path=f"pages/{html}",
+        og_type="article",
+    )
+
+    html_path.write_text(
+        html_content,
+        encoding="utf-8",
     )
 
 
