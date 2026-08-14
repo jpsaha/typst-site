@@ -27,7 +27,11 @@ from scripts.config import (
     SITE_TITLE,
     SITE_ICON,
     SITE_TAGLINE,
+    SITE_DESCRIPTION,
 )
+
+# from scripts.metadata.seo import seo_head
+from scripts.metadata.seo import inject_seo
 
 
 # ============================================================
@@ -238,6 +242,26 @@ def build_homepage(categories):
         )
 
 
+    # --------------------------------------------------------
+    # Inject homepage SEO
+    # --------------------------------------------------------
+
+    html_content = INDEX_HTML.read_text(
+        encoding="utf-8",
+    )
+
+    html_content = inject_seo(
+        html_content,
+        title=SITE_TITLE,
+        description=SITE_DESCRIPTION,
+        path="",
+        og_type="website",
+    )
+
+    INDEX_HTML.write_text(
+        html_content,
+        encoding="utf-8",
+    )
 # ============================================================
 # Main
 # ============================================================
