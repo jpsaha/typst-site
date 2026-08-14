@@ -6,6 +6,7 @@
   number: 30,
   title: "Olympiad Inequalities",
   category: "Olympiad",
+  description: "Introduction to Olympiad Inequalities.",
 )
 
 #show: lecture-layout(lecture)

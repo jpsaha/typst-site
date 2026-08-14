@@ -8,7 +8,7 @@
   title: "Polynomial rings",
   category: "Fields and Galois theory",
   tags: ["linear-map", "matrices"],
-  description: "Introduction to linear transformations and matrix representations.",
+  description: "Introduction to Fields and Galois theory.",
   date: "2026-08-10",
   status: "published",
   // reading: "Chapter 2",

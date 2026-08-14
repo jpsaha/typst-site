@@ -6,6 +6,7 @@
   number: 2,
   title: "Field extensions",
   category: "Fields and Galois theory",
+  description: "Introduction to Fields and Galois theory.",
 )
 
 #show: lecture-layout(lecture)
