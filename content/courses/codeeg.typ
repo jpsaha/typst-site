@@ -10,7 +10,7 @@
 
 #show: doc => {
   reset-counters(lecture.number)
-  setup-document(doc)
+  doc
 }
 
 #page-header(lecture)
