@@ -9,7 +9,7 @@
   category: "Fields and Galois theory",
   tags: ["linear-map", "matrices"],
   description: "Introduction to linear transformations and matrix representations.",
-  date: datetime(year: 2026, month: 8, day: 1),
+  date: "2026-08-10",
   status: "published",
   // reading: "Chapter 2",
   // duration: "75 minutes",
