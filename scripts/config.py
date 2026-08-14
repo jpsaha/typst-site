@@ -73,9 +73,17 @@ BUILD_REPORT = DIAGNOSTICS_DIR / "build_report.txt"
 # Site information
 # ============================================================
 
-SITE_TITLE = "Mathematics Lecture Portal"
+# SITE_TITLE = "Mathematics Lecture Portal"
+# SITE_ICON = "🧮"
+# SITE_TAGLINE = (
+#     "Interactive web modules & downloadable "
+#     "print-ready course material"
+# )
+
+SITE_TITLE = "Notes"
 SITE_ICON = "🧮"
 SITE_TAGLINE = (
-    "Interactive web modules & downloadable "
-    "print-ready course material"
+    "These notes may contain typos, "
+    "and need not be a faithful representation of any lecture or a course."
+    "Please report any errors you find to the author."
 )
