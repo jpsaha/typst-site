@@ -2,7 +2,7 @@
 #import "../../templates/course.typ": *
 
 #let lecture = (
-  file: "lec1",
+  file: "fgt1",
   type: "lecture",
   number: 1,
   title: "Polynomial rings",
