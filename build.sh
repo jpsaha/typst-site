@@ -297,6 +297,8 @@ build_html() {
     stage_start
 
     python3 scripts/run.py html
+    python3 scripts/run.py sitemap
+    python3 scripts/run.py robots
 
     stage_end TIME_HTML
 }
