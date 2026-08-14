@@ -67,3 +67,15 @@ BUILD_REPORT = DIAGNOSTICS_DIR / "build_report.txt"
 
 
 # DOT = DIAGNOSTICS_DIR / "imports.dot"
+
+
+# ============================================================
+# Site information
+# ============================================================
+
+SITE_TITLE = "Mathematics Lecture Portal"
+SITE_ICON = "🧮"
+SITE_TAGLINE = (
+    "Interactive web modules & downloadable "
+    "print-ready course material"
+)

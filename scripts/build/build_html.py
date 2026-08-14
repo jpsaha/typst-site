@@ -24,6 +24,9 @@ from scripts.config import (
     CONTENT_DIR,
     HOMEPAGE_JSON,
     INDEX_HTML,
+    SITE_TITLE,
+    SITE_ICON,
+    SITE_TAGLINE,
 )
 
 
@@ -152,7 +155,7 @@ def build_homepage(categories):
             '    <meta charset="UTF-8">\n'
             '    <meta name="viewport" '
             'content="width=device-width, initial-scale=1.0">\n'
-            '    <title>Mathematics Lecture Portal</title>\n'
+            f'    <title>{SITE_TITLE}</title>\n'
             '    <link rel="stylesheet" '
             'href="assets/css/style.css">\n'
             "</head>\n"
@@ -162,9 +165,8 @@ def build_homepage(categories):
             '<div class="index-container">\n'
             "\n"
             '<header class="index-header">\n'
-            "    <h1>🧮 Mathematics Lecture Portal</h1>\n"
-            "    <p>Interactive web modules & "
-            "downloadable print-ready course material</p>\n"
+            f"    <h1>{SITE_ICON} {SITE_TITLE}</h1>\n"
+            f"    <p>{SITE_TAGLINE}</p>\n"
             "</header>\n"
             "\n"
             '<main class="lecture-list">\n'
