@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
 
 """
-SEO helpers for the Typst course website.
+SEO and OpenGraph helpers.
 
-Provides:
-    - HTML escaping
-    - canonical URLs
-    - meta tags
-    - OpenGraph tags
-    - Twitter Card tags
+Injects SEO metadata into generated Typst HTML.
 """
 
 from html import escape
@@ -18,9 +13,7 @@ from scripts.config import (
     SITE_URL,
     SITE_TITLE,
     SITE_DESCRIPTION,
-    SITE_AUTHOR,
     SITE_OG_IMAGE,
-    SITE_LANGUAGE,
 )
 
 
@@ -29,7 +22,7 @@ from scripts.config import (
 # ============================================================
 
 def absolute_url(path):
-    """Convert a site-relative path into an absolute URL."""
+    """Return an absolute site URL."""
 
     return urljoin(
         SITE_URL.rstrip("/") + "/",
@@ -38,53 +31,18 @@ def absolute_url(path):
 
 
 # ============================================================
-# HTML escaping
+# SEO head
 # ============================================================
 
-def html_escape(value):
-    """Escape a value for safe insertion into HTML."""
-
-    return escape(
-        str(value),
-        quote=True,
-    )
-
-
-# ============================================================
-# SEO metadata
-# ============================================================
-
-def seo_head(
+def seo_tags(
     *,
     title,
-    description=None,
-    path="/",
-    og_type="website",
+    description,
+    path,
+    og_type="article",
     image=None,
 ):
-    """
-    Generate SEO/OpenGraph/Twitter metadata.
-
-    Parameters
-    ----------
-    title:
-        Page title.
-
-    description:
-        Meta description.
-
-    path:
-        Site-relative URL.
-
-    og_type:
-        OpenGraph type, usually 'website' or 'article'.
-
-    image:
-        Site-relative image URL.
-    """
-
-    if description is None:
-        description = SITE_DESCRIPTION
+    """Generate SEO/OpenGraph/Twitter HTML."""
 
     canonical = absolute_url(path)
 
@@ -93,39 +51,107 @@ def seo_head(
 
     image_url = absolute_url(image)
 
-    title = html_escape(title)
-    description = html_escape(description)
-    canonical = html_escape(canonical)
-    image_url = html_escape(image_url)
-    site_title = html_escape(SITE_TITLE)
+    title = escape(str(title), quote=True)
+    description = escape(str(description), quote=True)
+    canonical = escape(canonical, quote=True)
+    image_url = escape(image_url, quote=True)
+    site_title = escape(SITE_TITLE, quote=True)
 
-    lines = [
-        f'    <title>{title}</title>',
-        f'    <meta name="description" content="{description}">',
-        f'    <link rel="canonical" href="{canonical}">',
-        f'    <meta name="author" content="{html_escape(SITE_AUTHOR)}">'
-        if SITE_AUTHOR
-        else "",
-        "",
-        f'    <meta property="og:type" content="{og_type}">',
-        f'    <meta property="og:title" content="{title}">',
-        f'    <meta property="og:description" content="{description}">',
-        f'    <meta property="og:url" content="{canonical}">',
-        f'    <meta property="og:site_name" content="{site_title}">',
-        f'    <meta property="og:image" content="{image_url}">',
-        "",
-        '    <meta name="twitter:card" '
-        'content="summary_large_image">',
-        f'    <meta name="twitter:title" content="{title}">',
-        f'    <meta name="twitter:description" '
-        f'content="{description}">',
-        f'    <meta name="twitter:image" content="{image_url}">',
-        "",
-        f'    <meta name="language" content="{SITE_LANGUAGE}">',
+    return f"""
+<title>{title}</title>
+<meta name="description" content="{description}">
+<link rel="canonical" href="{canonical}">
+
+<meta property="og:type" content="{og_type}">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{description}">
+<meta property="og:url" content="{canonical}">
+<meta property="og:site_name" content="{site_title}">
+<meta property="og:image" content="{image_url}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{description}">
+<meta name="twitter:image" content="{image_url}">
+""".strip()
+
+
+# ============================================================
+# Inject into HTML
+# ============================================================
+
+def inject_seo(
+    html,
+    *,
+    title,
+    description,
+    path,
+    og_type="article",
+    image=None,
+):
+    """Inject SEO metadata into the HTML <head>.
+
+    Safe to call repeatedly: existing generated SEO tags
+    are removed before new ones are inserted.
+    """
+
+    import re
+
+    # --------------------------------------------------------
+    # Remove previously generated SEO
+    # --------------------------------------------------------
+
+    patterns = [
+        r'<title>.*?</title>',
+        r'<meta name="description"[^>]*>\s*',
+        r'<link rel="canonical"[^>]*>\s*',
+
+        r'<meta property="og:type"[^>]*>\s*',
+        r'<meta property="og:title"[^>]*>\s*',
+        r'<meta property="og:description"[^>]*>\s*',
+        r'<meta property="og:url"[^>]*>\s*',
+        r'<meta property="og:site_name"[^>]*>\s*',
+        r'<meta property="og:image"[^>]*>\s*',
+
+        r'<meta name="twitter:card"[^>]*>\s*',
+        r'<meta name="twitter:title"[^>]*>\s*',
+        r'<meta name="twitter:description"[^>]*>\s*',
+        r'<meta name="twitter:image"[^>]*>\s*',
     ]
 
-    return "\n".join(
-        line
-        for line in lines
-        if line != ""
+    for pattern in patterns:
+        html = re.sub(
+            pattern,
+            "",
+            html,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+
+    # --------------------------------------------------------
+    # Generate new SEO
+    # --------------------------------------------------------
+
+    tags = seo_tags(
+        title=title,
+        description=description,
+        path=path,
+        og_type=og_type,
+        image=image,
+    )
+
+    # --------------------------------------------------------
+    # Insert before </head>
+    # --------------------------------------------------------
+
+    marker = "</head>"
+
+    if marker not in html:
+        raise ValueError(
+            "Could not find </head> in generated HTML."
+        )
+
+    return html.replace(
+        marker,
+        tags + "\n" + marker,
+        1,
     )
