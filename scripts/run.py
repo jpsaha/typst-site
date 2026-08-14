@@ -73,6 +73,9 @@ COMMANDS = {
     # --------------------------------------------------------
     
     "prepare-diagnostics": "scripts.build.prepare_diagnostics",
+
+    "sitemap": "scripts.build.build_sitemap",
+    "robots": "scripts.build.build_robots",
 }
 
 
