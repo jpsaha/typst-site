@@ -69,7 +69,6 @@ def generate_asy(
     number,
     title,
     category,
-    file,
 ):
     """
     Generate one Asymptote source from lecture metadata.
@@ -90,11 +89,6 @@ def generate_asy(
     source = source.replace(
         "__CATEGORY__",
         escape_asy_string(category),
-    )
-
-    source = source.replace(
-        "__FILE__",
-        escape_asy_string(file),
     )
 
     return source
@@ -176,30 +170,47 @@ def main():
                 skipped += 1
                 continue
 
-            # ------------------------------------------------
-            # Lecture filename
-            # ------------------------------------------------
 
-            html = lecture.get("html")
+            # --------------------------------------------------------
+            # Source path
+            # --------------------------------------------------------
 
-            if not html:
+            source = lecture.get("source")
+
+            if not source:
                 print(
-                    "⚠️  Skipping lecture without html"
+                    "⚠️  Skipping lecture without source"
                 )
                 continue
 
-            if not html.endswith(".html"):
+            source_path = Path(source)
+
+            if source_path.suffix != ".typ":
                 print(
-                    f"⚠️  Skipping {html} "
-                    f"— expected .html filename"
+                    f"⚠️  Skipping {source} "
+                    f"— expected .typ source"
                 )
                 continue
 
-            file = html[:-5]
+            # Preserve source directory structure
+            # and replace .typ with .asy
 
-            # ------------------------------------------------
+            output_relative = source_path.with_suffix(".asy")
+
+            output = (
+                OUTPUT_DIR
+                / output_relative
+            )
+
+            output.parent.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
+
+
+            # --------------------------------------------------------
             # Lecture metadata
-            # ------------------------------------------------
+            # --------------------------------------------------------
 
             number = lecture.get(
                 "number",
@@ -211,32 +222,27 @@ def main():
                 "",
             )
 
-            # Category comes from homepage.json
             category_name = category
 
-            # ------------------------------------------------
-            # Generate Asymptote source
-            # ------------------------------------------------
 
-            source = generate_asy(
+            # --------------------------------------------------------
+            # Generate Asymptote source
+            # --------------------------------------------------------
+
+            source_text = generate_asy(
                 template,
                 number=number,
                 title=title,
                 category=category_name,
-                file=file,
             )
 
-            # ------------------------------------------------
+
+            # --------------------------------------------------------
             # Write output
-            # ------------------------------------------------
-
-            output = (
-                OUTPUT_DIR
-                / f"{file}.asy"
-            )
+            # --------------------------------------------------------
 
             output.write_text(
-                source,
+                source_text,
                 encoding="utf-8",
             )
 
