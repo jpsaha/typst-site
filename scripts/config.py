@@ -15,6 +15,7 @@ CONTENT_DIR = ROOT / "content"
 TEMPLATES_DIR = ROOT / "templates"
 GENERATED_DIR = ROOT / "generated"
 DIAGNOSTICS_DIR = ROOT / "diagnostics"
+GENERATED_OG_DIR = GENERATED_DIR / "og"
 
 # ============================================================
 # Source directories

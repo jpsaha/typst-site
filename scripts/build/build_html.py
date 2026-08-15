@@ -14,6 +14,7 @@ PDF files are built separately by build_pdfs.py,
 build_categories.py, build_book.py, and build_pages_pdf.py.
 """
 
+from pathlib import Path
 import json
 import re
 import subprocess
@@ -41,14 +42,26 @@ from scripts.metadata.seo import inject_seo
 def compile_page(lecture):
     """Compile one content page to HTML and inject SEO metadata."""
 
+    # ========================================================
+    # Basic lecture metadata
+    # ========================================================
+
     title = lecture["title"]
     html = lecture["html"]
     source = lecture["source"]
+
+    # --------------------------------------------------------
+    # Resolve source and output paths
+    # --------------------------------------------------------
 
     source_path = CONTENT_DIR / source
     html_path = PAGES_DIR / html
 
     print(f"📖 Compiling {title}")
+
+    # ========================================================
+    # Compile Typst source to HTML
+    # ========================================================
 
     subprocess.run(
         [
@@ -66,18 +79,86 @@ def compile_page(lecture):
         check=True,
     )
 
-    # --------------------------------------------------------
-    # Inject SEO
-    # --------------------------------------------------------
+    # ========================================================
+    # Read generated HTML
+    # ========================================================
 
     html_content = html_path.read_text(
         encoding="utf-8",
     )
 
+    # ========================================================
+    # SEO description
+    # ========================================================
+
+    # Use the lecture-specific description when supplied.
+    # Otherwise fall back to the site-wide description.
     description = lecture.get(
         "description",
         SITE_DESCRIPTION,
     )
+
+    # ========================================================
+    # Determine Open Graph image
+    # ========================================================
+    #
+    # Priority:
+    #
+    #   1. Explicit "og_image" in lecture metadata.
+    #   2. Generated OG image corresponding to the source file.
+    #
+    # Example with:
+    #
+    #     source: "lectures/lec1.typ"
+    #
+    # the generated OG image is:
+    #
+    #     generated/og/lectures/lec1.png
+    #
+    # and the published URL is:
+    #
+    #     /assets/og/lectures/lec1.png
+    #
+    # --------------------------------------------------------
+
+    if lecture.get("og_image"):
+
+        # ----------------------------------------------------
+        # An explicit image was supplied in the metadata.
+        # Do not generate or derive another OG image path.
+        # ----------------------------------------------------
+
+        image = lecture["og_image"]
+
+    else:
+
+        # ----------------------------------------------------
+        # No explicit OG image was supplied.
+        #
+        # Derive the generated image path from the source
+        # content path while preserving its directory structure.
+        #
+        #     lectures/lec1.typ
+        #             ↓
+        #     lectures/lec1.png
+        #
+        #     lectures_dummy/lec2.typ
+        #             ↓
+        #     lectures_dummy/lec2.png
+        # ----------------------------------------------------
+
+        source_path_relative = Path(source)
+
+        image = (
+            "/assets/og/"
+            + str(
+                source_path_relative.with_suffix(".png")
+            )
+        )
+
+    # ========================================================
+    # Inject SEO / Open Graph / Twitter metadata
+    # ========================================================
 
     html_content = inject_seo(
         html_content,
@@ -85,14 +166,17 @@ def compile_page(lecture):
         description=description,
         path=f"pages/{html}",
         og_type="article",
-        image=f"/assets/og/{html[:-5]}.png",
+        image=image,
     )
+
+    # ========================================================
+    # Write HTML back to disk
+    # ========================================================
 
     html_path.write_text(
         html_content,
         encoding="utf-8",
     )
-
 
 # ============================================================
 # Homepage entry
