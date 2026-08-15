@@ -15,22 +15,57 @@ import sys
 # This file provides a single entry point for build.sh and
 # keeps the shell script independent of the individual Python
 # module names.
-# 
+#
+# ------------------------------------------------------------
+# Generation
+# ------------------------------------------------------------
+#
 # python3 scripts/run.py metadata
+#
+# ------------------------------------------------------------
+# Open Graph images
+# ------------------------------------------------------------
+#
+# python3 scripts/run.py og-generate
+# python3 scripts/run.py og-build
+#
+# ------------------------------------------------------------
+# Validation
+# ------------------------------------------------------------
+#
 # python3 scripts/run.py metadata-check
 # python3 scripts/run.py generated
 # python3 scripts/run.py imports
-
+# python3 scripts/run.py links
+#
+# ------------------------------------------------------------
+# Build infrastructure
+# ------------------------------------------------------------
+#
 # python3 scripts/run.py prepare-dist
 # python3 scripts/run.py prepare-diagnostics
-
+#
+# ------------------------------------------------------------
+# Output
+# ------------------------------------------------------------
+#
 # python3 scripts/run.py html
 # python3 scripts/run.py pdf
 # python3 scripts/run.py categories
 # python3 scripts/run.py book
 # python3 scripts/run.py pages-pdf
-
-# python3 scripts/run.py links
+#
+# ------------------------------------------------------------
+# Site files
+# ------------------------------------------------------------
+#
+# python3 scripts/run.py sitemap
+# python3 scripts/run.py robots
+#
+# ------------------------------------------------------------
+# Diagnostics
+# ------------------------------------------------------------
+#
 # python3 scripts/run.py report
 # ============================================================
 
@@ -41,6 +76,13 @@ COMMANDS = {
     # --------------------------------------------------------
 
     "metadata": "scripts.build.generate_metadata",
+
+    # --------------------------------------------------------
+    # Open Graph images
+    # --------------------------------------------------------
+
+    "og-generate": "scripts.og.generate_og",
+    "og-build": "scripts.og.build_og",
 
     # --------------------------------------------------------
     # Output
@@ -71,7 +113,7 @@ COMMANDS = {
     # --------------------------------------------------------
     # Prepare diagnostics
     # --------------------------------------------------------
-    
+
     "prepare-diagnostics": "scripts.build.prepare_diagnostics",
 
     "sitemap": "scripts.build.build_sitemap",
