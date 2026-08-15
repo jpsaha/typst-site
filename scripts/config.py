@@ -88,11 +88,20 @@ SITE_TAGLINE = (
     "Please report any errors you find to the author."
 )
 
+
 # ============================================================
 # SEO / Website
 # ============================================================
 
-SITE_URL = "https://jpsaha.github.io/typst-site"
+# GitHub
+# GITHUB_USERNAME = "username"
+# REPO_NAME = "reponame"
+GITHUB_USERNAME = "jpsaha"
+REPO_NAME = "typst-site"
+
+
+# Website
+SITE_URL = f"https://{GITHUB_USERNAME}.github.io/{REPO_NAME}"
 # Do not put a trailing / on SITE_URL.
 
 SITE_DESCRIPTION = (
