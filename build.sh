@@ -111,6 +111,7 @@ BUILD_START=$(date +%s)
 TIME_METADATA="0"
 TIME_METADATA_CHECK="0"
 TIME_GENERATED_CHECK="0"
+TIME_OG="0"
 TIME_IMPORT_CHECK="0"
 TIME_HTML="0"
 TIME_PDF="0"
@@ -232,6 +233,30 @@ validate_generated() {
 
     stage_end TIME_GENERATED_CHECK
 }
+
+
+# ============================================================
+# 4. Generate Open Graph images
+# ============================================================
+
+generate_og() {
+
+    echo
+    echo "🖼️  Generating Open Graph images..."
+
+    stage_start
+
+    if ! python3 scripts/run.py og-generate; then
+        die "Open Graph source generation failed."
+    fi
+
+    if ! python3 scripts/run.py og-build; then
+        die "Open Graph image generation failed."
+    fi
+
+    stage_end TIME_OG
+}
+
 
 # ============================================================
 # 4. Check Typst imports
