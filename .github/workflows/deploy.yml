@@ -36,10 +36,28 @@ jobs:
       # ImageMagick is used for PNG processing/resizing.
       # ========================================================
 
-      - name: Install Asymptote and ImageMagick
+      # ========================================================
+      # Install Asymptote
+      # ========================================================
+
+      - name: Install Asymptote
         run: |
           sudo apt-get update
-          sudo apt-get install -y asymptote imagemagick
+          sudo apt-get install -y asymptote
+
+      # ========================================================
+      # Install ImageMagick 7
+      #
+      # build_og.py uses the ImageMagick 7 "magick" command.
+      # ========================================================
+
+      - name: Install ImageMagick
+        run: |
+          wget -q https://imagemagick.org/archive/binaries/magick \
+            -O magick
+
+          chmod +x magick
+          sudo mv magick /usr/local/bin/magick
 
       # ========================================================
       # Verify external build tools
