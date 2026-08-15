@@ -34,6 +34,7 @@ def prepare_dist():
         ASSETS_DIR / "css",
         ASSETS_DIR / "js",
         ASSETS_DIR / "images",
+        ASSETS_DIR / "og",
     ):
         directory.mkdir(
             parents=True,
@@ -41,7 +42,7 @@ def prepare_dist():
         )
 
     # --------------------------------------------------------
-    # Copy assets
+    # Copy CSS
     # --------------------------------------------------------
 
     source_css = ASSETS_SOURCE_DIR / "css" / "style.css"
@@ -60,6 +61,28 @@ def prepare_dist():
 
         print(
             "⚠️ Warning: assets/css/style.css not found"
+        )
+
+    # --------------------------------------------------------
+    # Copy Open Graph image
+    # --------------------------------------------------------
+
+    source_og = ASSETS_SOURCE_DIR / "og" / "default.png"
+    target_og = ASSETS_DIR / "og" / "default.png"
+
+    if source_og.exists():
+
+        shutil.copy2(
+            source_og,
+            target_og,
+        )
+
+        print("📋 Copied og/default.png")
+
+    else:
+
+        print(
+            "⚠️ Warning: assets/og/default.png not found"
         )
 
     # --------------------------------------------------------
