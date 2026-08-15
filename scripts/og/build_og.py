@@ -106,8 +106,7 @@ def build_og_image(source):
 
     subprocess.run(
         [
-            # "magick",
-            "convert",
+            "magick",
             "-density",
             str(DENSITY),
             str(pdf),
