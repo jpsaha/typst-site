@@ -85,16 +85,6 @@ COMMANDS = {
     "og-build": "scripts.og.build_og",
 
     # --------------------------------------------------------
-    # Output
-    # --------------------------------------------------------
-
-    "html": "scripts.build.build_html",
-    "pdf": "scripts.build.build_pdfs",
-    "categories": "scripts.build.build_categories",
-    "book": "scripts.build.build_book",
-    "pages-pdf": "scripts.build.build_pages_pdf",
-
-    # --------------------------------------------------------
     # Validation
     # --------------------------------------------------------
 
@@ -104,11 +94,10 @@ COMMANDS = {
     "links": "scripts.lint.check_links",
 
     # --------------------------------------------------------
-    # Build infrastructure
+    # Build infrastructure preparation
     # --------------------------------------------------------
 
     "prepare-dist": "scripts.build.prepare_dist",
-    "report": "scripts.build.build_report",
 
     # --------------------------------------------------------
     # Prepare diagnostics
@@ -116,8 +105,28 @@ COMMANDS = {
 
     "prepare-diagnostics": "scripts.build.prepare_diagnostics",
 
+    # --------------------------------------------------------
+    # Website Output
+    # --------------------------------------------------------
+
+    "html": "scripts.build.build_html",
     "sitemap": "scripts.build.build_sitemap",
     "robots": "scripts.build.build_robots",
+
+    # --------------------------------------------------------
+    # PDF Output
+    # --------------------------------------------------------
+
+    "pdf": "scripts.build.build_pdfs",
+    "categories": "scripts.build.build_categories",
+    "book": "scripts.build.build_book",
+    "pages-pdf": "scripts.build.build_pages_pdf",
+
+    # --------------------------------------------------------
+    # Diagnostics
+    # --------------------------------------------------------
+
+    "report": "scripts.build.build_report",
 }
 
 
