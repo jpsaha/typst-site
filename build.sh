@@ -35,6 +35,8 @@ Build the Typst mathematics lecture website and PDFs.
 Usage:
     ./build.sh [TARGET]
 
+If TARGET is omitted, "all" is used.
+
 Targets:
 
     all
@@ -117,6 +119,55 @@ Targets:
 
     report
         Build the diagnostics/build report.
+
+Options:
+
+    -h, --help
+        Show this help message.
+
+
+--------------------------------------------------
+##################################################
+
+Build the Typst mathematics lecture website and PDFs.
+
+Usage:
+    ./build.sh [TARGET]
+
+If TARGET is omitted, "all" is used.
+
+Targets:
+
+    ┌──────────────────────┬────────────────────────────┬──────────────────────────────────────────────┐
+    │ Target               │ Example                    │ Description                                  │
+    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
+    │ all                  │ ./build.sh                 │ Complete website + all PDFs + link check     │
+    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
+    │ metadata             │ ./build.sh metadata        │ Generate metadata                            │
+    │ og-generate          │ ./build.sh og-generate     │ Generate Open Graph .asy sources             │
+    │ og-build             │ ./build.sh og-build        │ Build Open Graph PNG images                  │
+    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
+    │ metadata-check       │ ./build.sh metadata-check  │ Validate source metadata                     │
+    │ generated            │ ./build.sh generated       │ Validate generated files                     │
+    │ imports              │ ./build.sh imports         │ Validate Typst imports                       │
+    │ links                │ ./build.sh links           │ Check generated website links                │
+    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
+    │ prepare-dist         │ ./build.sh prepare-dist    │ Prepare dist/ and copy static assets         │
+    │ prepare-diagnostics  │ ./build.sh prepare-        │ Prepare diagnostics/                         │
+    │                      │ diagnostics                │                                              │
+    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
+    │ html                 │ ./build.sh html            │ Build HTML pages                             │
+    │ sitemap              │ ./build.sh sitemap         │ Generate sitemap.xml                         │
+    │ robots               │ ./build.sh robots          │ Generate robots.txt                          │
+    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
+    │ pdf                  │ ./build.sh pdf             │ Build individual page PDFs                   │
+    │ categories           │ ./build.sh categories      │ Build category PDFs                          │
+    │ book                 │ ./build.sh book            │ Build complete course/book PDF               │
+    │ pages-pdf            │ ./build.sh pages-pdf       │ Build combined pages PDF                     │
+    │ allpdf               │ ./build.sh allpdf          │ Build all PDF outputs                        │
+    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
+    │ report               │ ./build.sh report          │ Generate diagnostics/build report            │
+    └──────────────────────┴────────────────────────────┴──────────────────────────────────────────────┘
 
 Options:
 
@@ -757,155 +808,504 @@ run_common_checks() {
 # ============================================================
 # Build dispatcher
 #
-# Every build target performs:
+# The build dispatcher determines which build operation should
+# be executed for the selected TARGET.
 #
-#   1. Prepare diagnostics.
-#   2. Common metadata generation and validation.
-#   3. Open Graph generation.
-#   4. Typst import validation.
-#   5. Dist preparation.
-#   6. The build stages required by the selected target.
+# Usage:
 #
-# Supported targets:
+#     ./build.sh
+#     ./build.sh all
+#     ./build.sh <target>
 #
-#   all
-#       Complete website build:
-#       HTML + sitemap + robots + all PDFs + link validation
+# If no target is supplied, TARGET defaults to "all".
+#
+# The dispatcher has two kinds of targets:
+#
+#   1. Composite targets
+#
+#      These combine several build stages and are implemented
+#      directly in this build.sh file.
+#
+#          all
+#          allpdf
+#
+#   2. Individual targets
+#
+#      These correspond directly to commands registered in
+#      scripts/run.py and are delegated to:
+#
+#          python3 scripts/run.py <target>
+#
+#      For example:
+#
+#          ./build.sh og-generate
+#
+#      is equivalent to:
+#
+#          python3 scripts/run.py og-generate
+#
+#
+# ------------------------------------------------------------
+# Complete build
+# ------------------------------------------------------------
+#
+# The "all" target performs the complete build pipeline.
+#
+#     ./build.sh
+#     ./build.sh all
+#
+# The complete build proceeds in the following order:
+#
+#   1.  Prepare diagnostics
+#
+#       Remove previous diagnostic output and recreate the
+#       diagnostics directory.
+#
+#   2.  Generate metadata
+#
+#       Discover source files, parse their metadata, generate
+#       the metadata JSON/Typst files, navigation data, and
+#       other generated metadata required by later stages.
+#
+#   3.  Validate source metadata
+#
+#       Check that the metadata supplied by the source Typst
+#       files satisfies the project's metadata requirements.
+#
+#   4.  Validate generated files
+#
+#       Check that generated files are consistent with the
+#       current source metadata.
+#
+#   5.  Generate Open Graph sources
+#
+#       Generate .asy files under:
+#
+#           generated/og/
+#
+#       for lectures that do not already provide a custom
+#       Open Graph image.
+#
+#       If a lecture already specifies an "og_image" in its
+#       metadata, no generated .asy source is created for it.
+#
+#   6.  Build Open Graph images
+#
+#       Recursively process:
+#
+#           generated/og/**/*.asy
+#
+#       and generate corresponding PNG files while preserving
+#       the directory structure.
+#
+#   7.  Validate Typst imports
+#
+#       Verify that imported Typst files exist and that there
+#       are no circular import dependencies.
+#
+#       The detailed dependency graph is written to:
+#
+#           diagnostics/imports.dot
+#
+#   8.  Prepare dist
+#
+#       Remove the previous distribution directory, recreate
+#       the required output directories, and copy the required
+#       static assets.
+#
+#   9.  Build HTML
+#
+#       Compile the lecture and resource pages and place the
+#       resulting website files under:
+#
+#           dist/pages/
+#
+#   10. Generate sitemap
+#
+#       Generate sitemap.xml for the deployed website.
+#
+#   11. Generate robots.txt
+#
+#       Generate the robots.txt file for the deployed website.
+#
+#   12. Build individual PDFs
+#
+#       Generate the PDF corresponding to each page.
+#
+#   13. Build category PDFs
+#
+#       Generate the combined PDF for each category.
+#
+#   14. Build complete course book
+#
+#       Generate the complete course/book PDF.
+#
+#   15. Build complete pages PDF
+#
+#       Generate the combined pages PDF.
+#
+#   16. Check links
+#
+#       Check links in the final generated HTML files.
+#
+#       This check is performed only after the HTML output and
+#       all referenced files have been generated.
+#
+#   17. Print diagnostics summary
+#
+#       After run_build() completes, print_summary() generates
+#       the final build diagnostics summary, including stage
+#       timings.
+#
+#
+# ------------------------------------------------------------
+# Individual generation targets
+# ------------------------------------------------------------
 #
 #   metadata
-#       Generate metadata only.
+#       Generate metadata and generated Typst/JSON files.
+#
+#       Usage:
+#
+#           ./build.sh metadata
+#
+#       Delegates to:
+#
+#           python3 scripts/run.py metadata
+#
 #
 #   og-generate
-#       Generate Open Graph Asymptote sources only.
+#       Generate Open Graph Asymptote source files.
+#
+#       Generated files are placed under:
+#
+#           generated/og/
+#
+#       The directory structure follows the source structure.
+#
+#       Lectures with an explicitly supplied "og_image" are
+#       skipped because their custom image should be used
+#       instead of generating a default image.
+#
+#       Usage:
+#
+#           ./build.sh og-generate
+#
 #
 #   og-build
-#       Build Open Graph PNG images only.
+#       Convert generated Open Graph Asymptote sources into PNG
+#       images.
+#
+#       The build searches recursively for:
+#
+#           generated/og/**/*.asy
+#
+#       and creates corresponding:
+#
+#           generated/og/**/*.png
+#
+#       while preserving the directory structure.
+#
+#       Usage:
+#
+#           ./build.sh og-build
+#
+#
+# ------------------------------------------------------------
+# Validation targets
+# ------------------------------------------------------------
 #
 #   metadata-check
-#       Validate source metadata.
+#       Validate metadata supplied by source Typst files.
+#
+#       Usage:
+#
+#           ./build.sh metadata-check
+#
 #
 #   generated
-#       Validate generated files.
+#       Validate consistency between source metadata and the
+#       generated files.
+#
+#       Usage:
+#
+#           ./build.sh generated
+#
 #
 #   imports
-#       Validate Typst imports.
+#       Check Typst imports and detect missing imports or
+#       circular dependencies.
+#
+#       Usage:
+#
+#           ./build.sh imports
+#
 #
 #   links
 #       Check links in the generated website.
 #
+#       This is normally run near the end of the complete
+#       build, after all HTML and referenced output files have
+#       been generated.
+#
+#       Usage:
+#
+#           ./build.sh links
+#
+#
+# ------------------------------------------------------------
+# Build preparation targets
+# ------------------------------------------------------------
+#
 #   prepare-dist
-#       Prepare the dist directory.
+#       Prepare the dist directory for a fresh build.
+#
+#       This removes previous distribution output, recreates
+#       the required directory structure, and copies static
+#       assets needed by the deployed website.
+#
+#       Usage:
+#
+#           ./build.sh prepare-dist
+#
 #
 #   prepare-diagnostics
-#       Prepare the diagnostics directory.
+#       Prepare a clean diagnostics directory before a build.
+#
+#       Usage:
+#
+#           ./build.sh prepare-diagnostics
+#
+#
+# ------------------------------------------------------------
+# Website output targets
+# ------------------------------------------------------------
 #
 #   html
-#       HTML pages only.
+#       Build the HTML pages.
+#
+#       This target performs only the HTML build operation.
+#       It does not automatically generate sitemap.xml or
+#       robots.txt.
+#
+#       Usage:
+#
+#           ./build.sh html
+#
 #
 #   sitemap
-#       Generate sitemap.xml.
+#       Generate sitemap.xml for the website.
+#
+#       Usage:
+#
+#           ./build.sh sitemap
+#
 #
 #   robots
-#       Generate robots.txt.
+#       Generate robots.txt for the website.
+#
+#       Usage:
+#
+#           ./build.sh robots
+#
+#
+# ------------------------------------------------------------
+# PDF output targets
+# ------------------------------------------------------------
 #
 #   pdf
-#       Individual PDFs only.
+#       Build individual page PDFs.
 #
-#   allpdf
-#       All PDF outputs.
+#       Usage:
+#
+#           ./build.sh pdf
+#
 #
 #   categories
-#       Category PDFs only.
+#       Build the PDF corresponding to each category.
+#
+#       Usage:
+#
+#           ./build.sh categories
+#
 #
 #   book
-#       Complete course PDF only.
+#       Build the complete course/book PDF.
+#
+#       Usage:
+#
+#           ./build.sh book
+#
 #
 #   pages-pdf
-#       Complete pages PDF only.
+#       Build the combined pages PDF.
+#
+#       Usage:
+#
+#           ./build.sh pages-pdf
+#
+#
+#   allpdf
+#       Build every PDF output.
+#
+#       This is a composite target consisting of:
+#
+#           1. Individual page PDFs
+#           2. Category PDFs
+#           3. Complete course/book PDF
+#           4. Complete pages PDF
+#
+#       Usage:
+#
+#           ./build.sh allpdf
+#
+#
+# ------------------------------------------------------------
+# Diagnostics target
+# ------------------------------------------------------------
 #
 #   report
-#       Build the diagnostics report.
+#       Generate the diagnostics/build report.
+#
+#       This target delegates directly to:
+#
+#           python3 scripts/run.py report
+#
+#       Usage:
+#
+#           ./build.sh report
+#
+#
+# ------------------------------------------------------------
+# Target independence
+# ------------------------------------------------------------
+#
+# Individual targets are intentionally independent.
+#
+# For example:
+#
+#     ./build.sh og-generate
+#
+# performs only Open Graph source generation.
+#
+#     ./build.sh og-build
+#
+# performs only Open Graph PNG generation.
+#
+#     ./build.sh html
+#
+# performs only the HTML build.
+#
+#     ./build.sh sitemap
+#
+# performs only sitemap generation.
+#
+#     ./build.sh report
+#
+# performs only diagnostics report generation.
+#
+# These individual commands do not automatically execute the
+# complete build pipeline.
+#
+# This makes it possible to inspect, debug, or rerun a single
+# stage without unnecessarily rebuilding the entire project.
+#
+#
+# ------------------------------------------------------------
+# Relationship with scripts/run.py
+# ------------------------------------------------------------
+#
+# scripts/run.py is the central Python command registry.
+#
+# build.sh provides the user-facing build interface, while
+# scripts/run.py maps each individual command to its Python
+# implementation.
+#
+# Therefore:
+#
+#     ./build.sh og-generate
+#
+# eventually executes:
+#
+#     python3 scripts/run.py og-generate
+#
+# and scripts/run.py dispatches that command to the
+# corresponding Python module.
+#
+# Composite targets such as "all" and "allpdf" remain in
+# build.sh because they represent orchestration of multiple
+# independent build stages.
+#
 # ============================================================
 
 run_build() {
 
-    # --------------------------------------------------------
-    # Prepare diagnostics
-    #
-    # This is done before the build so that every build starts
-    # with a clean diagnostics directory.
-    # --------------------------------------------------------
-
-    prepare_diagnostics
-
-    # --------------------------------------------------------
-    # Common generation and validation
-    # --------------------------------------------------------
-
-    run_common_checks
-
-    # --------------------------------------------------------
-    # Prepare output directories and assets
-    #
-    # This happens after generation because generated metadata
-    # and OG files are now available to later build stages.
-    # --------------------------------------------------------
-
-    prepare_dist
-
-    # --------------------------------------------------------
-    # Target-specific build
-    # --------------------------------------------------------
-
     case "$TARGET" in
 
-        # ----------------------------------------------------
+        # ====================================================
         # Complete build
-        # ----------------------------------------------------
+        # ====================================================
 
         all)
+
+            # ------------------------------------------------
+            # Prepare diagnostics
+            # ------------------------------------------------
+
+            prepare_diagnostics
+
+            # ------------------------------------------------
+            # Common generation and validation
+            # ------------------------------------------------
+
+            generate_metadata
+            validate_metadata
+            validate_generated
+
+            # ------------------------------------------------
+            # Open Graph generation
+            # ------------------------------------------------
+
+            generate_og
+            build_og
+
+            # ------------------------------------------------
+            # Typst dependency validation
+            # ------------------------------------------------
+
+            validate_imports
+
+            # ------------------------------------------------
+            # Prepare dist
+            # ------------------------------------------------
+
+            prepare_dist
+
+            # ------------------------------------------------
+            # Website output
+            # ------------------------------------------------
 
             build_html
             build_sitemap
             build_robots
 
+            # ------------------------------------------------
+            # PDF output
+            # ------------------------------------------------
+
             build_allpdf
+
+            # ------------------------------------------------
+            # Final validation
+            # ------------------------------------------------
 
             validate_links
 
             ;;
 
-        # ----------------------------------------------------
-        # Website output
-        # ----------------------------------------------------
-
-        html)
-
-            build_html
-
-            ;;
-
-        sitemap)
-
-            build_sitemap
-
-            ;;
-
-        robots)
-
-            build_robots
-
-            ;;
-
-        # ----------------------------------------------------
-        # PDF output
-        # ----------------------------------------------------
-
-        pdf)
-
-            build_pdf
-
-            ;;
+        # ====================================================
+        # All PDFs
+        # ====================================================
 
         allpdf)
 
@@ -913,27 +1313,116 @@ run_build() {
 
             ;;
 
+        # ====================================================
+        # Individual targets
+        #
+        # Delegate directly to scripts/run.py.
+        # ====================================================
+
+        metadata)
+
+            python3 scripts/run.py metadata
+
+            ;;
+
+        og-generate)
+
+            python3 scripts/run.py og-generate
+
+            ;;
+
+        og-build)
+
+            python3 scripts/run.py og-build
+
+            ;;
+
+        metadata-check)
+
+            python3 scripts/run.py metadata-check
+
+            ;;
+
+        generated)
+
+            python3 scripts/run.py generated
+
+            ;;
+
+        imports)
+
+            python3 scripts/run.py imports
+
+            ;;
+
+        links)
+
+            python3 scripts/run.py links
+
+            ;;
+
+        prepare-dist)
+
+            python3 scripts/run.py prepare-dist
+
+            ;;
+
+        prepare-diagnostics)
+
+            python3 scripts/run.py prepare-diagnostics
+
+            ;;
+
+        html)
+
+            python3 scripts/run.py html
+
+            ;;
+
+        sitemap)
+
+            python3 scripts/run.py sitemap
+
+            ;;
+
+        robots)
+
+            python3 scripts/run.py robots
+
+            ;;
+
+        pdf)
+
+            python3 scripts/run.py pdf
+
+            ;;
+
         categories)
 
-            build_categories
+            python3 scripts/run.py categories
 
             ;;
 
         book)
 
-            build_book
+            python3 scripts/run.py book
 
             ;;
 
         pages-pdf)
 
-            build_pages_pdf
+            python3 scripts/run.py pages-pdf
+
+            ;;
+
+        report)
+
+            python3 scripts/run.py report
 
             ;;
 
     esac
 }
-
 
 # ============================================================
 # Run selected build target
