@@ -46,6 +46,19 @@ jobs:
           sudo apt-get install -y asymptote
 
       # ========================================================
+      # Install TeX dependencies for Asymptote
+      # ========================================================
+
+      - name: Install TeX dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-fonts-recommended \
+            texlive-latex-extra
+
+      # ========================================================
       # Install ImageMagick 7
       #
       # build_og.py uses the ImageMagick 7 "magick" command.
