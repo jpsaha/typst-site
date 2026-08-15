@@ -2,14 +2,13 @@
 #import "../../templates/course.typ": *
 
 #let lecture = (
-  file: "fgt1",
+  file: "fgt2",
   type: "lecture",
-  number: 1,
-  title: "Polynomial ringsttt",
-  category: "Fields and Galois theoryzzz",
+  number: 2,
+  title: "Polynomial ringsttt2",
+  category: "Fields and Galois theoryzzz2",
   tags: ["division algorithm", "Gauss' lemma"],
-  description: "fgt1 description.",
-  og_image: "assets/images/fgt1.png",
+  description: "fgt2 description.",
 )
 
 #show: lecture-layout(lecture)
@@ -21,6 +20,6 @@
 
 #page-header(lecture, chap: true)
 
-#include "lec1_content.typ"
+#include "lec2_content.typ"
 
 #previous-next(lecture)
