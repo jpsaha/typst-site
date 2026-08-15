@@ -340,11 +340,16 @@ cleanup() {
 trap cleanup EXIT
 
 # ============================================================
-# 1. Generate metadata
+# 1. Generation
+# ============================================================
+
+# ============================================================
+# 1a. Generate metadata
 # ============================================================
 
 generate_metadata() {
 
+    echo
     echo "📋 Generating metadata..."
 
     stage_start
@@ -355,7 +360,48 @@ generate_metadata() {
 }
 
 # ============================================================
-# 2. Check source metadata
+# 1b. Generate Open Graph Asymptote sources
+# ============================================================
+
+generate_og() {
+
+    echo
+    echo "🖼️  Generating Open Graph sources..."
+
+    stage_start
+
+    if ! python3 scripts/run.py og-generate; then
+        die "Open Graph source generation failed."
+    fi
+
+    stage_end TIME_OG_GENERATE
+}
+
+# ============================================================
+# 1c. Build Open Graph PNG images
+# ============================================================
+
+build_og() {
+
+    echo
+    echo "🖼️  Building Open Graph images..."
+
+    stage_start
+
+    if ! python3 scripts/run.py og-build; then
+        die "Open Graph image generation failed."
+    fi
+
+    stage_end TIME_OG_BUILD
+}
+
+
+# ============================================================
+# 2. Validation
+# ============================================================
+
+# ============================================================
+# 2a. Check source metadata
 # ============================================================
 
 validate_metadata() {
@@ -373,7 +419,7 @@ validate_metadata() {
 }
 
 # ============================================================
-# 3. Check generated files
+# 2b. Check generated files
 # ============================================================
 
 validate_generated() {
@@ -391,29 +437,7 @@ validate_generated() {
 }
 
 # ============================================================
-# 4. Generate Open Graph images
-# ============================================================
-
-generate_og() {
-
-    echo
-    echo "🖼️  Generating Open Graph images..."
-
-    stage_start
-
-    if ! python3 scripts/run.py og-generate; then
-        die "Open Graph source generation failed."
-    fi
-
-    if ! python3 scripts/run.py og-build; then
-        die "Open Graph image generation failed."
-    fi
-
-    stage_end TIME_OG
-}
-
-# ============================================================
-# 5. Check Typst imports
+# 2c. Check Typst imports
 #
 # Verify that all imported Typst files exist and that there
 # are no circular import dependencies.
@@ -439,137 +463,7 @@ validate_imports() {
 }
 
 # ============================================================
-# 6. Prepare dist
-#
-# Delegate dist preparation to the Python build layer.
-# ============================================================
-
-prepare_dist() {
-
-    echo
-    echo "📁 Preparing dist..."
-
-    python3 scripts/run.py prepare-dist
-}
-
-# ============================================================
-# Prepare diagnostics
-# ============================================================
-
-prepare_diagnostics() {
-
-    echo "🧹 Preparing diagnostics..."
-
-    python3 scripts/run.py prepare-diagnostics
-
-    echo "✓ Diagnostics directory prepared."
-}
-
-# ============================================================
-# 7. Generate homepage and compile pages
-# ============================================================
-
-build_html() {
-
-    echo
-    echo "🌐 Building course pages..."
-
-    stage_start
-
-    python3 scripts/run.py html
-    python3 scripts/run.py sitemap
-    python3 scripts/run.py robots
-
-    stage_end TIME_HTML
-}
-
-# ============================================================
-# 8. Build individual page PDFs
-# ============================================================
-
-build_pdf() {
-
-    echo
-    echo "📄 Building individual page PDFs..."
-
-    stage_start
-
-    python3 scripts/run.py pdf
-
-    stage_end TIME_PDF
-}
-
-# ============================================================
-# 9. Composite PDF build
-# ============================================================
-# Build all PDF outputs
-#
-# This is a composite operation consisting of:
-#
-#   1. Individual page PDFs
-#   2. Category PDFs
-#   3. Complete course book
-#   4. Complete pages PDF
-# ============================================================
-
-build_allpdf() {
-
-    build_pdf
-    build_categories
-    build_book
-    build_pages_pdf
-}
-
-# ============================================================
-# 10. Build category books
-# ============================================================
-
-build_categories() {
-
-    echo
-    echo "📚 Building category books..."
-
-    stage_start
-
-    python3 scripts/run.py categories
-
-    stage_end TIME_CATEGORIES
-}
-
-# ============================================================
-# 11. Build complete course PDF
-# ============================================================
-
-build_book() {
-
-    echo
-    echo "📚 Building together complete course book..."
-
-    stage_start
-
-    python3 scripts/run.py book
-
-    stage_end TIME_BOOK
-}
-
-# ============================================================
-# 12. Build complete pages PDF
-# ============================================================
-
-build_pages_pdf() {
-
-    echo
-    echo "📚 Building together complete pages.pdf..."
-
-    stage_start
-
-    python3 scripts/run.py pages-pdf
-
-    stage_end TIME_PAGES
-}
-
-# ============================================================
-# 13. Check links
+# 2d. Check links
 # ============================================================
 
 validate_links() {
@@ -586,8 +480,198 @@ validate_links() {
     stage_end TIME_LINKS
 }
 
+
 # ============================================================
-# 14. Build diagnostics summary
+# 3. Build preparation
+# ============================================================
+
+# ============================================================
+# 3a. Prepare dist
+#
+# Delegate dist preparation to the Python build layer.
+# ============================================================
+
+prepare_dist() {
+
+    echo
+    echo "📁 Preparing dist..."
+
+    stage_start
+
+    python3 scripts/run.py prepare-dist
+
+    stage_end TIME_PREPARE_DIST
+}
+
+# ============================================================
+# 3b. Prepare diagnostics
+# ============================================================
+
+prepare_diagnostics() {
+
+    echo
+    echo "🧹 Preparing diagnostics..."
+
+    stage_start
+
+    python3 scripts/run.py prepare-diagnostics
+
+    stage_end TIME_PREPARE_DIAGNOSTICS
+
+    echo "✓ Diagnostics directory prepared."
+}
+
+
+# ============================================================
+# 4. Website output
+# ============================================================
+
+# ============================================================
+# 4a. Build HTML pages
+# ============================================================
+
+build_html() {
+
+    echo
+    echo "🌐 Building course pages..."
+
+    stage_start
+
+    python3 scripts/run.py html
+
+    stage_end TIME_HTML
+}
+
+# ============================================================
+# 4b. Generate sitemap
+# ============================================================
+
+build_sitemap() {
+
+    echo
+    echo "🗺️  Generating sitemap..."
+
+    stage_start
+
+    python3 scripts/run.py sitemap
+
+    stage_end TIME_SITEMAP
+}
+
+# ============================================================
+# 4c. Generate robots.txt
+# ============================================================
+
+build_robots() {
+
+    echo
+    echo "🤖 Generating robots.txt..."
+
+    stage_start
+
+    python3 scripts/run.py robots
+
+    stage_end TIME_ROBOTS
+}
+
+
+# ============================================================
+# 5. PDF output
+# ============================================================
+
+# ============================================================
+# 5a. Build individual page PDFs
+# ============================================================
+
+build_pdf() {
+
+    echo
+    echo "📄 Building individual page PDFs..."
+
+    stage_start
+
+    python3 scripts/run.py pdf
+
+    stage_end TIME_PDF
+}
+
+# ============================================================
+# 5b. Build category books
+# ============================================================
+
+build_categories() {
+
+    echo
+    echo "📚 Building category books..."
+
+    stage_start
+
+    python3 scripts/run.py categories
+
+    stage_end TIME_CATEGORIES
+}
+
+# ============================================================
+# 5c. Build complete course PDF
+# ============================================================
+
+build_book() {
+
+    echo
+    echo "📚 Building complete course book..."
+
+    stage_start
+
+    python3 scripts/run.py book
+
+    stage_end TIME_BOOK
+}
+
+# ============================================================
+# 5d. Build complete pages PDF
+# ============================================================
+
+build_pages_pdf() {
+
+    echo
+    echo "📚 Building complete pages.pdf..."
+
+    stage_start
+
+    python3 scripts/run.py pages-pdf
+
+    stage_end TIME_PAGES
+}
+
+# ============================================================
+# 5e. Composite PDF build
+#
+# Build all PDF outputs:
+#
+#   1. Individual page PDFs
+#   2. Category PDFs
+#   3. Complete course book
+#   4. Complete pages PDF
+#
+# This is a composite operation, so its constituent stages
+# provide the individual timings.
+# ============================================================
+
+build_allpdf() {
+
+    build_pdf
+    build_categories
+    build_book
+    build_pages_pdf
+}
+
+
+# ============================================================
+# 6. Diagnostics
+# ============================================================
+
+# ============================================================
+# 6a. Build diagnostics summary
 #
 # Delegate report generation to the Python build layer.
 # ============================================================
@@ -599,16 +683,22 @@ print_summary() {
 
     BUILD_TIME="$BUILD_TIME" \
     TIME_METADATA="$TIME_METADATA" \
+    TIME_OG_GENERATE="$TIME_OG_GENERATE" \
+    TIME_OG_BUILD="$TIME_OG_BUILD" \
     TIME_METADATA_CHECK="$TIME_METADATA_CHECK" \
     TIME_GENERATED_CHECK="$TIME_GENERATED_CHECK" \
-    TIME_OG="$TIME_OG" \
     TIME_IMPORT_CHECK="$TIME_IMPORT_CHECK" \
+    TIME_LINKS="$TIME_LINKS" \
+    TIME_PREPARE_DIST="$TIME_PREPARE_DIST" \
+    TIME_PREPARE_DIAGNOSTICS="$TIME_PREPARE_DIAGNOSTICS" \
     TIME_HTML="$TIME_HTML" \
+    TIME_SITEMAP="$TIME_SITEMAP" \
+    TIME_ROBOTS="$TIME_ROBOTS" \
     TIME_PDF="$TIME_PDF" \
     TIME_CATEGORIES="$TIME_CATEGORIES" \
     TIME_BOOK="$TIME_BOOK" \
     TIME_PAGES="$TIME_PAGES" \
-    TIME_LINKS="$TIME_LINKS" \
+    TIME_REPORT="$TIME_REPORT" \
         python3 scripts/run.py report
 }
 
