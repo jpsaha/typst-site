@@ -138,37 +138,36 @@ If TARGET is omitted, "all" is used.
 
 Targets:
 
-    ┌──────────────────────┬────────────────────────────┬──────────────────────────────────────────────┐
-    │ Target               │ Example                    │ Description                                  │
-    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
-    │ all                  │ ./build.sh                 │ Complete website + all PDFs + link check     │
-    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
-    │ metadata             │ ./build.sh metadata        │ Generate metadata                            │
-    │ og-generate          │ ./build.sh og-generate     │ Generate Open Graph .asy sources             │
-    │ og-build             │ ./build.sh og-build        │ Build Open Graph PNG images                  │
-    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
-    │ metadata-check       │ ./build.sh metadata-check  │ Validate source metadata                     │
-    │ generated            │ ./build.sh generated       │ Validate generated files                     │
-    │ imports              │ ./build.sh imports         │ Validate Typst imports                       │
-    │ links                │ ./build.sh links           │ Check generated website links                │
-    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
-    │ prepare-dist         │ ./build.sh prepare-dist    │ Prepare dist/ and copy static assets         │
-    │ prepare-diagnostics  │ ./build.sh prepare-        │ Prepare diagnostics/                         │
-    │                      │ diagnostics                │                                              │
-    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
-    │ html                 │ ./build.sh html            │ Build HTML pages                             │
-    │ sitemap              │ ./build.sh sitemap         │ Generate sitemap.xml                         │
-    │ robots               │ ./build.sh robots          │ Generate robots.txt                          │
-    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
-    │ pdf                  │ ./build.sh pdf             │ Build individual page PDFs                   │
-    │ categories           │ ./build.sh categories      │ Build category PDFs                          │
-    │ book                 │ ./build.sh book            │ Build complete course/book PDF               │
-    │ pages-pdf            │ ./build.sh pages-pdf       │ Build combined pages PDF                     │
-    │ allpdf               │ ./build.sh allpdf          │ Build all PDF outputs                        │
-    ├──────────────────────┼────────────────────────────┼──────────────────────────────────────────────┤
-    │ report               │ ./build.sh report          │ Generate diagnostics/build report            │
-    └──────────────────────┴────────────────────────────┴──────────────────────────────────────────────┘
-
+    ┌──────────────────────┬─────────────────────────────────────┬──────────────────────────────────────────────┐
+    │ Target               │ Example                             │ Description                                  │
+    ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
+    │ all                  │ ./build.sh                          │ Complete website + all PDFs + link check     │
+    ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
+    │ metadata             │ ./build.sh metadata                 │ Generate metadata                            │
+    │ og-generate          │ ./build.sh og-generate              │ Generate Open Graph .asy sources             │
+    │ og-build             │ ./build.sh og-build                 │ Build Open Graph PNG images                  │
+    ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
+    │ metadata-check       │ ./build.sh metadata-check           │ Validate source metadata                     │
+    │ generated            │ ./build.sh generated                │ Validate generated files                     │
+    │ imports              │ ./build.sh imports                  │ Validate Typst imports                       │
+    │ links                │ ./build.sh links                    │ Check generated website links                │
+    ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
+    │ prepare-dist         │ ./build.sh prepare-dist             │ Prepare dist/ and copy static assets         │
+    │ prepare-diagnostics  │ ./build.sh prepare-diagnostics      │ Prepare diagnostics/                         │
+    ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
+    │ html                 │ ./build.sh html                     │ Build HTML pages                             │
+    │ sitemap              │ ./build.sh sitemap                  │ Generate sitemap.xml                         │
+    │ robots               │ ./build.sh robots                   │ Generate robots.txt                          │
+    ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
+    │ pdf                  │ ./build.sh pdf                      │ Build individual page PDFs                   │
+    │ categories           │ ./build.sh categories               │ Build category PDFs                          │
+    │ book                 │ ./build.sh book                     │ Build complete course/book PDF               │
+    │ pages-pdf            │ ./build.sh pages-pdf                │ Build combined pages PDF                     │
+    │ allpdf               │ ./build.sh allpdf                   │ Build all PDF outputs                        │
+    ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
+    │ report               │ ./build.sh report                   │ Generate diagnostics/build report            │
+    └──────────────────────┴─────────────────────────────────────┴──────────────────────────────────────────────┘
+    
 Options:
 
     -h, --help
