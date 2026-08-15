@@ -44,7 +44,6 @@ env/
 # Assets
 # ============================================================
 
-assets/og/default.asy
 assets/og/default.pdf
 
 pdflayout_old.typ

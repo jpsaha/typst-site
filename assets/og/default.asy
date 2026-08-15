@@ -39,24 +39,48 @@ pen textcolor  = rgb("#26383A");
 
 
 // ------------------------------------------------------------
+// Rounded rectangle helper
+// ------------------------------------------------------------
+
+path roundedbox(pair A, pair B, real r) {
+  real x1 = A.x;
+  real y1 = A.y;
+  real x2 = B.x;
+  real y2 = B.y;
+
+  return
+    (x1+r,y1) --
+    (x2-r,y1) --
+    arc((x2-r,y1+r),r,-90,0) --
+    (x2,y2-r) --
+    arc((x2-r,y2-r),r,0,90) --
+    (x1+r,y2) --
+    arc((x1+r,y2-r),r,90,180) --
+    (x1,y1+r) --
+    arc((x1+r,y1+r),r,180,270) --
+    cycle;
+}
+
+
+// ------------------------------------------------------------
 // Background
 // ------------------------------------------------------------
 
-// Main background
+// Main rounded background
 fill(
-  box((0,0),(W,H)),
+  roundedbox((6,6),(W-6,H-6),28),
   paper
 );
 
-// Outer border
+// Outer rounded border
 draw(
-  box((6,6),(W-6,H-6)),
+  roundedbox((6,6),(W-6,H-6),28),
   darkgreen + linewidth(2)
 );
 
-// Inner cream panel
+// Inner rounded cream panel
 fill(
-  box((12,12),(W-12,H-72)),
+  roundedbox((12,12),(W-12,H-72),22),
   cream
 );
 
@@ -394,7 +418,7 @@ for (int i=0; i<4; ++i) {
 // ============================================================
 
 fill(
-  box((12,12),(1188,62)),
+  roundedbox((12,12),(1188,62),16),
   darkgreen
 );
 
