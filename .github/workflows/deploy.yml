@@ -53,11 +53,12 @@ jobs:
 
       - name: Install ImageMagick
         run: |
-          wget -q https://imagemagick.org/archive/binaries/magick \
-            -O magick
+          wget -q \
+            https://github.com/ImageMagick/ImageMagick/releases/download/7.1.2-28/ImageMagick-7.1.2-28-gcc-x86_64.AppImage \
+            -O /tmp/magick
 
-          chmod +x magick
-          sudo mv magick /usr/local/bin/magick
+          chmod +x /tmp/magick
+          sudo mv /tmp/magick /usr/local/bin/magick
 
       # ========================================================
       # Verify external build tools
