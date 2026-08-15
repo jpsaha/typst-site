@@ -1,5 +1,3 @@
-# Refactored `build.sh`
-
 #!/usr/bin/env bash
 
 set -euo pipefail
@@ -234,7 +232,6 @@ validate_generated() {
     stage_end TIME_GENERATED_CHECK
 }
 
-
 # ============================================================
 # 4. Generate Open Graph images
 # ============================================================
@@ -257,9 +254,8 @@ generate_og() {
     stage_end TIME_OG
 }
 
-
 # ============================================================
-# 4. Check Typst imports
+# 5. Check Typst imports
 #
 # Verify that all imported Typst files exist and that there
 # are no circular import dependencies.
@@ -285,7 +281,7 @@ validate_imports() {
 }
 
 # ============================================================
-# 5. Prepare dist
+# 6. Prepare dist
 #
 # Delegate dist preparation to the Python build layer.
 # ============================================================
@@ -303,6 +299,7 @@ prepare_dist() {
 # ============================================================
 
 prepare_diagnostics() {
+
     echo "🧹 Preparing diagnostics..."
 
     python3 scripts/run.py prepare-diagnostics
@@ -311,7 +308,7 @@ prepare_diagnostics() {
 }
 
 # ============================================================
-# 6. Generate homepage and compile pages
+# 7. Generate homepage and compile pages
 # ============================================================
 
 build_html() {
@@ -329,7 +326,7 @@ build_html() {
 }
 
 # ============================================================
-# 7. Build individual page PDFs
+# 8. Build individual page PDFs
 # ============================================================
 
 build_pdf() {
@@ -345,7 +342,7 @@ build_pdf() {
 }
 
 # ============================================================
-# 8. Composite PDF build
+# 9. Composite PDF build
 # ============================================================
 # Build all PDF outputs
 #
@@ -366,7 +363,7 @@ build_allpdf() {
 }
 
 # ============================================================
-# 9. Build category books
+# 10. Build category books
 # ============================================================
 
 build_categories() {
@@ -382,7 +379,7 @@ build_categories() {
 }
 
 # ============================================================
-# 10. Build complete course PDF
+# 11. Build complete course PDF
 # ============================================================
 
 build_book() {
@@ -398,7 +395,7 @@ build_book() {
 }
 
 # ============================================================
-# 11. Build complete pages PDF
+# 12. Build complete pages PDF
 # ============================================================
 
 build_pages_pdf() {
@@ -414,7 +411,7 @@ build_pages_pdf() {
 }
 
 # ============================================================
-# 12. Check links
+# 13. Check links
 # ============================================================
 
 validate_links() {
@@ -425,16 +422,14 @@ validate_links() {
     stage_start
 
     if ! python3 scripts/run.py links; then
-
         die "broken links detected."
-
     fi
 
     stage_end TIME_LINKS
 }
 
 # ============================================================
-# 13. Build diagnostics summary
+# 14. Build diagnostics summary
 #
 # Delegate report generation to the Python build layer.
 # ============================================================
@@ -448,6 +443,7 @@ print_summary() {
     TIME_METADATA="$TIME_METADATA" \
     TIME_METADATA_CHECK="$TIME_METADATA_CHECK" \
     TIME_GENERATED_CHECK="$TIME_GENERATED_CHECK" \
+    TIME_OG="$TIME_OG" \
     TIME_IMPORT_CHECK="$TIME_IMPORT_CHECK" \
     TIME_HTML="$TIME_HTML" \
     TIME_PDF="$TIME_PDF" \
@@ -465,13 +461,16 @@ print_summary() {
 # ============================================================
 # Common validation
 #
-# These checks are performed before every build target.
+# These checks and generation stages are performed before
+# every build target.
 #
 # They:
+#
 #   1. Generate metadata.
 #   2. Validate source metadata.
 #   3. Validate generated files.
-#   4. Validate Typst imports.
+#   4. Generate Open Graph sources and PNGs.
+#   5. Validate Typst imports.
 #
 # Dist preparation is intentionally kept separate because it
 # is a build preparation step, not a validation step.
@@ -482,6 +481,7 @@ run_common_checks() {
     generate_metadata
     validate_metadata
     validate_generated
+    generate_og
     validate_imports
 }
 
@@ -490,7 +490,7 @@ run_common_checks() {
 #
 # Every build target performs:
 #
-#   1. Common metadata and validation checks.
+#   1. Common metadata, OG generation and validation checks.
 #   2. Dist preparation.
 #   3. The build stages required by the selected target.
 #
@@ -523,7 +523,7 @@ run_build() {
     prepare_diagnostics
 
     # --------------------------------------------------------
-    # Common validation
+    # Common validation and generation
     # --------------------------------------------------------
 
     run_common_checks
