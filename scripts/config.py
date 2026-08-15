@@ -80,7 +80,7 @@ BUILD_REPORT = DIAGNOSTICS_DIR / "build_report.txt"
 #     "print-ready course material"
 # )
 
-SITE_TITLE = "Notes"
+SITE_TITLE = "Mathematics: Lectures & Notes · Typeset with Typst"
 SITE_ICON = "🧮"
 SITE_TAGLINE = (
     "These notes may contain typos, "
