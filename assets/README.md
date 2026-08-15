@@ -44,12 +44,15 @@ The image-generation workflow is:
 ```bash
 asy -f pdf -o assets/og/default assets/og/default.asy
 
-magick -density 300 assets/og/default.pdf \
-  -resize 1200x630 \
+magick -density 700 assets/og/default.pdf \
+  -resize 1200x630! \
   -filter Lanczos \
   assets/og/default.png
 
 file assets/og/default.png
+
+open  assets/og/default.png
+
 ```
 
 The final PNG is **1200 × 630 pixels**, suitable for use as the default
