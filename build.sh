@@ -36,28 +36,90 @@ Usage:
     ./build.sh [TARGET]
 
 Targets:
+
     all
-        Build everything.
+        Run the complete website build.
+
+    --------------------------------------------------------
+    Generation
+    --------------------------------------------------------
+
+    metadata
+        Generate metadata and generated Typst files.
+
+    og-generate
+        Generate Open Graph Asymptote sources.
+
+    og-build
+        Build PNG Open Graph images from Asymptote sources.
+
+    --------------------------------------------------------
+    Validation
+    --------------------------------------------------------
+
+    metadata-check
+        Validate source metadata.
+
+    generated
+        Validate generated files.
+
+    imports
+        Validate Typst imports.
+
+    links
+        Check links in the generated website.
+
+    --------------------------------------------------------
+    Build preparation
+    --------------------------------------------------------
+
+    prepare-dist
+        Prepare the dist directory and copy assets.
+
+    prepare-diagnostics
+        Prepare the diagnostics directory.
+
+    --------------------------------------------------------
+    Website output
+    --------------------------------------------------------
 
     html
-        Build HTML pages only.
+        Build HTML lecture pages.
+
+    sitemap
+        Generate sitemap.xml.
+
+    robots
+        Generate robots.txt.
+
+    --------------------------------------------------------
+    PDF output
+    --------------------------------------------------------
 
     pdf
-        Build individual page PDFs only.
+        Build individual page PDFs.
+
+    categories
+        Build category PDFs.
+
+    book
+        Build the complete course book PDF.
+
+    pages-pdf
+        Build the complete pages PDF.
 
     allpdf
         Build all PDF outputs.
 
-    categories
-        Build category PDFs only.
+    --------------------------------------------------------
+    Diagnostics
+    --------------------------------------------------------
 
-    book
-        Build the complete course PDF only.
-
-    pages-pdf
-        Build the complete pages PDF only.
+    report
+        Build the diagnostics/build report.
 
 Options:
+
     -h, --help
         Show this help message.
 
@@ -80,14 +142,75 @@ esac
 # ============================================================
 
 case "$TARGET" in
-    all|html|pdf|allpdf|categories|book|pages-pdf)
+
+    # --------------------------------------------------------
+    # Complete build
+    # --------------------------------------------------------
+
+    all)
+
         ;;
+
+    # --------------------------------------------------------
+    # Generation
+    # --------------------------------------------------------
+
+    metadata|og-generate|og-build)
+
+        ;;
+
+    # --------------------------------------------------------
+    # Validation
+    # --------------------------------------------------------
+
+    metadata-check|generated|imports|links)
+
+        ;;
+
+    # --------------------------------------------------------
+    # Build preparation
+    # --------------------------------------------------------
+
+    prepare-dist|prepare-diagnostics)
+
+        ;;
+
+    # --------------------------------------------------------
+    # Website output
+    # --------------------------------------------------------
+
+    html|sitemap|robots)
+
+        ;;
+
+    # --------------------------------------------------------
+    # PDF output
+    # --------------------------------------------------------
+
+    pdf|categories|book|pages-pdf|allpdf)
+
+        ;;
+
+    # --------------------------------------------------------
+    # Diagnostics
+    # --------------------------------------------------------
+
+    report)
+
+        ;;
+
+    # --------------------------------------------------------
+    # Invalid target
+    # --------------------------------------------------------
+
     *)
+
         echo "Unknown build target: $TARGET"
         echo
         echo "Run './build.sh --help' for usage information."
         exit 1
         ;;
+
 esac
 
 # ============================================================
@@ -106,17 +229,52 @@ BUILD_START=$(date +%s)
 # final summary can show where the build time was spent.
 # ============================================================
 
+# ------------------------------------------------------------
+# Generation
+# ------------------------------------------------------------
+
 TIME_METADATA="0"
+TIME_OG_GENERATE="0"
+TIME_OG_BUILD="0"
+
+# ------------------------------------------------------------
+# Validation
+# ------------------------------------------------------------
+
 TIME_METADATA_CHECK="0"
 TIME_GENERATED_CHECK="0"
-TIME_OG="0"
 TIME_IMPORT_CHECK="0"
+TIME_LINKS="0"
+
+# ------------------------------------------------------------
+# Build preparation
+# ------------------------------------------------------------
+
+TIME_PREPARE_DIST="0"
+TIME_PREPARE_DIAGNOSTICS="0"
+
+# ------------------------------------------------------------
+# Website output
+# ------------------------------------------------------------
+
 TIME_HTML="0"
+TIME_SITEMAP="0"
+TIME_ROBOTS="0"
+
+# ------------------------------------------------------------
+# PDF output
+# ------------------------------------------------------------
+
 TIME_PDF="0"
 TIME_CATEGORIES="0"
 TIME_BOOK="0"
 TIME_PAGES="0"
-TIME_LINKS="0"
+
+# ------------------------------------------------------------
+# Diagnostics
+# ------------------------------------------------------------
+
+TIME_REPORT="0"
 
 # ============================================================
 # Helpers
