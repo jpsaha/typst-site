@@ -63,27 +63,40 @@ def prepare_dist():
             "⚠️ Warning: assets/css/style.css not found"
         )
 
+
     # --------------------------------------------------------
-    # Copy Open Graph image
+    # Copy all PNG images from assets
     # --------------------------------------------------------
 
-    source_og = ASSETS_SOURCE_DIR / "og" / "default.png"
-    target_og = ASSETS_DIR / "og" / "default.png"
+    png_count = 0
 
-    if source_og.exists():
+    for source_png in ASSETS_SOURCE_DIR.rglob("*.png"):
+
+        relative_path = source_png.relative_to(
+            ASSETS_SOURCE_DIR
+        )
+
+        target_png = ASSETS_DIR / relative_path
+
+        target_png.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
 
         shutil.copy2(
-            source_og,
-            target_og,
+            source_png,
+            target_png,
         )
-
-        print("📋 Copied og/default.png")
-
-    else:
 
         print(
-            "⚠️ Warning: assets/og/default.png not found"
+            f"📋 Copied {relative_path}"
         )
+
+        png_count += 1
+
+    print(
+        f"📋 Copied {png_count} PNG image(s)"
+    )
 
     # --------------------------------------------------------
     # Check generated metadata

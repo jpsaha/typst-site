@@ -85,6 +85,7 @@ def compile_page(lecture):
         description=description,
         path=f"pages/{html}",
         og_type="article",
+        image=f"/assets/og/{html[:-5]}.png",
     )
 
     html_path.write_text(
