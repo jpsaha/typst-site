@@ -707,18 +707,18 @@ print_summary() {
 # ============================================================
 
 # ============================================================
-# Common validation
+# Common generation and validation
 #
-# These checks and generation stages are performed before
-# every build target.
+# These stages are performed before every build target.
 #
-# They:
+# Order:
 #
-#   1. Generate metadata.
-#   2. Validate source metadata.
-#   3. Validate generated files.
-#   4. Generate Open Graph sources and PNGs.
-#   5. Validate Typst imports.
+#   1. Generate metadata
+#   2. Validate source metadata
+#   3. Validate generated files
+#   4. Generate Open Graph Asymptote sources
+#   5. Build Open Graph PNG images
+#   6. Validate Typst imports
 #
 # Dist preparation is intentionally kept separate because it
 # is a build preparation step, not a validation step.
@@ -726,58 +726,129 @@ print_summary() {
 
 run_common_checks() {
 
+    # --------------------------------------------------------
+    # Generation
+    # --------------------------------------------------------
+
     generate_metadata
+
+    # --------------------------------------------------------
+    # Validation
+    # --------------------------------------------------------
+
     validate_metadata
     validate_generated
+
+    # --------------------------------------------------------
+    # Open Graph generation
+    # --------------------------------------------------------
+
     generate_og
+    build_og
+
+    # --------------------------------------------------------
+    # Typst dependency validation
+    # --------------------------------------------------------
+
     validate_imports
 }
+
 
 # ============================================================
 # Build dispatcher
 #
 # Every build target performs:
 #
-#   1. Common metadata, OG generation and validation checks.
-#   2. Dist preparation.
-#   3. The build stages required by the selected target.
+#   1. Prepare diagnostics.
+#   2. Common metadata generation and validation.
+#   3. Open Graph generation.
+#   4. Typst import validation.
+#   5. Dist preparation.
+#   6. The build stages required by the selected target.
 #
 # Supported targets:
 #
 #   all
-#       HTML + all PDFs + link validation
+#       Complete website build:
+#       HTML + sitemap + robots + all PDFs + link validation
+#
+#   metadata
+#       Generate metadata only.
+#
+#   og-generate
+#       Generate Open Graph Asymptote sources only.
+#
+#   og-build
+#       Build Open Graph PNG images only.
+#
+#   metadata-check
+#       Validate source metadata.
+#
+#   generated
+#       Validate generated files.
+#
+#   imports
+#       Validate Typst imports.
+#
+#   links
+#       Check links in the generated website.
+#
+#   prepare-dist
+#       Prepare the dist directory.
+#
+#   prepare-diagnostics
+#       Prepare the diagnostics directory.
 #
 #   html
-#       HTML pages only
+#       HTML pages only.
+#
+#   sitemap
+#       Generate sitemap.xml.
+#
+#   robots
+#       Generate robots.txt.
 #
 #   pdf
-#       Individual PDFs only
+#       Individual PDFs only.
 #
 #   allpdf
-#       All PDF outputs
+#       All PDF outputs.
 #
 #   categories
-#       Category PDFs only
+#       Category PDFs only.
 #
 #   book
-#       Complete course PDF only
+#       Complete course PDF only.
 #
 #   pages-pdf
-#       Complete pages PDF only
+#       Complete pages PDF only.
+#
+#   report
+#       Build the diagnostics report.
 # ============================================================
 
 run_build() {
 
+    # --------------------------------------------------------
+    # Prepare diagnostics
+    #
+    # This is done before the build so that every build starts
+    # with a clean diagnostics directory.
+    # --------------------------------------------------------
+
     prepare_diagnostics
 
     # --------------------------------------------------------
-    # Common validation and generation
+    # Common generation and validation
     # --------------------------------------------------------
 
     run_common_checks
 
     # --------------------------------------------------------
     # Prepare output directories and assets
+    #
+    # This happens after generation because generated metadata
+    # and OG files are now available to later build stages.
     # --------------------------------------------------------
 
     prepare_dist
@@ -788,38 +859,81 @@ run_build() {
 
     case "$TARGET" in
 
+        # ----------------------------------------------------
+        # Complete build
+        # ----------------------------------------------------
+
         all)
+
             build_html
+            build_sitemap
+            build_robots
+
             build_allpdf
+
             validate_links
+
             ;;
+
+        # ----------------------------------------------------
+        # Website output
+        # ----------------------------------------------------
 
         html)
+
             build_html
+
             ;;
 
+        sitemap)
+
+            build_sitemap
+
+            ;;
+
+        robots)
+
+            build_robots
+
+            ;;
+
+        # ----------------------------------------------------
+        # PDF output
+        # ----------------------------------------------------
+
         pdf)
+
             build_pdf
+
             ;;
 
         allpdf)
+
             build_allpdf
+
             ;;
 
         categories)
+
             build_categories
+
             ;;
 
         book)
+
             build_book
+
             ;;
 
         pages-pdf)
+
             build_pages_pdf
+
             ;;
 
     esac
 }
+
 
 # ============================================================
 # Run selected build target
@@ -827,8 +941,13 @@ run_build() {
 
 run_build
 
+
 # ============================================================
 # Print summary
+#
+# The report is generated after the selected build target has
+# completed so that all stage timings and diagnostics are
+# available.
 # ============================================================
 
 print_summary
