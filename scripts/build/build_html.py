@@ -29,11 +29,11 @@ from scripts.config import (
     SITE_ICON,
     SITE_TAGLINE,
     SITE_DESCRIPTION,
+    SITE_OG_IMAGE,
 )
 
 # from scripts.metadata.seo import seo_head
 from scripts.metadata.seo import inject_seo
-
 
 # ============================================================
 # Compile one page
@@ -51,7 +51,15 @@ def compile_page(lecture):
     source = lecture["source"]
 
     # --------------------------------------------------------
-    # Resolve source and output paths
+    # Resolve the Typst source and HTML output paths.
+    #
+    # Example:
+    #
+    #     source:
+    #         lectures/lec1.typ
+    #
+    #     output:
+    #         dist/pages/lec1.html
     # --------------------------------------------------------
 
     source_path = CONTENT_DIR / source
@@ -90,13 +98,18 @@ def compile_page(lecture):
     # ========================================================
     # SEO description
     # ========================================================
+    #
+    # Use the description supplied in the lecture metadata.
+    #
+    # If no lecture-specific description is provided, use the
+    # site-wide default description.
+    # ========================================================
 
-    # Use the lecture-specific description when supplied.
-    # Otherwise fall back to the site-wide description.
     description = lecture.get(
         "description",
         SITE_DESCRIPTION,
     )
+
 
     # ========================================================
     # Determine Open Graph image
@@ -104,57 +117,46 @@ def compile_page(lecture):
     #
     # Priority:
     #
-    #   1. Explicit "og_image" in lecture metadata.
-    #   2. Generated OG image corresponding to the source file.
+    #   1. Explicit og_image from metadata.
+    #   2. Generated OG image derived from source.
+    #   3. Site-wide default OG image.
     #
-    # Example with:
+    # Example:
     #
-    #     source: "lectures/lec1.typ"
+    #   source = "mopss/mopss_aug08.typ"
     #
-    # the generated OG image is:
+    #   generated:
+    #       generated/og/mopss/mopss_aug08.png
     #
-    #     generated/og/lectures/lec1.png
-    #
-    # and the published URL is:
-    #
-    #     /assets/og/lectures/lec1.png
-    #
-    # --------------------------------------------------------
+    #   published:
+    #       /assets/og/mopss/mopss_aug08.png
+    # ========================================================
 
-    if lecture.get("og_image"):
+    explicit_og_image = lecture.get("og_image")
 
-        # ----------------------------------------------------
-        # An explicit image was supplied in the metadata.
-        # Do not generate or derive another OG image path.
-        # ----------------------------------------------------
-
-        image = lecture["og_image"]
+    if explicit_og_image:
+        image = explicit_og_image
 
     else:
-
-        # ----------------------------------------------------
-        # No explicit OG image was supplied.
-        #
-        # Derive the generated image path from the source
-        # content path while preserving its directory structure.
-        #
-        #     lectures/lec1.typ
-        #             ↓
-        #     lectures/lec1.png
-        #
-        #     lectures_dummy/lec2.typ
-        #             ↓
-        #     lectures_dummy/lec2.png
-        # ----------------------------------------------------
-
         source_path_relative = Path(source)
 
-        image = (
-            "/assets/og/"
-            + str(
-                source_path_relative.with_suffix(".png")
-            )
+        generated_og_path = (
+            ROOT
+            / "generated"
+            / "og"
+            / source_path_relative.with_suffix(".png")
         )
+
+        if generated_og_path.exists():
+            image = (
+                "/assets/og/"
+                + str(
+                    source_path_relative.with_suffix(".png")
+                )
+            )
+        else:
+            image = SITE_OG_IMAGE
+
 
     # ========================================================
     # Inject SEO / Open Graph / Twitter metadata
@@ -170,13 +172,14 @@ def compile_page(lecture):
     )
 
     # ========================================================
-    # Write HTML back to disk
+    # Write the HTML with the injected metadata
     # ========================================================
 
     html_path.write_text(
         html_content,
         encoding="utf-8",
     )
+
 
 # ============================================================
 # Homepage entry
