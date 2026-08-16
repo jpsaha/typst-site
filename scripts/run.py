@@ -32,7 +32,7 @@ import sys
 # Validation
 # ------------------------------------------------------------
 #
-# python3 scripts/run.py check-config
+# python3 scripts/run.py config
 # python3 scripts/run.py metadata-check
 # python3 scripts/run.py generated
 # python3 scripts/run.py imports
@@ -96,7 +96,7 @@ COMMANDS = {
     #
     # These commands inspect the project and generated output.
     #
-    # check-config:
+    # config:
     #     Checks whether project-wide configuration is properly
     #     centralized in scripts/config.py.
     #
@@ -117,7 +117,7 @@ COMMANDS = {
     #     URLs and that the referenced images exist.
     # --------------------------------------------------------
 
-    "check-config": "scripts.lint.check_config",
+    "config": "scripts.lint.check_config",
     "metadata-check": "scripts.lint.check_metadata",
     "generated": "scripts.lint.check_generated",
     "imports": "scripts.lint.check_imports",
