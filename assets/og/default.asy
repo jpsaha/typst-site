@@ -244,55 +244,65 @@ label(
 // lines beside pi
 
 draw(
-  (450,475)--(572,475),
+  (450,475)--(565,475),
   lightgreen + linewidth(1)
 );
 
 draw(
-  (628,475)--(750,475),
+  (635,475)--(750,475),
   lightgreen + linewidth(1)
 );
 
-dot((572,475), lightgreen);
-dot((628,475), lightgreen);
-
+dot((565,475), lightgreen);
+dot((635,475), lightgreen);
 
 // ============================================================
 // TITLE
 // ============================================================
 
+pen titlefont = Palatino(
+  series="b",
+  shape="n"
+) + fontsize(52);
+
 label(
   "MATHEMATICS",
   (600,390),
-  darkgreen + fontsize(32)
+  darkgreen + titlefont
 );
 
 label(
   "LECTURES",
-  (600,345),
-  darkgreen + fontsize(32)
+  (600,325),
+  darkgreen + titlefont
 );
 
 
-// ------------------------------------------------------------
-// Subtitle
-// ------------------------------------------------------------
+
+draw(
+  (450,300)--(750,300),
+  lightgreen + linewidth(1)
+);
+
+
+dot((0,305), lightgreen);
+
+// ============================================================
+// SUBTITLE
+// ============================================================
 
 label(
   "Notes  $\bullet$  Problems  $\bullet$  Resources",
-  (600,300),
-  textcolor + fontsize(15)
+  (600,280),
+  textcolor + fontsize(20)
 );
-
 
 // ============================================================
 // CATEGORY BADGE
 // ============================================================
 
-// simple rectangular badge
-
-pair B1 = (425,235);
-pair B2 = (775,270);
+pair B1 = (425,215);
+pair B2 = (775,248);
 
 fill(
   box(B1,B2),
@@ -306,10 +316,9 @@ draw(
 
 label(
   "ALGEBRA  $\bullet$  NUMBER THEORY",
-  (600,252),
+  (600,231),
   darkgreen + fontsize(11)
 );
-
 
 // ============================================================
 // DECORATIVE MATRIX
