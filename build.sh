@@ -327,7 +327,9 @@ generate_metadata() {
 
     stage_start
 
-    python3 scripts/run.py metadata
+    if ! python3 scripts/run.py metadata; then
+        die "metadata generation failed."
+    fi
 
     stage_end TIME_METADATA
 }
@@ -374,7 +376,31 @@ build_og() {
 # ============================================================
 
 # ============================================================
-# 2a. Check source metadata
+# 2a. Check central configuration
+#
+# Audit configuration usage throughout the Python build
+# system. The detailed report is written to:
+#
+#     diagnostics/config_report.txt
+#
+# ============================================================
+
+validate_config() {
+
+    echo
+    echo "⚙️  Checking configuration..."
+
+    stage_start
+
+    if ! python3 scripts/run.py config; then
+        die "configuration audit failed."
+    fi
+
+    stage_end TIME_CONFIG_CHECK
+}
+
+# ============================================================
+# 2b. Check source metadata
 # ============================================================
 
 validate_metadata() {
@@ -392,7 +418,7 @@ validate_metadata() {
 }
 
 # ============================================================
-# 2b. Check generated files
+# 2c. Check generated files
 # ============================================================
 
 validate_generated() {
@@ -410,7 +436,7 @@ validate_generated() {
 }
 
 # ============================================================
-# 2c. Check Typst imports
+# 2d. Check Typst imports
 #
 # Verify that all imported Typst files exist and that there
 # are no circular import dependencies.
@@ -436,7 +462,28 @@ validate_imports() {
 }
 
 # ============================================================
-# 2d. Check links
+# 2e. Check Open Graph images
+#
+# Verify that generated HTML pages contain valid Open Graph
+# image references and that the referenced image files exist.
+# ============================================================
+
+validate_og() {
+
+    echo
+    echo "🖼️  Checking Open Graph images..."
+
+    stage_start
+
+    if ! python3 scripts/run.py og-check; then
+        die "Open Graph image check failed."
+    fi
+
+    stage_end TIME_OG_CHECK
+}
+
+# ============================================================
+# 2f. Check links
 # ============================================================
 
 validate_links() {
@@ -471,7 +518,9 @@ prepare_dist() {
 
     stage_start
 
-    python3 scripts/run.py prepare-dist
+    if ! python3 scripts/run.py prepare-dist; then
+        die "dist preparation failed."
+    fi
 
     stage_end TIME_PREPARE_DIST
 }
@@ -487,7 +536,9 @@ prepare_diagnostics() {
 
     stage_start
 
-    python3 scripts/run.py prepare-diagnostics
+    if ! python3 scripts/run.py prepare-diagnostics; then
+        die "diagnostics preparation failed."
+    fi
 
     stage_end TIME_PREPARE_DIAGNOSTICS
 
@@ -510,7 +561,9 @@ build_html() {
 
     stage_start
 
-    python3 scripts/run.py html
+    if ! python3 scripts/run.py html; then
+        die "HTML build failed."
+    fi
 
     stage_end TIME_HTML
 }
@@ -526,7 +579,9 @@ build_sitemap() {
 
     stage_start
 
-    python3 scripts/run.py sitemap
+    if ! python3 scripts/run.py sitemap; then
+        die "sitemap generation failed."
+    fi
 
     stage_end TIME_SITEMAP
 }
@@ -542,7 +597,9 @@ build_robots() {
 
     stage_start
 
-    python3 scripts/run.py robots
+    if ! python3 scripts/run.py robots; then
+        die "robots.txt generation failed."
+    fi
 
     stage_end TIME_ROBOTS
 }
@@ -563,7 +620,9 @@ build_pdf() {
 
     stage_start
 
-    python3 scripts/run.py pdf
+    if ! python3 scripts/run.py pdf; then
+        die "individual PDF build failed."
+    fi
 
     stage_end TIME_PDF
 }
@@ -579,7 +638,9 @@ build_categories() {
 
     stage_start
 
-    python3 scripts/run.py categories
+    if ! python3 scripts/run.py categories; then
+        die "category PDF build failed."
+    fi
 
     stage_end TIME_CATEGORIES
 }
@@ -595,7 +656,9 @@ build_book() {
 
     stage_start
 
-    python3 scripts/run.py book
+    if ! python3 scripts/run.py book; then
+        die "complete course book build failed."
+    fi
 
     stage_end TIME_BOOK
 }
@@ -611,7 +674,9 @@ build_pages_pdf() {
 
     stage_start
 
-    python3 scripts/run.py pages-pdf
+    if ! python3 scripts/run.py pages-pdf; then
+        die "complete pages PDF build failed."
+    fi
 
     stage_end TIME_PAGES
 }
@@ -655,12 +720,14 @@ print_summary() {
     BUILD_TIME=$((BUILD_END - BUILD_START))
 
     BUILD_TIME="$BUILD_TIME" \
+    TIME_CONFIG_CHECK="$TIME_CONFIG_CHECK" \
     TIME_METADATA="$TIME_METADATA" \
     TIME_OG_GENERATE="$TIME_OG_GENERATE" \
     TIME_OG_BUILD="$TIME_OG_BUILD" \
     TIME_METADATA_CHECK="$TIME_METADATA_CHECK" \
     TIME_GENERATED_CHECK="$TIME_GENERATED_CHECK" \
     TIME_IMPORT_CHECK="$TIME_IMPORT_CHECK" \
+    TIME_OG_CHECK="$TIME_OG_CHECK" \
     TIME_LINKS="$TIME_LINKS" \
     TIME_PREPARE_DIST="$TIME_PREPARE_DIST" \
     TIME_PREPARE_DIAGNOSTICS="$TIME_PREPARE_DIAGNOSTICS" \
