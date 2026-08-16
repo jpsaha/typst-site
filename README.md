@@ -11,6 +11,9 @@ The project generates:
 * **course and category books**
 * **automatically generated navigation**
 * **automatically generated homepage data**
+* **SEO metadata**
+* **Open Graph images**
+* **sitemap and robots.txt**
 * **metadata and build diagnostics**
 * **import and link validation**
 
@@ -86,83 +89,89 @@ open http://localhost:8000
 
 ---
 
+# Features
+
+The current system provides:
+
+* 📝 **Typst-first authoring**
+* 📚 **Metadata-driven content management**
+* 🌐 **Automatic HTML generation**
+* 📄 **Individual PDF generation**
+* 📖 **Combined book generation**
+* 🗂️ **Course and category books**
+* 🏠 **Automatically generated homepage**
+* 🧭 **Automatic previous/next and category navigation**
+* 🔎 **SEO metadata generation**
+* 🌍 **Sitemap generation**
+* 🤖 **robots.txt generation**
+* 🖼️ **Automatic Open Graph image generation**
+* 🔗 **Generated HTML link validation**
+* 🧪 **Metadata validation**
+* 🧪 **Generated-file consistency validation**
+* 🧩 **Typst import/dependency validation**
+* ⚙️ **Configuration validation**
+* 📊 **Build and diagnostic reports**
+* 🚀 **GitHub Pages deployment**
+* ♻️ **Reproducible generated output**
+
+SEO and Open Graph generation are part of the current build pipeline rather than future features.
+
+---
+
 # Project Structure
 
 The repository is organized into several distinct layers:
 
 ```text
 typst-site/
-├── assets/             # Static website assets
-├── coding/             # Architecture and development documentation
-├── content/            # Source mathematical content and metadata
-├── diagnostics/        # Build and validation reports
-├── dist/               # Generated website and PDF output
-├── figures/             # Figures and graphical assets
-├── generated/           # Generated Typst/JSON metadata files
-├── scripts/             # Build, metadata, and linting infrastructure
-├── templates/           # Reusable Typst templates and components
+├── INSTALL.md
+├── README.md
 │
-├── book_source.typ      # Combined book source
-├── pages_source.typ     # Combined pages-book source
-├── pdflayout.typ        # PDF layout configuration
-├── pdflayout_old.typ    # Previous PDF layout implementation
-└── build.sh             # Main build entry point
+├── assets/                 # Static source website assets
+│   ├── README.md
+│   ├── css/
+│   │   └── style.css
+│   └── og/                 # Static/default OG assets
+│
+├── book_source.typ         # Combined book source
+├── pages_source.typ        # Combined pages-book source
+├── build.sh                # Main build entry point
+│
+├── coding/                 # Architecture and development documentation
+├── content/                # Source mathematical content and metadata
+├── diagnostics/            # Build and validation reports
+├── dist/                   # Generated website and PDF output
+├── docs/                   # Operational/project documentation
+├── figures/                # Figures and graphical assets
+├── generated/              # Generated Typst/JSON/OG artifacts
+├── scripts/                # Build, metadata, OG, and linting infrastructure
+└── templates/              # Reusable Typst templates and components
 ```
 
-The most important principle is that **generated artifacts are not the source of truth**. Source content and metadata are discovered and transformed by the build pipeline.
+The most important principle is that **generated artifacts are not the source of truth**.
+
+Source content and metadata are discovered and transformed by the build pipeline:
 
 ```text
-typst-site/
-├── assets/
-│   └── css/
-│       └── style.css
-│
-├── content/
-│   ├── courses/
-│   ├── lectures/
-│   ├── mopss/
-│   └── olympiad/
-│
-├── diagnostics/
-│   ├── imports.dot
-│   ├── link_report.txt
-│   └── metadata_report.txt
-│
-├── figures/
-│
-├── generated/
-│   ├── book.typ
-│   ├── category_*.typ
-│   ├── homepage.json
-│   ├── homepage.typ
-│   ├── lectures.typ
-│   ├── pages.typ
-│   └── pages_meta.typ
-│
-├── scripts/
-│   ├── build/
-│   ├── lint/
-│   ├── metadata/
-│   └── utils/
-│
-├── templates/
-│   ├── block-engine.typ
-│   ├── blocks.typ
-│   ├── code.typ
-│   ├── colors.typ
-│   ├── config.typ
-│   ├── counters.typ
-│   ├── course.typ
-│   ├── math.typ
-│   ├── nav.typ
-│   ├── render.typ
-│   ├── theorems.typ
-│   └── utils.typ
-│
-├── book_source.typ
-├── pages_source.typ
-├── pdflayout.typ
-└── build.sh
+content/
+    │
+    │ metadata discovery
+    ▼
+scripts/
+    │
+    │ generation
+    ▼
+generated/
+    │
+    │ Typst compilation + asset preparation
+    ▼
+dist/
+```
+
+Diagnostics are kept separately:
+
+```text
+diagnostics/
 ```
 
 ---
@@ -175,12 +184,13 @@ Source content lives under:
 content/
 ```
 
-The current content tree contains:
+The current content tree is organized by subject/program:
 
 ```text
 content/
 ├── courses/
-├── lectures/
+├── fgt/
+├── gt/
 ├── mopss/
 └── olympiad/
 ```
@@ -189,40 +199,15 @@ Different types of material are therefore kept separate while still using the sa
 
 ---
 
-# Lectures
-
-Lecture wrappers and their actual content are kept in separate files.
-
-For example:
-
-```text
-content/lectures/
-├── lec1.typ
-├── lec1_content.typ
-├── lec2.typ
-├── lec2_content.typ
-├── lec3.typ
-└── lec3_content.typ
-```
-
-The wrapper contains metadata and imports or includes the corresponding content file.
-
-For example:
-
-```text
-lec1.typ
-lec1_content.typ
-```
-
-The metadata-bearing wrapper is used by the metadata discovery pipeline, while `_content.typ` contains the actual lecture material.
-
-This separation makes it possible to change metadata, navigation, or generation behavior without mixing those concerns into the mathematical content.
-
----
-
 # Courses
 
-Course material is organized similarly:
+Course-level material is stored under:
+
+```text
+content/courses/
+```
+
+For example:
 
 ```text
 content/courses/
@@ -232,7 +217,51 @@ content/courses/
 └── fun_content.typ
 ```
 
-A course wrapper provides metadata and the corresponding `_content.typ` file contains the course material.
+A course wrapper provides metadata, while the corresponding `_content.typ` file contains the actual course material.
+
+---
+
+# FGT
+
+Field and Galois Theory material is stored under:
+
+```text
+content/fgt/
+```
+
+For example:
+
+```text
+content/fgt/
+├── lec1.typ
+├── lec1_content.typ
+├── lec2.typ
+└── lec2_content.typ
+```
+
+The wrapper/content separation follows the same pattern used throughout the project.
+
+---
+
+# Group Theory
+
+Group Theory material is stored under:
+
+```text
+content/gt/
+```
+
+For example:
+
+```text
+content/gt/
+├── lec1.typ
+├── lec1_content.typ
+├── lec2.typ
+├── lec2_content.typ
+├── lec3.typ
+└── lec3_content.typ
+```
 
 ---
 
@@ -305,6 +334,8 @@ The metadata is used to generate:
 * combined books
 * generated Typst files
 * HTML/PDF output information
+* SEO metadata
+* Open Graph information
 * metadata reports
 
 ---
@@ -323,6 +354,9 @@ Other fields, such as:
 ```text
 number
 category
+tags
+description
+date
 ```
 
 are handled according to the project's metadata rules.
@@ -335,20 +369,20 @@ Pages or other content without a lecture number can be represented separately by
 
 # Adding New Content
 
-To add a new lecture, the usual workflow is:
+To add new content, the usual workflow is:
 
-## 1. Create the wrapper
+## 1. Create the metadata wrapper
 
 For example:
 
 ```text
-content/lectures/lec4.typ
+content/fgt/lec3.typ
 ```
 
 ## 2. Create the content file
 
 ```text
-content/lectures/lec4_content.typ
+content/fgt/lec3_content.typ
 ```
 
 ## 3. Add metadata
@@ -357,22 +391,16 @@ The wrapper should define the required metadata:
 
 ```typst
 #let lecture = (
-  file: "lec4",
-  number: 4,
+  file: "lec3",
+  number: 3,
   title: "Your Lecture Title",
   category: "Your Category",
 )
 ```
 
-## 4. Put the lecture material in `_content.typ`
+## 4. Put the mathematical material in `_content.typ`
 
-For example:
-
-```text
-lec4_content.typ
-```
-
-contains the actual definitions, theorems, examples, exercises, proofs, and other material.
+The content file contains the actual definitions, theorems, examples, exercises, proofs, and other material.
 
 ## 5. Run the build
 
@@ -405,10 +433,13 @@ scripts/
 ├── build/
 ├── lint/
 ├── metadata/
-└── utils/
+├── og/
+├── utils/
+├── config.py
+└── run.py
 ```
 
-This separation keeps the build orchestration, metadata processing, validation, and reusable utilities independent.
+This separation keeps build orchestration, metadata processing, Open Graph generation, validation, and reusable utilities independent.
 
 ---
 
@@ -443,9 +474,11 @@ scripts/metadata/
 These modules handle tasks including:
 
 ```text
+config.py
 discover.py
-parser.py
 navigation.py
+parser.py
+seo.py
 typst.py
 write_book.py
 write_homepage.py
@@ -456,9 +489,36 @@ write_report.py
 
 The metadata system discovers source content and generates the Typst and JSON artifacts required by the rest of the build.
 
+The metadata system is also responsible for generating information used by:
+
+* navigation
+* homepage generation
+* category books
+* SEO
+* Open Graph generation
+* reports
+
 ---
 
-## 2. Validate metadata
+## 2. Validate configuration
+
+Configuration validation is performed by:
+
+```text
+scripts/lint/check_config.py
+```
+
+The resulting report is written to:
+
+```text
+diagnostics/config_report.txt
+```
+
+This catches invalid or inconsistent project configuration before later build stages depend on it.
+
+---
+
+## 3. Validate metadata
 
 Metadata validation is performed by:
 
@@ -477,7 +537,7 @@ It checks the metadata structure and the project's metadata rules, including suc
 
 ---
 
-## 3. Validate generated files
+## 4. Validate generated files
 
 Generated-file consistency is checked by:
 
@@ -485,7 +545,7 @@ Generated-file consistency is checked by:
 scripts/lint/check_generated.py
 ```
 
-The generated-file checker is itself organized into supporting modules:
+The generated-file checker is organized into supporting modules:
 
 ```text
 scripts/lint/generated/
@@ -499,7 +559,7 @@ This makes it possible to detect stale or missing generated artifacts and discre
 
 ---
 
-## 4. Prepare diagnostics and output directories
+## 5. Prepare diagnostics and output directories
 
 The build infrastructure prepares:
 
@@ -514,7 +574,7 @@ The goal is that stale output should not silently survive from an earlier build.
 
 ---
 
-## 5. Build HTML pages
+## 6. Build HTML pages
 
 HTML generation is handled by:
 
@@ -522,7 +582,7 @@ HTML generation is handled by:
 scripts/build/build_html.py
 ```
 
-The generated Typst page sources and metadata are used to produce the browser-viewable pages under:
+The generated Typst page sources and metadata are used to produce browser-viewable pages under:
 
 ```text
 dist/pages/
@@ -534,9 +594,15 @@ The generated homepage is placed at:
 dist/index.html
 ```
 
+Static website assets such as CSS are copied into:
+
+```text
+dist/assets/
+```
+
 ---
 
-## 6. Build individual PDFs
+## 7. Build individual PDFs
 
 Individual page/lecture PDFs are built by the PDF build components under:
 
@@ -559,7 +625,7 @@ dist/pdf/
 
 ---
 
-## 7. Build category books
+## 8. Build category books
 
 Category sources are generated under:
 
@@ -569,36 +635,27 @@ generated/category_*.typ
 
 and compiled into category PDFs.
 
-For example:
+Examples include:
 
 ```text
+generated/category_developer.typ
+generated/category_extras.typ
+generated/category_fields_and_galois_theory.typ
+generated/category_group_theory.typ
 generated/category_ioqm.typ
 generated/category_mopss.typ
-generated/category_olympiad.typ
 generated/category_r_m_o.typ
 ```
 
-produce corresponding category books under:
+Category generation is handled by:
 
 ```text
-dist/pdf/
-```
-
-The current build also generates category books for categories such as:
-
-```text
-Developer
-Extras
-Fields and Galois Theory
-IOQM
-MOPSS
-Olympiad
-RMO
+scripts/build/build_categories.py
 ```
 
 ---
 
-## 8. Build combined books
+## 9. Build combined books
 
 The project also produces combined collections.
 
@@ -609,28 +666,148 @@ book_source.typ
 pages_source.typ
 ```
 
-and the resulting PDFs include:
-
-```text
-dist/pdf/book.pdf
-dist/pdf/pages.pdf
-```
-
-The generated book metadata is written to:
-
-```text
-generated/book.typ
-```
-
 The book build logic is implemented under:
 
 ```text
 scripts/build/build_book.py
 ```
 
+Generated book metadata is written to:
+
+```text
+generated/book.typ
+```
+
 ---
 
-## 9. Build report
+# SEO
+
+SEO generation is part of the normal metadata/build pipeline.
+
+SEO-related logic lives under:
+
+```text
+scripts/metadata/seo.py
+```
+
+The generated HTML pages receive metadata derived from the source content and project configuration.
+
+The SEO pipeline is designed to keep page metadata synchronized with the same metadata used for:
+
+* titles
+* descriptions
+* categories
+* navigation
+* homepage information
+
+This avoids maintaining SEO information separately for every generated HTML page.
+
+---
+
+# Sitemap and robots.txt
+
+The build automatically generates the site's crawler-related files.
+
+The relevant build components are:
+
+```text
+scripts/build/build_sitemap.py
+scripts/build/build_robots.py
+```
+
+The generated files are placed in the published site under:
+
+```text
+dist/
+```
+
+typically as:
+
+```text
+dist/sitemap.xml
+dist/robots.txt
+```
+
+These are generated artifacts and should not normally be edited manually.
+
+---
+
+# Open Graph Images
+
+Open Graph image generation is integrated into the build pipeline.
+
+The implementation lives under:
+
+```text
+scripts/og/
+├── __init__.py
+├── build_og.py
+├── generate_og.py
+└── og_template.asy
+```
+
+The OG pipeline uses metadata to generate page-specific social preview images.
+
+Generated OG sources and images are kept under:
+
+```text
+generated/og/
+```
+
+and the published images are copied into:
+
+```text
+dist/assets/og/
+```
+
+The structure is organized by content:
+
+```text
+generated/og/
+├── courses/
+├── fgt/
+├── gt/
+├── mopss/
+└── olympiad/
+```
+
+The final website therefore contains corresponding published assets under:
+
+```text
+dist/assets/og/
+```
+
+A default OG asset is also available for pages that do not have a specific generated image.
+
+The source/default OG assets live under:
+
+```text
+assets/og/
+```
+
+while generated page-specific OG assets live under:
+
+```text
+generated/og/
+```
+
+and published OG assets live under:
+
+```text
+dist/assets/og/
+```
+
+This follows the general:
+
+```text
+source → generated → published
+```
+
+architecture used by the rest of the project.
+
+---
+
+# Build Report
 
 Build reporting is handled by:
 
@@ -654,7 +831,7 @@ This provides a consolidated view of the build result in addition to the individ
 
 ---
 
-## 10. Check generated links
+# Generated Links
 
 Generated HTML is checked by:
 
@@ -662,11 +839,20 @@ Generated HTML is checked by:
 scripts/lint/check_links.py
 ```
 
-The checker scans the generated HTML for broken local links and records the results in:
+The checker scans generated HTML for broken local links and records the results in:
 
 ```text
 diagnostics/link_report.txt
 ```
+
+This includes links generated automatically by:
+
+* navigation
+* category pages
+* homepage cards
+* PDF links
+* related pages
+* generated website metadata
 
 ---
 
@@ -678,7 +864,7 @@ The directory:
 generated/
 ```
 
-contains files produced automatically by the metadata pipeline.
+contains files produced automatically by the metadata and asset-generation pipelines.
 
 The current generated tree includes:
 
@@ -688,13 +874,14 @@ generated/
 ├── category_developer.typ
 ├── category_extras.typ
 ├── category_fields_and_galois_theory.typ
+├── category_group_theory.typ
 ├── category_ioqm.typ
 ├── category_mopss.typ
-├── category_olympiad.typ
 ├── category_r_m_o.typ
 ├── homepage.json
 ├── homepage.typ
 ├── lectures.typ
+├── og/
 ├── pages.typ
 └── pages_meta.typ
 ```
@@ -729,7 +916,7 @@ The final website and PDFs are placed under:
 dist/
 ```
 
-The current output is organized as:
+The output is organized approximately as:
 
 ```text
 dist/
@@ -737,45 +924,36 @@ dist/
 │   ├── css/
 │   │   └── style.css
 │   ├── images/
-│   └── js/
+│   ├── js/
+│   └── og/
+│       ├── courses/
+│       ├── fgt/
+│       ├── gt/
+│       ├── mopss/
+│       └── olympiad/
 │
 ├── index.html
+├── robots.txt
+├── sitemap.xml
 │
 ├── pages/
 │   ├── codeeg.html
+│   ├── fgt1.html
+│   ├── fgt2.html
 │   ├── fun.html
+│   ├── gt1.html
+│   ├── gt2.html
+│   ├── gt3.html
 │   ├── ioqm2024.html
 │   ├── ioqm2025.html
-│   ├── lec1.html
-│   ├── lec2.html
-│   ├── lec3.html
 │   ├── mopss_26aug08.html
 │   ├── mopss_26aug29.html
 │   └── rmo2025.html
 │
 └── pdf/
-    ├── book.pdf
-    ├── pages.pdf
-    ├── codeeg.pdf
-    ├── fun.pdf
-    ├── ioqm2024.pdf
-    ├── ioqm2025.pdf
-    ├── lec1.pdf
-    ├── lec2.pdf
-    ├── lec3.pdf
-    ├── mopss_26aug08.pdf
-    ├── mopss_26aug29.pdf
-    ├── rmo2025.pdf
-    ├── category_developer.pdf
-    ├── category_extras.pdf
-    ├── category_fields_and_galois_theory.pdf
-    ├── category_ioqm.pdf
-    ├── category_mopss.pdf
-    ├── category_olympiad.pdf
-    └── category_r_m_o.pdf
 ```
 
-`dist/` is build output and can be safely regenerated.
+`dist/` is build output and can be regenerated from the repository source.
 
 ---
 
@@ -792,10 +970,27 @@ The current diagnostic files include:
 ```text
 diagnostics/
 ├── build_report.txt
+├── config_report.txt
 ├── generated_report.txt
 ├── imports.dot
 ├── link_report.txt
 └── metadata_report.txt
+```
+
+---
+
+## Configuration report
+
+```text
+config_report.txt
+```
+
+contains the results of configuration validation.
+
+It is generated by:
+
+```text
+scripts/lint/check_config.py
 ```
 
 ---
@@ -877,7 +1072,7 @@ Reusable Typst functionality lives under:
 templates/
 ```
 
-The template system is now divided into several layers.
+The template system is divided into several layers.
 
 The current structure includes:
 
@@ -962,7 +1157,7 @@ Navigation-related functionality lives in:
 templates/nav.typ
 ```
 
-It is used together with generated metadata to provide navigation such as:
+It is used together with generated metadata to provide:
 
 * previous/next links
 * lecture navigation
@@ -980,7 +1175,7 @@ Shared rendering logic lives in:
 templates/render.typ
 ```
 
-The rendering layer is intended to keep presentation logic separate from individual content files and to support the different output targets.
+The rendering layer keeps presentation logic separate from individual content files and supports the different output targets.
 
 ---
 
@@ -1065,7 +1260,7 @@ This separates Euler-specific components and visual styling from the main projec
 
 # Figures
 
-Figures are stored separately from the lecture source:
+Figures are stored separately from lecture source:
 
 ```text
 figures/
@@ -1083,6 +1278,8 @@ This keeps mathematical source content and graphical assets organized independen
 
 Common figures can be shared across multiple pieces of content, while lecture-specific and olympiad-specific figures remain localized.
 
+As the content hierarchy evolves, figure organization can also be aligned more closely with the corresponding course/program structure.
+
 ---
 
 # Website Assets
@@ -1093,16 +1290,21 @@ Static website assets live under:
 assets/
 ```
 
-The current source asset tree is:
+The current source asset tree includes:
 
 ```text
 assets/
 ├── README.md
-└── css/
-    └── style.css
+├── css/
+│   └── style.css
+└── og/
+    ├── default.asy
+    ├── default.pdf
+    ├── default.png
+    └── fgt1.png
 ```
 
-The build copies the required assets into:
+The build copies or generates the required assets into:
 
 ```text
 dist/assets/
@@ -1122,6 +1324,39 @@ assets/css/style.css
 
 The CSS is copied into the generated website during the build.
 
+The published copy is:
+
+```text
+dist/assets/css/style.css
+```
+
+The generated copy should not be edited manually.
+
+---
+
+# Open Graph Asset Flow
+
+Open Graph assets follow the same source/generated/published separation as the rest of the project.
+
+```text
+assets/og/
+        │
+        │ static/default assets
+        │
+        ▼
+scripts/og/
+        │
+        │ OG generation
+        ▼
+generated/og/
+        │
+        │ published during build
+        ▼
+dist/assets/og/
+```
+
+This makes it possible to regenerate social preview assets without manually maintaining the final website output.
+
 ---
 
 # PDF Layout
@@ -1131,13 +1366,7 @@ The main PDF-related files are:
 ```text
 book_source.typ
 pages_source.typ
-pdflayout.typ
-```
-
-There is also an older implementation retained as:
-
-```text
-pdflayout_old.typ
+templates/pdflayout.typ
 ```
 
 The source files define the entry points and layout configuration used for the generated combined PDFs and page collections.
@@ -1154,20 +1383,40 @@ Architecture and development notes are kept under:
 coding/
 ```
 
-The current documentation includes:
+The current documentation includes material such as:
 
 ```text
 coding/
 ├── Course Website Roadmap.md
 ├── Course Website Roadmap.pdf
+├── Fresh GitHub Repository Setup.md
+├── Fresh GitHub Repository Setup.pdf
 ├── build_architecture_refactoring_roadmap.md
 ├── build_architecture_refactoring_roadmap.pdf
-└── project_architecture_roadmap.md
+├── project_architecture_roadmap.md
+├── typst-course-roadmap.md
+└── typst-course-roadmap.pdf
 ```
 
-These documents record architectural decisions, planned refactoring, and future development directions.
+These documents record architectural decisions, setup procedures, planned refactoring, and development history.
 
 They are intentionally kept separate from the operational README.
+
+Additional operational documentation is kept under:
+
+```text
+docs/
+```
+
+including:
+
+```text
+docs/
+├── README_diagnostic.md
+├── README_dist.md
+├── README_figure.md
+└── README_generated.md
+```
 
 ---
 
@@ -1178,6 +1427,18 @@ Several standalone checks are available under:
 ```text
 scripts/lint/
 ```
+
+---
+
+## Configuration
+
+Run:
+
+```bash
+python3 scripts/lint/check_config.py
+```
+
+This validates project configuration.
 
 ---
 
@@ -1202,6 +1463,18 @@ python3 scripts/lint/check_generated.py
 ```
 
 This checks consistency between source metadata and generated files.
+
+---
+
+## Open Graph assets
+
+Run:
+
+```bash
+python3 scripts/lint/check_og.py
+```
+
+This validates generated Open Graph assets and their relationship to the source metadata/build output.
 
 ---
 
@@ -1265,6 +1538,78 @@ The standalone checks are useful when debugging a particular part of the system.
 
 ---
 
+# Scripts
+
+The build infrastructure is organized as follows:
+
+```text
+scripts/
+├── build/
+│   ├── build_book.py
+│   ├── build_categories.py
+│   ├── build_html.py
+│   ├── build_pages_pdf.py
+│   ├── build_pdfs.py
+│   ├── build_report.py
+│   ├── build_robots.py
+│   ├── build_sitemap.py
+│   ├── generate_metadata.py
+│   ├── prepare_diagnostics.py
+│   └── prepare_dist.py
+│
+├── lint/
+│   ├── check_config.py
+│   ├── check_generated.py
+│   ├── check_imports.py
+│   ├── check_links.py
+│   ├── check_metadata.py
+│   ├── check_og.py
+│   ├── generated/
+│   └── imports/
+│
+├── metadata/
+│   ├── config.py
+│   ├── discover.py
+│   ├── navigation.py
+│   ├── parser.py
+│   ├── seo.py
+│   ├── typst.py
+│   ├── write_book.py
+│   ├── write_homepage.py
+│   ├── write_lectures.py
+│   ├── write_pages.py
+│   └── write_report.py
+│
+├── og/
+│   ├── build_og.py
+│   ├── generate_og.py
+│   └── og_template.asy
+│
+├── config.py
+└── run.py
+```
+
+The modular structure is intentional:
+
+```text
+metadata/
+    discovery + parsing + metadata generation
+
+build/
+    compilation + packaging + reports
+
+og/
+    Open Graph generation
+
+lint/
+    validation
+
+utils/
+    reusable implementation helpers
+```
+
+---
+
 # Design Philosophy
 
 The project follows several basic principles.
@@ -1283,11 +1628,11 @@ The project follows several basic principles.
 
 4. **The same metadata drives multiple outputs.**
 
-   Metadata is used to generate HTML, PDFs, navigation, homepage information, and category collections.
+   Metadata is used to generate HTML, PDFs, navigation, homepage information, category collections, SEO metadata, and Open Graph assets.
 
 5. **Generated artifacts should be reproducible.**
 
-   A clean build should be able to regenerate the generated metadata and `dist/` output from the repository source.
+   A clean build should be able to regenerate the generated metadata and `dist/` output from repository source.
 
 6. **Stale output should not silently survive.**
 
@@ -1299,11 +1644,15 @@ The project follows several basic principles.
 
 8. **Build responsibilities should remain modular.**
 
-   Discovery, metadata parsing, generation, compilation, validation, and reporting are implemented as separate components under `scripts/`.
+   Discovery, metadata parsing, generation, compilation, validation, OG generation, and reporting are implemented as separate components under `scripts/`.
 
 9. **Source organization should reflect content organization.**
 
-   Lectures, courses, olympiad material, and MOPSS material have their own source areas while sharing the same underlying generation infrastructure.
+   Courses, FGT, Group Theory, Olympiad, and MOPSS material have their own source areas while sharing the same underlying generation infrastructure.
+
+10. **Published assets are derived from source assets.**
+
+    CSS, images, OG assets, sitemap, robots.txt, HTML, and PDFs are produced as part of the build rather than being maintained independently in the published output.
 
 ---
 
@@ -1320,19 +1669,27 @@ Update metadata if necessary
     ↓
 Discover and parse metadata
     ↓
+Validate configuration
+    ↓
 Validate metadata
     ↓
-Generate Typst/JSON files
+Generate Typst/JSON metadata
+    ↓
+Generate OG assets
     ↓
 Validate generated files
     ↓
 Build HTML pages
+    ↓
+Build SEO-related files
     ↓
 Build individual PDFs
     ↓
 Build category books
     ↓
 Build combined books
+    ↓
+Copy website assets
     ↓
 Check generated links
     ↓
@@ -1353,7 +1710,7 @@ Inspect:
 diagnostics/
 ```
 
-for metadata, generated-file, import, link, and build reports.
+for metadata, generated-file, configuration, OG, import, link, and build reports.
 
 ---
 
@@ -1367,6 +1724,14 @@ Modify files under:
 
 ```text
 content/
+```
+
+### Modify figures
+
+Modify files under:
+
+```text
+figures/
 ```
 
 ### Modify reusable presentation or functionality
@@ -1384,6 +1749,7 @@ Modify the appropriate modules under:
 ```text
 scripts/metadata/
 scripts/build/
+scripts/og/
 ```
 
 ### Modify validation
@@ -1402,6 +1768,14 @@ Modify:
 assets/css/style.css
 ```
 
+### Modify static/default OG assets
+
+Modify:
+
+```text
+assets/og/
+```
+
 ### Do not manually edit generated output
 
 Avoid manually editing:
@@ -1409,6 +1783,7 @@ Avoid manually editing:
 ```text
 generated/
 dist/
+diagnostics/
 ```
 
 unless debugging or inspecting generated artifacts.
@@ -1423,15 +1798,15 @@ Regenerate them with:
 
 # Future Improvements
 
-The project is functional, but there are several areas that can be improved or extended over time.
+The project is already functional as a complete publishing pipeline. Future work can therefore focus on **new capabilities and polish** rather than completing the core publishing infrastructure.
 
 Possible directions include:
 
-* **Website search** — add client-side search across lectures, courses, and problem collections.
+* **Website search** — add client-side/full-text search across lectures, courses, and problem collections.
 * **Richer homepage** — improve categorization, filtering, and presentation of available material.
+* **Navigation improvements** — further improve breadcrumbs, cross-references, related-content navigation, and category navigation.
 * **Build diagnostics** — expand the final build summary with more detailed timing, file counts, and validation statistics.
-* **Metadata tooling** — add stronger validation, duplicate detection, and clearer metadata error messages.
-* **Navigation** — further improve breadcrumbs, previous/next navigation, category navigation, and cross-references.
+* **Metadata tooling** — add stronger validation and clearer metadata error messages.
 * **PDF presentation** — continue refining typography, page layout, title pages, headers, footers, and category-book design.
 * **HTML presentation** — polish responsive layouts, mathematical typography, theorem blocks, code blocks, and mobile presentation.
 * **Accessibility** — improve semantic HTML, keyboard navigation, contrast, and screen-reader support.
@@ -1440,13 +1815,13 @@ Possible directions include:
 * **Performance** — reduce unnecessary compilation and improve incremental development workflows.
 * **Documentation** — expand documentation as the project architecture and authoring workflow evolve.
 
-These are intentionally ongoing areas of development rather than fixed requirements. The project can evolve incrementally as new content and requirements emerge.
+SEO, sitemap/robots generation, and Open Graph generation are **already implemented** and are therefore not listed as future work.
 
 ---
 
 # Repository Summary
 
-The current repository can be viewed conceptually as five layers:
+The repository can be viewed conceptually as the following pipeline:
 
 ```text
                  ┌──────────────────────┐
@@ -1455,22 +1830,23 @@ The current repository can be viewed conceptually as five layers:
                  │ metadata             │
                  └──────────┬───────────┘
                             │
+                            │ discovery
                             ▼
                  ┌──────────────────────┐
                  │      scripts/        │
-                 │ Discovery + metadata │
-                 │ generation + build   │
-                 │ validation           │
+                 │ Metadata + build +   │
+                 │ validation + OG      │
                  └──────────┬───────────┘
                             │
                             ▼
                  ┌──────────────────────┐
                  │     generated/       │
-                 │ Generated Typst +    │
-                 │ JSON metadata        │
+                 │ Typst + JSON + OG    │
+                 │ intermediate files   │
                  └──────────┬───────────┘
                             │
                  ┌──────────┴───────────┐
+                 │                      │
                  ▼                      ▼
        ┌──────────────────┐   ┌──────────────────┐
        │   templates/     │   │    figures/      │
@@ -1480,10 +1856,13 @@ The current repository can be viewed conceptually as five layers:
        └────────┬─────────┘   └────────┬─────────┘
                 │                      │
                 └──────────┬───────────┘
+                           │
                            ▼
                  ┌──────────────────────┐
                  │       dist/          │
                  │ HTML + PDFs + assets │
+                 │ SEO + OG + sitemap   │
+                 │ + robots.txt         │
                  └──────────────────────┘
 
                  diagnostics/
@@ -1491,4 +1870,8 @@ The current repository can be viewed conceptually as five layers:
                  reports
 ```
 
-The central idea is that **source content and metadata are the authoritative inputs; everything else is generated or derived from them**.
+The central idea is:
+
+> **Source content and metadata are the authoritative inputs; everything else is generated or derived from them.**
+
+This keeps the project maintainable as the number of lectures, courses, problem collections, figures, and generated outputs grows.
