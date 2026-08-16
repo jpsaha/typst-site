@@ -26,6 +26,7 @@ from scripts.config import (
     HOMEPAGE_JSON,
     INDEX_HTML,
     SITE_TITLE,
+    SITE_SUBTITLE,
     SITE_ICON,
     SITE_TAGLINE,
     SITE_DESCRIPTION,
@@ -283,7 +284,8 @@ def build_homepage(categories):
             "\n"
             '<header class="index-header">\n'
             f"    <h1>{SITE_ICON} {SITE_TITLE}</h1>\n"
-            f"    <p>{SITE_TAGLINE}</p>\n"
+            f"    <p class=\"site-subtitle\">{SITE_SUBTITLE}</p>\n"
+            f"    <p class=\"site-tagline\">{SITE_TAGLINE}</p>\n"
             "</header>\n"
             "\n"
             '<main class="lecture-list">\n'

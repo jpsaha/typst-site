@@ -149,7 +149,8 @@ BUILD_REPORT = DIAGNOSTICS_DIR / "build_report.txt"
 # Current site identity
 # ------------------------------------------------------------
 
-SITE_TITLE = "Mathematics: Lectures & Notes · Typeset with Typst"
+SITE_TITLE = "Mathematics: Lectures & Notes"
+SITE_SUBTITLE = "Typeset with Typst"
 
 SITE_ICON = "🧮"
 
