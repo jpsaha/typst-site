@@ -60,6 +60,7 @@ from scripts.config import (
     ROOT,
     HOMEPAGE_JSON,
     GENERATED_OG_DIR,
+    OG_TEMPLATE_FILE,
 )
 
 
@@ -78,24 +79,6 @@ from scripts.config import (
 #     generated/homepage.json
 # ------------------------------------------------------------
 
-METADATA_FILE = HOMEPAGE_JSON
-
-
-# ------------------------------------------------------------
-# Asymptote template
-#
-# This template is specific to the OG generation system,
-# so its path remains local to this script.
-#
-#     scripts/og/og_template.asy
-# ------------------------------------------------------------
-
-TEMPLATE_FILE = (
-    ROOT
-    / "scripts"
-    / "og"
-    / "og_template.asy"
-)
 
 
 # ------------------------------------------------------------
@@ -111,7 +94,6 @@ TEMPLATE_FILE = (
 #     generated/og/gt/lec1.asy
 # ------------------------------------------------------------
 
-OUTPUT_DIR = GENERATED_OG_DIR
 
 # ============================================================
 # Utilities
@@ -207,14 +189,14 @@ def main():
     # Validate required input files
     # ========================================================
 
-    if not METADATA_FILE.exists():
+    if not HOMEPAGE_JSON.exists():
         raise FileNotFoundError(
-            f"Metadata file not found: {METADATA_FILE}"
+            f"Metadata file not found: {HOMEPAGE_JSON}"
         )
 
-    if not TEMPLATE_FILE.exists():
+    if not OG_TEMPLATE_FILE.exists():
         raise FileNotFoundError(
-            f"OG template not found: {TEMPLATE_FILE}"
+            f"OG template not found: {OG_TEMPLATE_FILE}"
         )
 
     # ========================================================
@@ -222,7 +204,7 @@ def main():
     # ========================================================
 
     data = json.loads(
-        METADATA_FILE.read_text(
+        HOMEPAGE_JSON.read_text(
             encoding="utf-8"
         )
     )
@@ -233,7 +215,7 @@ def main():
     # The same template is reused for every content item.
     # --------------------------------------------------------
 
-    template = TEMPLATE_FILE.read_text(
+    template = OG_TEMPLATE_FILE.read_text(
         encoding="utf-8"
     )
 
@@ -241,7 +223,7 @@ def main():
     # Prepare generated/og/
     # ========================================================
 
-    OUTPUT_DIR.mkdir(
+    GENERATED_OG_DIR.mkdir(
         parents=True,
         exist_ok=True,
     )
@@ -385,7 +367,7 @@ def main():
             )
 
             output = (
-                OUTPUT_DIR
+                GENERATED_OG_DIR
                 / output_relative
             )
 

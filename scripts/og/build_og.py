@@ -55,8 +55,6 @@ from scripts.config import (
 #     generated/og/mopss/mopss_aug29.asy
 # ============================================================
 
-OG_DIR = GENERATED_OG_DIR
-
 
 # ============================================================
 # Open Graph image settings
@@ -75,9 +73,6 @@ OG_DIR = GENERATED_OG_DIR
 #     Asymptote-generated PDF.
 # ============================================================
 
-WIDTH = OG_WIDTH
-HEIGHT = OG_HEIGHT
-DENSITY = OG_DENSITY
 
 # ============================================================
 # Rasterization density
@@ -99,7 +94,7 @@ def build_og_image(source):
     Convert one Asymptote source into a 1200×630 PNG.
     """
 
-    relative = source.relative_to(OG_DIR)
+    relative = source.relative_to(GENERATED_OG_DIR)
 
     output_base = source.with_suffix("")
 
@@ -189,10 +184,10 @@ def build_og_image(source):
 
 def main():
 
-    if not OG_DIR.exists():
+    if not GENERATED_OG_DIR.exists():
         print(
             f"⚠️  OG directory does not exist: "
-            f"{OG_DIR}"
+            f"{GENERATED_OG_DIR}"
         )
         return
 
@@ -201,7 +196,7 @@ def main():
     # --------------------------------------------------------
 
     sources = sorted(
-        OG_DIR.rglob("*.asy")
+        GENERATED_OG_DIR.rglob("*.asy")
     )
 
     if not sources:

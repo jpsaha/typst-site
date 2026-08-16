@@ -14,18 +14,47 @@ Report:
 
 Checks:
     1. Constants defined in scripts/config.py.
-    2. Uppercase constants defined outside config.py.
-    3. Path(...) constructions outside config.py.
-    4. ROOT / ... path constructions.
-    5. Hard-coded project directory names.
-    6. Hard-coded project/site-specific strings.
-    7. Configuration-like numeric constants.
-    8. Imports from scripts.config.
-    9. Local redefinitions of names imported from config.py.
+    2. Configuration-like constants defined outside config.py.
+    3. Implementation constants defined outside config.py.
+    4. Path(...) constructions outside config.py.
+    5. ROOT / ... path constructions.
+    6. Hard-coded project directory names.
+    7. Hard-coded project/site-specific strings.
+    8. Configuration-like numeric constants.
+    9. Imports from scripts.config.
+   10. Local redefinitions of names imported from config.py.
 
-This is an audit tool, not a strict linter. Some findings are
-legitimate local implementation details and should simply be reviewed.
+Important:
+    Not every uppercase constant belongs in config.py.
+
+For example:
+
+    REQUIRED_FIELDS
+    LECTURE_START_RE
+    IMPORT_RE
+    COMMANDS
+
+are implementation details of individual scripts.
+
+By contrast:
+
+    WIDTH
+    HEIGHT
+    DENSITY
+    DIST_DIR
+    SITE_URL
+    CONTENT_DIR
+
+are examples of values that may represent project configuration.
+
+This script therefore separates uppercase constants into:
+
+    Configuration constants
+    Implementation constants
+
+The report is an audit aid, not a strict linter.
 """
+
 
 from pathlib import Path
 import ast
@@ -34,6 +63,20 @@ import re
 
 # ============================================================
 # Project paths
+# ============================================================
+#
+# This script lives at:
+#
+#     scripts/lint/check_config.py
+#
+# Therefore:
+#
+#     parents[0] = scripts/lint
+#     parents[1] = scripts
+#     parents[2] = project root
+#
+# These paths belong to this audit script itself and are not
+# project configuration. They are deliberately kept local.
 # ============================================================
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -48,6 +91,11 @@ REPORT_FILE = DIAGNOSTICS_DIR / "config_report.txt"
 # ============================================================
 # Configuration-like patterns
 # ============================================================
+#
+# These are project-specific directory names that should
+# normally be represented through config.py when they are used
+# as filesystem paths.
+# ============================================================
 
 PROJECT_DIRECTORIES = {
     "content",
@@ -61,17 +109,94 @@ PROJECT_DIRECTORIES = {
     "scripts",
 }
 
+
+# ------------------------------------------------------------
+# Project-specific strings
+# ------------------------------------------------------------
+#
+# These are values tied to this particular website/repository.
+# They are useful for detecting accidental hard-coding.
+# ============================================================
+
 PROJECT_STRINGS = {
     "jpsaha",
     "typst-site",
     "github.io",
 }
 
+
+# ------------------------------------------------------------
+# Configuration-like numbers
+# ------------------------------------------------------------
+#
+# These are currently known OG-image settings.
+#
+# They are included as an audit aid. If a script contains one
+# of these numbers, the report asks us to review whether the
+# value should instead come from config.py.
+# ============================================================
+
 CONFIG_LIKE_NUMBERS = {
     1200,
     630,
     300,
 }
+
+
+# ============================================================
+# Constant classification
+# ============================================================
+#
+# An uppercase name does NOT automatically mean that it belongs
+# in config.py.
+#
+# The following names/patterns are normally implementation
+# details rather than project configuration.
+# ============================================================
+
+IMPLEMENTATION_CONSTANT_NAMES = {
+    # Validation / metadata
+    "REQUIRED_FIELDS",
+
+    # Command dispatch
+    "COMMANDS",
+
+    # Import checking
+    "TYPST_DIRS",
+    "TYPST_FILES",
+
+    # Regular expressions
+    "IMPORT_RE",
+    "FILE_FIELD_RE",
+    "CONTENT_INCLUDE_RE",
+    "LECTURE_START_RE",
+    "LECTURE_METADATA_PATTERN",
+
+    # Metadata-specific generated paths/configuration
+    # are intentionally NOT listed here if they represent
+    # actual project paths. Those should come from config.py.
+}
+
+
+# ------------------------------------------------------------
+# Implementation-name patterns
+# ------------------------------------------------------------
+#
+# These patterns identify common implementation constants.
+#
+# They are deliberately conservative. A constant is only
+# classified as implementation when there is a strong signal.
+# ============================================================
+
+IMPLEMENTATION_NAME_PATTERNS = (
+    r".*_RE$",          # Regular expressions
+    r".*_REGEX$",
+    r".*_PATTERN$",
+    r".*_FIELDS$",
+    r".*_NAMES$",
+    r".*_MAP$",
+    r".*_MAPPING$",
+)
 
 
 # ============================================================
@@ -83,6 +208,7 @@ def relative(path):
 
     try:
         return path.relative_to(ROOT)
+
     except ValueError:
         return path
 
@@ -121,7 +247,9 @@ def imported_config_names(tree):
     Handles:
 
         from scripts.config import ROOT
+
         from scripts.config import ROOT, DIST_DIR
+
         from scripts.config import ROOT as PROJECT_ROOT
     """
 
@@ -157,10 +285,12 @@ def assigned_names(tree):
     for node in ast.walk(tree):
 
         if isinstance(node, ast.Name):
+
             if isinstance(node.ctx, ast.Store):
                 names.add(node.id)
 
         elif isinstance(node, ast.arg):
+
             names.add(node.arg)
 
     return names
@@ -168,7 +298,15 @@ def assigned_names(tree):
 
 def uppercase_assignments(tree):
     """
-    Return uppercase module-level configuration-like assignments.
+    Return uppercase module-level assignments.
+
+    Each result is:
+
+        (name, line_number, AST_node)
+
+    Only assignments directly in the module body are considered.
+    Constants created inside functions are not treated as module
+    configuration.
     """
 
     results = []
@@ -198,10 +336,106 @@ def uppercase_assignments(tree):
                     (
                         name,
                         target.lineno,
+                        node,
                     )
                 )
 
     return results
+
+
+# ============================================================
+# Constant classification helpers
+# ============================================================
+
+def looks_like_implementation_constant(name, node):
+    """
+    Return True if an uppercase constant looks like an
+    implementation detail rather than project configuration.
+
+    This classification is intentionally conservative.
+
+    Examples:
+
+        IMPORT_RE
+        LECTURE_START_RE
+        REQUIRED_FIELDS
+        COMMANDS
+
+    are implementation constants.
+
+    Examples such as:
+
+        OG_WIDTH
+        OG_HEIGHT
+        DIST_DIR
+        SITE_URL
+
+    are not classified as implementation constants here.
+    """
+
+    # --------------------------------------------------------
+    # Explicit implementation constants
+    # --------------------------------------------------------
+
+    if name in IMPLEMENTATION_CONSTANT_NAMES:
+        return True
+
+    # --------------------------------------------------------
+    # Regex / pattern constants
+    # --------------------------------------------------------
+
+    for pattern in IMPLEMENTATION_NAME_PATTERNS:
+
+        if re.fullmatch(pattern, name):
+            return True
+
+    # --------------------------------------------------------
+    # AST-based implementation detection
+    # --------------------------------------------------------
+    #
+    # Regular expressions often contain calls such as:
+    #
+    #     re.compile(...)
+    #
+    # Detect these even if the constant name is unusual.
+    # --------------------------------------------------------
+
+    if isinstance(node, ast.Assign):
+
+        value = node.value
+
+        if isinstance(value, ast.Call):
+
+            function = value.func
+
+            if (
+                isinstance(function, ast.Attribute)
+                and isinstance(function.value, ast.Name)
+                and function.value.id == "re"
+                and function.attr == "compile"
+            ):
+                return True
+
+    return False
+
+
+def classify_constant(name, node):
+    """
+    Classify an uppercase constant.
+
+    Returns either:
+
+        "configuration"
+
+    or:
+
+        "implementation"
+    """
+
+    if looks_like_implementation_constant(name, node):
+        return "implementation"
+
+    return "configuration"
 
 
 # ============================================================
@@ -211,6 +445,7 @@ def uppercase_assignments(tree):
 def main():
 
     if not CONFIG_FILE.exists():
+
         raise FileNotFoundError(
             f"Configuration file not found: {CONFIG_FILE}"
         )
@@ -224,12 +459,14 @@ def main():
         SCRIPTS_DIR.rglob("*.py")
     )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # Report sections
-    # --------------------------------------------------------
+    # ========================================================
 
     findings = {
-        "local_constants": [],
+        "configuration_constants": [],
+        "implementation_constants": [],
         "local_paths": [],
         "root_paths": [],
         "project_directories": [],
@@ -239,11 +476,13 @@ def main():
         "redefinitions": [],
     }
 
+
     config_constants = set()
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # Parse config.py
-    # --------------------------------------------------------
+    # ========================================================
 
     config_source = CONFIG_FILE.read_text(
         encoding="utf-8"
@@ -254,14 +493,15 @@ def main():
         filename=str(CONFIG_FILE),
     )
 
-    for name, lineno in uppercase_assignments(
+    for name, lineno, node in uppercase_assignments(
         config_tree
     ):
         config_constants.add(name)
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # Audit every Python script
-    # --------------------------------------------------------
+    # ========================================================
 
     for path in python_files:
 
@@ -270,6 +510,7 @@ def main():
         )
 
         try:
+
             tree = ast.parse(
                 source,
                 filename=str(path),
@@ -284,6 +525,7 @@ def main():
 
             continue
 
+
         # ====================================================
         # Skip config.py for duplicate-definition checks
         # ====================================================
@@ -294,17 +536,35 @@ def main():
             # 1. Uppercase constants
             # ------------------------------------------------
 
-            for name, lineno in uppercase_assignments(
+            for name, lineno, node in uppercase_assignments(
                 tree
             ):
 
-                add_finding(
-                    findings,
-                    "local_constants",
-                    path,
-                    lineno,
+                classification = classify_constant(
                     name,
+                    node,
                 )
+
+                if classification == "configuration":
+
+                    add_finding(
+                        findings,
+                        "configuration_constants",
+                        path,
+                        lineno,
+                        name,
+                    )
+
+                else:
+
+                    add_finding(
+                        findings,
+                        "implementation_constants",
+                        path,
+                        lineno,
+                        name,
+                    )
+
 
             # ------------------------------------------------
             # 2. Imported config names
@@ -322,6 +582,7 @@ def main():
                     )
                 )
 
+
             # ------------------------------------------------
             # 3. Local redefinitions
             # ------------------------------------------------
@@ -330,33 +591,43 @@ def main():
 
             for local_name, config_name in imported.items():
 
-                if local_name in assignments:
+                if local_name not in assignments:
+                    continue
 
-                    # Ignore the import itself. We only want
-                    # actual subsequent/local assignments.
-                    for node in ast.walk(tree):
+                # Ignore the import itself.
+                #
+                # We only report actual Store nodes that occur
+                # as assignments elsewhere in the module.
+                # ------------------------------------------------
 
-                        if isinstance(node, ast.Name):
+                for node in ast.walk(tree):
 
-                            if (
-                                node.id == local_name
-                                and isinstance(
-                                    node.ctx,
-                                    ast.Store,
-                                )
-                            ):
+                    if not isinstance(node, ast.Name):
+                        continue
 
-                                findings["redefinitions"].append(
-                                    (
-                                        str(relative(path)),
-                                        node.lineno,
-                                        (
-                                            f"{local_name} "
-                                            f"(imported from config "
-                                            f"as {config_name})"
-                                        ),
-                                    )
-                                )
+                    if node.id != local_name:
+                        continue
+
+                    if not isinstance(node.ctx, ast.Store):
+                        continue
+
+                    # The import itself is an ImportFrom node,
+                    # not an ast.Name Store node, so every match
+                    # here represents an actual assignment.
+                    # ------------------------------------------------
+
+                    findings["redefinitions"].append(
+                        (
+                            str(relative(path)),
+                            node.lineno,
+                            (
+                                f"{local_name} "
+                                f"(imported from config "
+                                f"as {config_name})"
+                            ),
+                        )
+                    )
+
 
         # ====================================================
         # AST/path checks
@@ -366,6 +637,11 @@ def main():
 
             # ------------------------------------------------
             # 4. Path(...)
+            # ------------------------------------------------
+            #
+            # Path(source) is not necessarily configuration.
+            # It is still useful to report because it can reveal
+            # scripts constructing project paths locally.
             # ------------------------------------------------
 
             if (
@@ -382,8 +658,17 @@ def main():
                     source_line(source, node.lineno),
                 )
 
+
             # ------------------------------------------------
             # 5. ROOT / ...
+            # ------------------------------------------------
+            #
+            # Only report actual division expressions involving
+            # ROOT. This is intended to find locally reconstructed
+            # project paths such as:
+            #
+            #     ROOT / "generated"
+            #
             # ------------------------------------------------
 
             if (
@@ -406,6 +691,7 @@ def main():
                         text,
                     )
 
+
             # ------------------------------------------------
             # 6. Numeric constants
             # ------------------------------------------------
@@ -424,6 +710,7 @@ def main():
                         node.lineno,
                         str(node.value),
                     )
+
 
     # ========================================================
     # Text-based checks
@@ -471,6 +758,7 @@ def main():
 
                     break
 
+
             # ------------------------------------------------
             # 8. Project-specific strings
             # ------------------------------------------------
@@ -489,8 +777,9 @@ def main():
 
                     break
 
+
     # ========================================================
-    # Remove obvious false positives
+    # Remove duplicate findings
     # ========================================================
 
     for category in findings:
@@ -504,45 +793,42 @@ def main():
             ),
         )
 
+
     # ========================================================
     # Build report
     # ========================================================
 
     lines = []
 
-    lines.append(
-        "=" * 70
-    )
-    lines.append(
-        "Configuration Audit Report"
-    )
-    lines.append(
-        "=" * 70
-    )
+    lines.append("=" * 70)
+    lines.append("Configuration Audit Report")
+    lines.append("=" * 70)
     lines.append("")
+
     lines.append(
         f"Project root : {ROOT}"
     )
+
     lines.append(
         f"Config file  : {relative(CONFIG_FILE)}"
     )
+
     lines.append(
         f"Python files : {len(python_files)}"
     )
+
     lines.append("")
 
-    # --------------------------------------------------------
-    # Central configuration
-    # --------------------------------------------------------
 
-    lines.append(
-        "CENTRAL CONFIGURATION"
-    )
-    lines.append(
-        "-" * 70
-    )
+    # ========================================================
+    # Central configuration
+    # ========================================================
+
+    lines.append("CENTRAL CONFIGURATION")
+    lines.append("-" * 70)
 
     for name in sorted(config_constants):
+
         lines.append(
             f"  {name}"
         )
@@ -550,23 +836,25 @@ def main():
     lines.append(
         f"\nTotal: {len(config_constants)}"
     )
+
     lines.append("")
 
-    # --------------------------------------------------------
-    # Local constants
-    # --------------------------------------------------------
+
+    # ========================================================
+    # Configuration constants outside config.py
+    # ========================================================
 
     lines.append(
-        "1. UPPERCASE CONSTANTS DEFINED OUTSIDE config.py"
-    )
-    lines.append(
-        "-" * 70
+        "1. CONFIGURATION-LIKE CONSTANTS DEFINED "
+        "OUTSIDE config.py"
     )
 
-    if findings["local_constants"]:
+    lines.append("-" * 70)
+
+    if findings["configuration_constants"]:
 
         for path, lineno, text in findings[
-            "local_constants"
+            "configuration_constants"
         ]:
 
             lines.append(
@@ -574,22 +862,53 @@ def main():
             )
 
     else:
+
         lines.append(
             "  ✓ None found."
         )
 
     lines.append("")
 
-    # --------------------------------------------------------
-    # Local paths
-    # --------------------------------------------------------
+
+    # ========================================================
+    # Implementation constants
+    # ========================================================
 
     lines.append(
-        "2. Path(...) CONSTRUCTIONS OUTSIDE config.py"
+        "2. IMPLEMENTATION CONSTANTS DEFINED "
+        "OUTSIDE config.py"
     )
+
+    lines.append("-" * 70)
+
+    if findings["implementation_constants"]:
+
+        for path, lineno, text in findings[
+            "implementation_constants"
+        ]:
+
+            lines.append(
+                f"  {path}:{lineno}: {text}"
+            )
+
+    else:
+
+        lines.append(
+            "  ✓ None found."
+        )
+
+    lines.append("")
+
+
+    # ========================================================
+    # Local paths
+    # ========================================================
+
     lines.append(
-        "-" * 70
+        "3. Path(...) CONSTRUCTIONS OUTSIDE config.py"
     )
+
+    lines.append("-" * 70)
 
     if findings["local_paths"]:
 
@@ -602,22 +921,23 @@ def main():
             )
 
     else:
+
         lines.append(
             "  ✓ None found."
         )
 
     lines.append("")
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # ROOT path constructions
-    # --------------------------------------------------------
+    # ========================================================
 
     lines.append(
-        "3. ROOT / ... PATH CONSTRUCTIONS"
+        "4. ROOT / ... PATH CONSTRUCTIONS"
     )
-    lines.append(
-        "-" * 70
-    )
+
+    lines.append("-" * 70)
 
     if findings["root_paths"]:
 
@@ -630,22 +950,23 @@ def main():
             )
 
     else:
+
         lines.append(
             "  ✓ None found."
         )
 
     lines.append("")
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # Project directories
-    # --------------------------------------------------------
+    # ========================================================
 
     lines.append(
-        "4. HARDCODED PROJECT DIRECTORY NAMES"
+        "5. HARDCODED PROJECT DIRECTORY NAMES"
     )
-    lines.append(
-        "-" * 70
-    )
+
+    lines.append("-" * 70)
 
     if findings["project_directories"]:
 
@@ -658,22 +979,23 @@ def main():
             )
 
     else:
+
         lines.append(
             "  ✓ None found."
         )
 
     lines.append("")
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # Project strings
-    # --------------------------------------------------------
+    # ========================================================
 
     lines.append(
-        "5. HARDCODED PROJECT / WEBSITE STRINGS"
+        "6. HARDCODED PROJECT / WEBSITE STRINGS"
     )
-    lines.append(
-        "-" * 70
-    )
+
+    lines.append("-" * 70)
 
     if findings["project_strings"]:
 
@@ -686,22 +1008,23 @@ def main():
             )
 
     else:
+
         lines.append(
             "  ✓ None found."
         )
 
     lines.append("")
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # Numeric configuration
-    # --------------------------------------------------------
+    # ========================================================
 
     lines.append(
-        "6. CONFIGURATION-LIKE NUMERIC VALUES"
+        "7. CONFIGURATION-LIKE NUMERIC VALUES"
     )
-    lines.append(
-        "-" * 70
-    )
+
+    lines.append("-" * 70)
 
     if findings["config_numbers"]:
 
@@ -714,22 +1037,23 @@ def main():
             )
 
     else:
+
         lines.append(
             "  ✓ None found."
         )
 
     lines.append("")
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # Config imports
-    # --------------------------------------------------------
+    # ========================================================
 
     lines.append(
-        "7. IMPORTS FROM scripts.config"
+        "8. IMPORTS FROM scripts.config"
     )
-    lines.append(
-        "-" * 70
-    )
+
+    lines.append("-" * 70)
 
     if findings["config_imports"]:
 
@@ -742,22 +1066,23 @@ def main():
             )
 
     else:
+
         lines.append(
             "  ⚠️  No config imports found."
         )
 
     lines.append("")
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # Redefinitions
-    # --------------------------------------------------------
+    # ========================================================
 
     lines.append(
-        "8. NAMES IMPORTED FROM config.py AND REDEFINED"
+        "9. NAMES IMPORTED FROM config.py AND REDEFINED"
     )
-    lines.append(
-        "-" * 70
-    )
+
+    lines.append("-" * 70)
 
     if findings["redefinitions"]:
 
@@ -770,22 +1095,20 @@ def main():
             )
 
     else:
+
         lines.append(
             "  ✓ None found."
         )
 
     lines.append("")
 
-    # --------------------------------------------------------
-    # Summary
-    # --------------------------------------------------------
 
-    lines.append(
-        "SUMMARY"
-    )
-    lines.append(
-        "-" * 70
-    )
+    # ========================================================
+    # Summary
+    # ========================================================
+
+    lines.append("SUMMARY")
+    lines.append("-" * 70)
 
     lines.append(
         f"Config constants              : "
@@ -793,8 +1116,14 @@ def main():
     )
 
     lines.append(
-        f"Local uppercase constants     : "
-        f"{len(findings['local_constants'])}"
+        f"Configuration constants "
+        f"outside config.py          : "
+        f"{len(findings['configuration_constants'])}"
+    )
+
+    lines.append(
+        f"Implementation constants      : "
+        f"{len(findings['implementation_constants'])}"
     )
 
     lines.append(
@@ -833,25 +1162,34 @@ def main():
     )
 
     lines.append("")
+
     lines.append(
         "NOTE: Findings are candidates for review, not "
         "automatic errors."
     )
+
     lines.append(
-        "Local implementation details may legitimately "
-        "remain outside config.py."
+        "Configuration constants should normally be centralized "
+        "in config.py."
     )
 
-    report = "\n".join(lines) + "\n"
+    lines.append(
+        "Implementation constants may legitimately remain "
+        "inside the scripts that use them."
+    )
+
 
     # ========================================================
     # Write report
     # ========================================================
 
+    report = "\n".join(lines) + "\n"
+
     REPORT_FILE.write_text(
         report,
         encoding="utf-8",
     )
+
 
     # ========================================================
     # Print report

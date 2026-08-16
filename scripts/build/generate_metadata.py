@@ -14,15 +14,6 @@ import sys
 import shutil
 from pathlib import Path
 
-# ------------------------------------------------------------
-# Make scripts/ available for imports
-# ------------------------------------------------------------
-
-# SCRIPTS_DIR = Path(__file__).resolve().parent.parent
-
-# if str(SCRIPTS_DIR) not in sys.path:
-#     sys.path.insert(0, str(SCRIPTS_DIR))
-
 # ============================================================
 # Project root
 # ============================================================
@@ -37,39 +28,39 @@ from scripts.config import ROOT, GENERATED_DIR
 # scripts/build/ on sys.path rather than the project root.
 # Add PROJECT_ROOT so that scripts.metadata can be imported.
 
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+# if str(ROOT) not in sys.path:
+#     sys.path.insert(0, str(ROOT))
 
 # ------------------------------------------------------------
 # Import metadata modules
 # ------------------------------------------------------------
 
-from metadata.discover import discover_content
+from scripts.metadata.discover import discover_content
 
-from metadata.navigation import (
+from scripts.metadata.navigation import (
     sort_lectures,
     add_navigation,
 )
 
-from metadata.write_lectures import (
+from scripts.metadata.write_lectures import (
     write_lectures,
 )
 
-from metadata.write_pages import (
+from scripts.metadata.write_pages import (
     write_pages,
     write_pages_meta,
 )
 
-from metadata.write_homepage import (
+from scripts.metadata.write_homepage import (
     write_homepage,
 )
 
-from metadata.write_book import (
+from scripts.metadata.write_book import (
     write_book,
     write_category_books,
 )
 
-from metadata.write_report import (
+from scripts.metadata.write_report import (
     write_metadata_report,
 )
 

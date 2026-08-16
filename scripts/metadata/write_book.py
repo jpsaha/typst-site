@@ -1,7 +1,7 @@
 from pathlib import Path
 import re
 
-from .config import BOOK_TYP
+from scripts.config import BOOK_TYP
 from .typst import write_header
 
 

@@ -30,6 +30,7 @@ from scripts.config import (
     SITE_TAGLINE,
     SITE_DESCRIPTION,
     SITE_OG_IMAGE,
+    GENERATED_OG_DIR,
 )
 
 # from scripts.metadata.seo import seo_head
@@ -141,9 +142,7 @@ def compile_page(lecture):
         source_path_relative = Path(source)
 
         generated_og_path = (
-            ROOT
-            / "generated"
-            / "og"
+            GENERATED_OG_DIR
             / source_path_relative.with_suffix(".png")
         )
 
