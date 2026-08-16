@@ -9,7 +9,7 @@
   category: "Fields and Galois theory",
   tags: ["division algorithm", "Gauss' lemma"],
   description: "fgt1 description.",
-  og_image: "assets/images/fgt1.png",
+  og_image: "assets/og/fgt1.png",
 )
 
 #show: lecture-layout(lecture)
