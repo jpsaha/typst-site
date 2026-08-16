@@ -11,6 +11,7 @@ export TYPST_FEATURES=html
 #
 #     ./build.sh
 #     ./build.sh all
+#     ./build.sh config
 #     ./build.sh html
 #     ./build.sh pdf
 #     ./build.sh allpdf
@@ -22,6 +23,7 @@ export TYPST_FEATURES=html
 # ============================================================
 
 TARGET="${1:-all}"
+
 
 # ============================================================
 # Help
@@ -37,104 +39,6 @@ Usage:
 
 If TARGET is omitted, "all" is used.
 
-Targets:
-
-    all
-        Run the complete website build.
-
-    --------------------------------------------------------
-    Generation
-    --------------------------------------------------------
-
-    metadata
-        Generate metadata and generated Typst files.
-
-    og-generate
-        Generate Open Graph Asymptote sources.
-
-    og-build
-        Build PNG Open Graph images from Asymptote sources.
-
-    --------------------------------------------------------
-    Validation
-    --------------------------------------------------------
-
-    metadata-check
-        Validate source metadata.
-
-    generated
-        Validate generated files.
-
-    imports
-        Validate Typst imports.
-
-    links
-        Check links in the generated website.
-
-    --------------------------------------------------------
-    Build preparation
-    --------------------------------------------------------
-
-    prepare-dist
-        Prepare the dist directory and copy assets.
-
-    prepare-diagnostics
-        Prepare the diagnostics directory.
-
-    --------------------------------------------------------
-    Website output
-    --------------------------------------------------------
-
-    html
-        Build HTML lecture pages.
-
-    sitemap
-        Generate sitemap.xml.
-
-    robots
-        Generate robots.txt.
-
-    --------------------------------------------------------
-    PDF output
-    --------------------------------------------------------
-
-    pdf
-        Build individual page PDFs.
-
-    categories
-        Build category PDFs.
-
-    book
-        Build the complete course book PDF.
-
-    pages-pdf
-        Build the complete pages PDF.
-
-    allpdf
-        Build all PDF outputs.
-
-    --------------------------------------------------------
-    Diagnostics
-    --------------------------------------------------------
-
-    report
-        Build the diagnostics/build report.
-
-Options:
-
-    -h, --help
-        Show this help message.
-
-
---------------------------------------------------
-##################################################
-
-Build the Typst mathematics lecture website and PDFs.
-
-Usage:
-    ./build.sh [TARGET]
-
-If TARGET is omitted, "all" is used.
 
 Targets:
 
@@ -143,6 +47,7 @@ Targets:
     ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
     │ all                  │ ./build.sh                          │ Complete website + all PDFs + link check     │
     ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
+    │ config               │ ./build.sh config                   │ Audit centralized configuration              │
     │ metadata             │ ./build.sh metadata                 │ Generate metadata                            │
     │ og-generate          │ ./build.sh og-generate              │ Generate Open Graph .asy sources             │
     │ og-build             │ ./build.sh og-build                 │ Build Open Graph PNG images                  │
@@ -151,6 +56,7 @@ Targets:
     │ generated            │ ./build.sh generated                │ Validate generated files                     │
     │ imports              │ ./build.sh imports                  │ Validate Typst imports                       │
     │ links                │ ./build.sh links                    │ Check generated website links                │
+    │ og-check             │ ./build.sh og-check                 │ Validate Open Graph images in HTML           │
     ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
     │ prepare-dist         │ ./build.sh prepare-dist             │ Prepare dist/ and copy static assets         │
     │ prepare-diagnostics  │ ./build.sh prepare-diagnostics      │ Prepare diagnostics/                         │
@@ -167,7 +73,8 @@ Targets:
     ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
     │ report               │ ./build.sh report                   │ Generate diagnostics/build report            │
     └──────────────────────┴─────────────────────────────────────┴──────────────────────────────────────────────┘
-    
+
+
 Options:
 
     -h, --help
@@ -175,6 +82,7 @@ Options:
 
 EOF
 }
+
 
 # ============================================================
 # Handle command-line help
@@ -186,6 +94,7 @@ case "$TARGET" in
         exit 0
         ;;
 esac
+
 
 # ============================================================
 # Validate command-line target
@@ -202,10 +111,10 @@ case "$TARGET" in
         ;;
 
     # --------------------------------------------------------
-    # Generation
+    # Configuration and generation
     # --------------------------------------------------------
 
-    metadata|og-generate|og-build)
+    config|metadata|og-generate|og-build)
 
         ;;
 
@@ -213,7 +122,7 @@ case "$TARGET" in
     # Validation
     # --------------------------------------------------------
 
-    metadata-check|generated|imports|links)
+    metadata-check|generated|imports|links|og-check)
 
         ;;
 
@@ -272,6 +181,7 @@ esac
 
 BUILD_START=$(date +%s)
 
+
 # ============================================================
 # Stage timings
 #
@@ -279,13 +189,16 @@ BUILD_START=$(date +%s)
 # final summary can show where the build time was spent.
 # ============================================================
 
+
 # ------------------------------------------------------------
-# Generation
+# Configuration and generation
 # ------------------------------------------------------------
 
+TIME_CONFIG="0"
 TIME_METADATA="0"
 TIME_OG_GENERATE="0"
 TIME_OG_BUILD="0"
+
 
 # ------------------------------------------------------------
 # Validation
@@ -295,6 +208,8 @@ TIME_METADATA_CHECK="0"
 TIME_GENERATED_CHECK="0"
 TIME_IMPORT_CHECK="0"
 TIME_LINKS="0"
+TIME_OG_CHECK="0"
+
 
 # ------------------------------------------------------------
 # Build preparation
@@ -303,6 +218,7 @@ TIME_LINKS="0"
 TIME_PREPARE_DIST="0"
 TIME_PREPARE_DIAGNOSTICS="0"
 
+
 # ------------------------------------------------------------
 # Website output
 # ------------------------------------------------------------
@@ -310,6 +226,7 @@ TIME_PREPARE_DIAGNOSTICS="0"
 TIME_HTML="0"
 TIME_SITEMAP="0"
 TIME_ROBOTS="0"
+
 
 # ------------------------------------------------------------
 # PDF output
@@ -320,11 +237,13 @@ TIME_CATEGORIES="0"
 TIME_BOOK="0"
 TIME_PAGES="0"
 
+
 # ------------------------------------------------------------
 # Diagnostics
 # ------------------------------------------------------------
 
 TIME_REPORT="0"
+
 
 # ============================================================
 # Helpers
@@ -334,6 +253,7 @@ die() {
     echo "Build failed: $1"
     exit 1
 }
+
 
 # ============================================================
 # Timing helpers
@@ -346,6 +266,7 @@ stage_start() {
     STAGE_START=$(date +%s)
 }
 
+
 stage_end() {
     local variable="$1"
     local elapsed
@@ -354,6 +275,7 @@ stage_end() {
 
     printf -v "$variable" '%s' "$elapsed"
 }
+
 
 # ============================================================
 # Cleanup
@@ -386,6 +308,7 @@ cleanup() {
 
     return "$status"
 }
+
 
 trap cleanup EXIT
 
