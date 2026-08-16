@@ -9,13 +9,19 @@ The project generates:
 * **individual lecture/page PDFs**
 * **combined books**
 * **course and category books**
+* **automatically generated homepage**
 * **automatically generated navigation**
-* **automatically generated homepage data**
-* **SEO metadata**
-* **Open Graph images**
-* **sitemap and robots.txt**
+* **previous/next and category navigation**
+* **metadata-driven homepage organization**
+* **SEO metadata and canonical URLs**
+* **Open Graph and Twitter Card metadata**
+* **generated Open Graph images**
 * **metadata and build diagnostics**
-* **import and link validation**
+* **Typst import validation**
+* **generated-file consistency validation**
+* **HTML link validation**
+* **OG asset validation**
+* **configuration validation**
 
 The source is organized so that **content, metadata, templates, generation, diagnostics, and build output remain separate**.
 
@@ -1798,24 +1804,24 @@ Regenerate them with:
 
 # Future Improvements
 
-The project is already functional as a complete publishing pipeline. Future work can therefore focus on **new capabilities and polish** rather than completing the core publishing infrastructure.
+The project is already functional as a complete metadata-driven publishing pipeline. 
+The following are possible future extensions rather than requirements of the current system.
 
-Possible directions include:
-
-* **Website search** — add client-side/full-text search across lectures, courses, and problem collections.
-* **Richer homepage** — improve categorization, filtering, and presentation of available material.
-* **Navigation improvements** — further improve breadcrumbs, cross-references, related-content navigation, and category navigation.
-* **Build diagnostics** — expand the final build summary with more detailed timing, file counts, and validation statistics.
-* **Metadata tooling** — add stronger validation and clearer metadata error messages.
+* **Website search** — add client-side search across lectures, courses, olympiad material, and problem collections.
+* **Homepage filtering** — optionally add lightweight client-side filtering or views by category, content type, date, or tags while retaining the current automatically generated category layout.
+* **Homepage presentation** — further refine the visual presentation of categories, lecture cards, metadata, and navigation as the amount of content grows.
+* **Build diagnostics** — expand the final build summary with more detailed timing, file counts, validation statistics, and clearer warnings.
+* **Metadata tooling** — strengthen metadata validation, duplicate detection, cross-field validation, and error reporting.
+* **Navigation** — further improve breadcrumbs, previous/next navigation, category navigation, and cross-references.
 * **PDF presentation** — continue refining typography, page layout, title pages, headers, footers, and category-book design.
-* **HTML presentation** — polish responsive layouts, mathematical typography, theorem blocks, code blocks, and mobile presentation.
-* **Accessibility** — improve semantic HTML, keyboard navigation, contrast, and screen-reader support.
-* **Testing** — introduce more automated checks for generated HTML, PDFs, metadata, links, and Typst imports.
-* **CI/CD** — further improve automated builds, deployment checks, and build failure diagnostics.
+* **HTML presentation** — continue polishing responsive layouts, mathematical typography, theorem blocks, code blocks, and mobile presentation.
+* **Accessibility** — improve semantic HTML, keyboard navigation, contrast, focus states, and screen-reader support.
+* **Testing** — introduce more automated checks for generated HTML, PDFs, metadata, links, OG assets, and Typst imports.
+* **CI/CD** — further improve automated builds, deployment checks, artifact validation, and build failure diagnostics.
 * **Performance** — reduce unnecessary compilation and improve incremental development workflows.
 * **Documentation** — expand documentation as the project architecture and authoring workflow evolve.
 
-SEO, sitemap/robots generation, and Open Graph generation are **already implemented** and are therefore not listed as future work.
+These are intentionally ongoing areas of development. New functionality can be added incrementally without changing the underlying separation between source content, metadata, templates, generation, diagnostics, and published output.
 
 ---
 
