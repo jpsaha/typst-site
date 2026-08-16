@@ -3,7 +3,6 @@
 import subprocess
 import sys
 
-
 # ============================================================
 # Command registry
 #
@@ -33,10 +32,12 @@ import sys
 # Validation
 # ------------------------------------------------------------
 #
+# python3 scripts/run.py check-config
 # python3 scripts/run.py metadata-check
 # python3 scripts/run.py generated
 # python3 scripts/run.py imports
 # python3 scripts/run.py links
+# python3 scripts/run.py og-check
 #
 # ------------------------------------------------------------
 # Build infrastructure
@@ -69,6 +70,7 @@ import sys
 # python3 scripts/run.py report
 # ============================================================
 
+
 COMMANDS = {
 
     # --------------------------------------------------------
@@ -80,6 +82,10 @@ COMMANDS = {
     # --------------------------------------------------------
     # Open Graph images
     # --------------------------------------------------------
+    #
+    # Generate Asymptote source files and then build the
+    # corresponding PNG images.
+    # --------------------------------------------------------
 
     "og-generate": "scripts.og.generate_og",
     "og-build": "scripts.og.build_og",
@@ -87,11 +93,36 @@ COMMANDS = {
     # --------------------------------------------------------
     # Validation
     # --------------------------------------------------------
+    #
+    # These commands inspect the project and generated output.
+    #
+    # check-config:
+    #     Checks whether project-wide configuration is properly
+    #     centralized in scripts/config.py.
+    #
+    # metadata-check:
+    #     Checks source metadata.
+    #
+    # generated:
+    #     Checks generated files against source metadata.
+    #
+    # imports:
+    #     Checks Typst imports.
+    #
+    # links:
+    #     Checks links in generated HTML.
+    #
+    # og-check:
+    #     Checks that generated HTML contains correct OG image
+    #     URLs and that the referenced images exist.
+    # --------------------------------------------------------
 
+    "check-config": "scripts.lint.check_config",
     "metadata-check": "scripts.lint.check_metadata",
     "generated": "scripts.lint.check_generated",
     "imports": "scripts.lint.check_imports",
     "links": "scripts.lint.check_links",
+    "og-check": "scripts.lint.check_og",
 
     # --------------------------------------------------------
     # Build infrastructure preparation
@@ -106,7 +137,7 @@ COMMANDS = {
     "prepare-diagnostics": "scripts.build.prepare_diagnostics",
 
     # --------------------------------------------------------
-    # Website Output
+    # Website output
     # --------------------------------------------------------
 
     "html": "scripts.build.build_html",
@@ -114,7 +145,7 @@ COMMANDS = {
     "robots": "scripts.build.build_robots",
 
     # --------------------------------------------------------
-    # PDF Output
+    # PDF output
     # --------------------------------------------------------
 
     "pdf": "scripts.build.build_pdfs",
@@ -128,7 +159,6 @@ COMMANDS = {
 
     "report": "scripts.build.build_report",
 }
-
 
 # ============================================================
 # Main
