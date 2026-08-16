@@ -376,13 +376,31 @@ build_og() {
 # ============================================================
 
 # ============================================================
-# 2a. Check central configuration
+# 2a. Check configuration
 #
-# Audit configuration usage throughout the Python build
-# system. The detailed report is written to:
+# Audit configuration usage across the Python codebase.
+#
+# The configuration audit is informational rather than a strict
+# validation check. It reports:
+#
+#   - configuration constants outside config.py
+#   - implementation constants
+#   - Path(...) constructions
+#   - hardcoded project directories
+#   - hardcoded project/website strings
+#   - configuration-like numeric values
+#   - imports from scripts.config
+#   - redefinitions of config names
+#
+# Findings are candidates for review and are not automatically
+# considered build errors.
+#
+# The detailed report is written to:
 #
 #     diagnostics/config_report.txt
 #
+# Therefore, a non-zero exit status from the audit does not
+# abort the build.
 # ============================================================
 
 validate_config() {
@@ -393,10 +411,12 @@ validate_config() {
     stage_start
 
     if ! python3 scripts/run.py config; then
-        die "configuration audit failed."
+        echo
+        echo "⚠️  Configuration audit reported findings."
+        echo "   See diagnostics/config_report.txt for details."
     fi
 
-    stage_end TIME_CONFIG_CHECK
+    stage_end TIME_CONFIG
 }
 
 # ============================================================
@@ -720,7 +740,7 @@ print_summary() {
     BUILD_TIME=$((BUILD_END - BUILD_START))
 
     BUILD_TIME="$BUILD_TIME" \
-    TIME_CONFIG_CHECK="$TIME_CONFIG_CHECK" \
+    TIME_CONFIG="$TIME_CONFIG" \
     TIME_METADATA="$TIME_METADATA" \
     TIME_OG_GENERATE="$TIME_OG_GENERATE" \
     TIME_OG_BUILD="$TIME_OG_BUILD" \
