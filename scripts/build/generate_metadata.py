@@ -18,16 +18,16 @@ from pathlib import Path
 # Make scripts/ available for imports
 # ------------------------------------------------------------
 
-SCRIPTS_DIR = Path(__file__).resolve().parent.parent
+# SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 
-if str(SCRIPTS_DIR) not in sys.path:
-    sys.path.insert(0, str(SCRIPTS_DIR))
+# if str(SCRIPTS_DIR) not in sys.path:
+#     sys.path.insert(0, str(SCRIPTS_DIR))
 
 # ============================================================
 # Project root
 # ============================================================
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+from scripts.config import ROOT, GENERATED_DIR
 
 # ============================================================
 # Import project metadata package
@@ -37,8 +37,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 # scripts/build/ on sys.path rather than the project root.
 # Add PROJECT_ROOT so that scripts.metadata can be imported.
 
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 # ------------------------------------------------------------
 # Import metadata modules
@@ -73,10 +73,6 @@ from metadata.write_report import (
     write_metadata_report,
 )
 
-from metadata.config import (
-    CATEGORY_BOOK_DIR,
-    GENERATED_DIR,
-)
 
 # ------------------------------------------------------------
 # Helpers
@@ -180,7 +176,7 @@ def main():
     # These will be compiled into PDFs later by build.sh.
     write_category_books(
         all_content,
-        CATEGORY_BOOK_DIR,
+        GENERATED_DIR,
     )
 
     write_metadata_report(
