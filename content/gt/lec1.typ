@@ -2,15 +2,15 @@
 #import "../../templates/course.typ": *
 
 #let lecture = (
-  file: "lec1",
+  file: "gt1",
   type: "lecture",
   number: 1,
-  title: "Polynomial ringssss",
-  category: "Fields and Galois theoryyyyyy",
-  tags: ["linear-map", "matrices"],
-  description: "Introduction to Fields and Galois theory.",
+  title: "Groups",
+  category: "Group theory",
+  tags: ["groups", "subgroups"],
+  description: "Introduction to Group theory.",
   date: "2026-08-10",
-  status: "published",
+  // status: "published",
   // reading: "Chapter 2",
   // duration: "75 minutes",
   // difficulty: "Intermediate",

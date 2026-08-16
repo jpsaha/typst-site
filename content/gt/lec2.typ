@@ -2,11 +2,11 @@
 #import "../../templates/course.typ": *
 
 #let lecture = (
-  file: "lec2",
+  file: "gt2",
   number: 2,
-  title: "Field extensions",
-  category: "Fields and Galois theory",
-  description: "Introduction to Fields and Galois theory.",
+  title: "Symmetric groups",
+  category: "Group theory",
+  description: "Introduction to Group theory.",
 )
 
 #show: lecture-layout(lecture)

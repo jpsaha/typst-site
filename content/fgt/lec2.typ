@@ -5,9 +5,9 @@
   file: "fgt2",
   type: "lecture",
   number: 2,
-  title: "Polynomial ringsttt2",
-  category: "Fields and Galois theoryzzz2",
-  tags: ["division algorithm", "Gauss' lemma"],
+  title: "Field extensions and algebraic elements",
+  category: "Fields and Galois theory",
+  tags: ["field extensions", "algebraic elements"],
   description: "fgt2 description.",
 )
 
