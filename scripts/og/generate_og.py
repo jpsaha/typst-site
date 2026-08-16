@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Generate Asymptote sources for lecture Open Graph images.
+Generate Asymptote source files for Open Graph images.
 
 Input:
     generated/homepage.json
@@ -10,14 +10,47 @@ Template:
     scripts/og/og_template.asy
 
 Output:
-    generated/og/<lecture>.asy
+    generated/og/<source-directory>/<source>.asy
 
-Rule:
-    If a lecture already has an `og_image` field, no OG source
-    is generated for that lecture.
+Examples:
 
-    If `og_image` is absent, an Asymptote source is generated
-    from the lecture metadata.
+    fgt/lec1.typ
+        →
+    generated/og/fgt/lec1.asy
+
+    gt/lec2.typ
+        →
+    generated/og/gt/lec2.asy
+
+    olympiad/ioqm/ioqm2024.typ
+        →
+    generated/og/olympiad/ioqm/ioqm2024.asy
+
+    mopss/mopss_aug08.typ
+        →
+    generated/og/mopss/mopss_aug08.asy
+
+Rules:
+
+    1. Every content entry with a valid `.typ` source is
+       considered eligible for automatic OG generation.
+
+    2. If the entry explicitly provides `og_image`, no
+       generated `.asy` file is created. The supplied image
+       is assumed to be managed separately.
+
+    3. The source directory structure is preserved under
+       generated/og/.
+
+    4. The `.typ` extension is replaced by `.asy`.
+
+Therefore:
+
+    source:
+        foo/bar/example.typ
+
+    generated:
+        generated/og/foo/bar/example.asy
 """
 
 import json
@@ -28,18 +61,55 @@ from pathlib import Path
 # Paths
 # ============================================================
 
+# Project root:
+#
+#     typst-site/
+#
+# This file lives at:
+#
+#     scripts/og/generate_og.py
+#
+# Therefore:
+#
+#     parents[0] = scripts/og
+#     parents[1] = scripts
+#     parents[2] = project root
+# ============================================================
+
 ROOT = Path(__file__).resolve().parents[2]
 
+
+# ------------------------------------------------------------
+# Generated metadata
+# ------------------------------------------------------------
+
 METADATA_FILE = (
-    ROOT / "generated" / "homepage.json"
+    ROOT
+    / "generated"
+    / "homepage.json"
 )
+
+
+# ------------------------------------------------------------
+# Asymptote template
+# ------------------------------------------------------------
 
 TEMPLATE_FILE = (
-    ROOT / "scripts" / "og" / "og_template.asy"
+    ROOT
+    / "scripts"
+    / "og"
+    / "og_template.asy"
 )
 
+
+# ------------------------------------------------------------
+# Generated OG source directory
+# ------------------------------------------------------------
+
 OUTPUT_DIR = (
-    ROOT / "generated" / "og"
+    ROOT
+    / "generated"
+    / "og"
 )
 
 
@@ -49,7 +119,16 @@ OUTPUT_DIR = (
 
 def escape_asy_string(value):
     """
-    Escape a Python string for use inside an Asymptote string.
+    Escape a Python value for use inside an Asymptote string.
+
+    In particular:
+
+        \  →  \\
+
+        "  →  \"
+
+    This prevents metadata containing quotes or backslashes
+    from breaking the generated Asymptote source.
     """
 
     return (
@@ -60,7 +139,7 @@ def escape_asy_string(value):
 
 
 # ============================================================
-# Generate one OG source
+# Generate one Asymptote source
 # ============================================================
 
 def generate_asy(
@@ -71,20 +150,44 @@ def generate_asy(
     category,
 ):
     """
-    Generate one Asymptote source from lecture metadata.
+    Generate one Asymptote source from content metadata.
+
+    The template contains placeholders such as:
+
+        __LECTURE_NUMBER__
+        __TITLE__
+        __CATEGORY__
+
+    which are replaced with escaped metadata values.
     """
 
     source = template
+
+    # --------------------------------------------------------
+    # Lecture/page number
+    #
+    # Empty string is used when the content item has no
+    # number, which is valid for pages such as MOPSS,
+    # IOQM, course pages, etc.
+    # --------------------------------------------------------
 
     source = source.replace(
         "__LECTURE_NUMBER__",
         escape_asy_string(number),
     )
 
+    # --------------------------------------------------------
+    # Page title
+    # --------------------------------------------------------
+
     source = source.replace(
         "__TITLE__",
         escape_asy_string(title),
     )
+
+    # --------------------------------------------------------
+    # Category name
+    # --------------------------------------------------------
 
     source = source.replace(
         "__CATEGORY__",
@@ -100,9 +203,9 @@ def generate_asy(
 
 def main():
 
-    # --------------------------------------------------------
-    # Check input files
-    # --------------------------------------------------------
+    # ========================================================
+    # Validate required input files
+    # ========================================================
 
     if not METADATA_FILE.exists():
         raise FileNotFoundError(
@@ -114,9 +217,9 @@ def main():
             f"OG template not found: {TEMPLATE_FILE}"
         )
 
-    # --------------------------------------------------------
-    # Read metadata
-    # --------------------------------------------------------
+    # ========================================================
+    # Read generated metadata
+    # ========================================================
 
     data = json.loads(
         METADATA_FILE.read_text(
@@ -124,110 +227,218 @@ def main():
         )
     )
 
+    # --------------------------------------------------------
+    # Read the Asymptote template once.
+    #
+    # The same template is reused for every content item.
+    # --------------------------------------------------------
+
     template = TEMPLATE_FILE.read_text(
         encoding="utf-8"
     )
 
-    # --------------------------------------------------------
-    # Prepare output directory
-    # --------------------------------------------------------
+    # ========================================================
+    # Prepare generated/og/
+    # ========================================================
 
     OUTPUT_DIR.mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    # --------------------------------------------------------
-    # Generate OG sources
-    # --------------------------------------------------------
+    # ========================================================
+    # Counters
+    # ========================================================
 
     generated = 0
     skipped = 0
+    warnings = 0
+
+    # ========================================================
+    # Process all content entries
+    # ========================================================
+    #
+    # homepage.json has the following general structure:
+    #
+    #     {
+    #         "Category A": [
+    #             {...},
+    #             {...}
+    #         ],
+    #         "Category B": [
+    #             {...}
+    #         ]
+    #     }
+    #
+    # We intentionally DO NOT check:
+    #
+    #     lecture.get("type") == "lecture"
+    #
+    # because not every content page has a `type` field.
+    #
+    # Instead, the presence of a valid `.typ` source determines
+    # whether an entry can have an automatically generated OG
+    # image.
+    # ========================================================
 
     for category, pages in data.items():
 
-        for lecture in pages:
+        # ----------------------------------------------------
+        # Process every page/content entry in this category.
+        # ----------------------------------------------------
 
-            # ------------------------------------------------
-            # Only lectures
-            # ------------------------------------------------
+        for page in pages:
 
-            if lecture.get("type") != "lecture":
-                continue
+            # =================================================
+            # Explicit OG image
+            # =================================================
+            #
+            # If the content metadata explicitly supplies:
+            #
+            #     og_image: "assets/og/fgt1.png"
+            #
+            # then that image takes precedence.
+            #
+            # We therefore do NOT create a generated `.asy`
+            # source for this page.
+            # =================================================
 
-            # ------------------------------------------------
-            # Existing OG image
-            # ------------------------------------------------
-
-            if lecture.get("og_image"):
+            if page.get("og_image"):
 
                 print(
                     f"⏭️  Skipping "
-                    f"{lecture.get('html', '<unknown>')}"
+                    f"{page.get('html', '<unknown>')}"
                     f" — og_image supplied"
                 )
 
                 skipped += 1
                 continue
 
-
-            # --------------------------------------------------------
+            # =================================================
             # Source path
-            # --------------------------------------------------------
+            # =================================================
 
-            source = lecture.get("source")
+            source = page.get("source")
+
+            # -------------------------------------------------
+            # A content entry without a source cannot be used
+            # to determine where its generated OG source should
+            # live.
+            # -------------------------------------------------
 
             if not source:
+
                 print(
-                    "⚠️  Skipping lecture without source"
+                    "⚠️  Skipping content entry "
+                    "without source"
                 )
+
+                warnings += 1
                 continue
+
+            # -------------------------------------------------
+            # Convert the source into a Path.
+            # -------------------------------------------------
 
             source_path = Path(source)
 
+            # -------------------------------------------------
+            # Automatic OG generation currently expects
+            # Typst source files.
+            # -------------------------------------------------
+
             if source_path.suffix != ".typ":
+
                 print(
                     f"⚠️  Skipping {source} "
                     f"— expected .typ source"
                 )
+
+                warnings += 1
                 continue
 
-            # Preserve source directory structure
-            # and replace .typ with .asy
+            # =================================================
+            # Determine generated `.asy` path
+            # =================================================
+            #
+            # Preserve the entire source directory structure.
+            #
+            # Example:
+            #
+            #     source:
+            #         fgt/lec2.typ
+            #
+            #     output:
+            #         generated/og/fgt/lec2.asy
+            #
+            # Another example:
+            #
+            #     source:
+            #         olympiad/ioqm/ioqm2025.typ
+            #
+            #     output:
+            #         generated/og/olympiad/ioqm/ioqm2025.asy
+            # =================================================
 
-            output_relative = source_path.with_suffix(".asy")
+            output_relative = source_path.with_suffix(
+                ".asy"
+            )
 
             output = (
                 OUTPUT_DIR
                 / output_relative
             )
 
+            # -------------------------------------------------
+            # Create any required intermediate directories.
+            # -------------------------------------------------
+
             output.parent.mkdir(
                 parents=True,
                 exist_ok=True,
             )
 
+            # =================================================
+            # Extract metadata for the OG image
+            # =================================================
 
-            # --------------------------------------------------------
-            # Lecture metadata
-            # --------------------------------------------------------
+            # -------------------------------------------------
+            # Not every page has a number.
+            #
+            # Use an empty string for pages such as:
+            #
+            #     MOPSS
+            #     IOQM
+            #     RMO
+            #     course pages
+            #     miscellaneous pages
+            # -------------------------------------------------
 
-            number = lecture.get(
+            number = page.get(
                 "number",
                 "",
             )
 
-            title = lecture.get(
+            # -------------------------------------------------
+            # Every generated OG image should have a title.
+            # Use an empty string rather than failing here;
+            # metadata validation can handle required metadata.
+            # -------------------------------------------------
+
+            title = page.get(
                 "title",
                 "",
             )
 
+            # -------------------------------------------------
+            # The outer dictionary key is the category name.
+            # -------------------------------------------------
+
             category_name = category
 
-
-            # --------------------------------------------------------
+            # =================================================
             # Generate Asymptote source
-            # --------------------------------------------------------
+            # =================================================
 
             source_text = generate_asy(
                 template,
@@ -236,10 +447,9 @@ def main():
                 category=category_name,
             )
 
-
-            # --------------------------------------------------------
-            # Write output
-            # --------------------------------------------------------
+            # =================================================
+            # Write `.asy` file
+            # =================================================
 
             output.write_text(
                 source_text,
@@ -253,15 +463,16 @@ def main():
 
             generated += 1
 
-    # --------------------------------------------------------
+    # ========================================================
     # Summary
-    # --------------------------------------------------------
+    # ========================================================
 
     print()
     print("OG image source generation")
     print("--------------------------")
     print(f"Generated : {generated}")
     print(f"Skipped   : {skipped}")
+    print(f"Warnings  : {warnings}")
 
 
 # ============================================================
