@@ -749,7 +749,8 @@ print_summary() {
 # ============================================================
 # Common generation and validation
 #
-# These stages are performed before every build target.
+# These stages are performed before every build target that
+# produces or validates site output.
 #
 # Order:
 #
@@ -758,10 +759,18 @@ print_summary() {
 #   3. Validate generated files
 #   4. Generate Open Graph Asymptote sources
 #   5. Build Open Graph PNG images
-#   6. Validate Typst imports
+#   6. Validate central configuration
+#   7. Validate Typst imports
+#
+# The configuration audit is included here because the build
+# depends on scripts/config.py being used consistently.
 #
 # Dist preparation is intentionally kept separate because it
 # is a build preparation step, not a validation step.
+#
+# Open Graph validation is also kept separate. It requires the
+# generated HTML files in dist/ and therefore must run after
+# the HTML output has been built.
 # ============================================================
 
 run_common_checks() {
@@ -773,7 +782,7 @@ run_common_checks() {
     generate_metadata
 
     # --------------------------------------------------------
-    # Validation
+    # Source and generated-file validation
     # --------------------------------------------------------
 
     validate_metadata
@@ -781,18 +790,32 @@ run_common_checks() {
 
     # --------------------------------------------------------
     # Open Graph generation
+    #
+    # Generate the OG source files first, then rasterize them
+    # into PNG images.
     # --------------------------------------------------------
 
     generate_og
     build_og
 
     # --------------------------------------------------------
+    # Central configuration audit
+    #
+    # Check that configuration-like values are centralized
+    # appropriately in scripts/config.py.
+    # --------------------------------------------------------
+
+    validate_config
+
+    # --------------------------------------------------------
     # Typst dependency validation
+    #
+    # Verify that imported Typst files exist and that there
+    # are no circular import dependencies.
     # --------------------------------------------------------
 
     validate_imports
 }
-
 
 # ============================================================
 # Build dispatcher
