@@ -22,31 +22,73 @@ Requirements:
     - ImageMagick (`magick`)
 """
 
-
 import subprocess
-from pathlib import Path
 
-
-# ============================================================
-# Paths
-# ============================================================
-
-ROOT = Path(__file__).resolve().parents[2]
-
-OG_DIR = (
-    ROOT / "generated" / "og"
+from scripts.config import (
+    ROOT,
+    GENERATED_OG_DIR,
+    OG_WIDTH,
+    OG_HEIGHT,
+    OG_DENSITY,
 )
 
 
 # ============================================================
-# Settings
+# Open Graph source directory
+# ============================================================
+#
+# Generated Asymptote sources are stored under:
+#
+#     generated/og/
+#
+# The directory structure of the corresponding content source
+# is preserved.
+#
+# Example:
+#
+#     content/gt/lec1.typ
+#             ↓
+#     generated/og/gt/lec1.asy
+#
+#     content/mopss/mopss_aug29.typ
+#             ↓
+#     generated/og/mopss/mopss_aug29.asy
 # ============================================================
 
-WIDTH = 1200
-HEIGHT = 630
+OG_DIR = GENERATED_OG_DIR
 
-DENSITY = 300
 
+# ============================================================
+# Open Graph image settings
+# ============================================================
+#
+# These values are defined centrally in scripts/config.py.
+#
+# OG_WIDTH
+#     Final PNG width in pixels.
+#
+# OG_HEIGHT
+#     Final PNG height in pixels.
+#
+# OG_DENSITY
+#     Resolution used when rasterizing the intermediate
+#     Asymptote-generated PDF.
+# ============================================================
+
+WIDTH = OG_WIDTH
+HEIGHT = OG_HEIGHT
+DENSITY = OG_DENSITY
+
+# ============================================================
+# Rasterization density
+# ============================================================
+#
+# Asymptote first produces the OG artwork as a PDF.
+# ImageMagick then rasterizes that PDF to PNG.
+#
+# A higher density gives ImageMagick more source resolution
+# before the final 1200 × 630 resize.
+# ============================================================
 
 # ============================================================
 # Build one OG image
@@ -108,10 +150,10 @@ def build_og_image(source):
         [
             "magick",
             "-density",
-            str(DENSITY),
+            str(OG_DENSITY),
             str(pdf),
             "-resize",
-            f"{WIDTH}x{HEIGHT}!",
+            f"{OG_WIDTH}x{OG_HEIGHT}!",
             "-filter",
             "Lanczos",
             str(png),
