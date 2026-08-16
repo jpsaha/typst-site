@@ -836,23 +836,21 @@ run_common_checks() {
 #   1. Composite targets
 #
 #      These combine several build stages and are implemented
-#      directly in this build.sh file.
+#      directly in this build.sh file:
 #
 #          all
 #          allpdf
 #
 #   2. Individual targets
 #
-#      These correspond directly to commands registered in
-#      scripts/run.py and are delegated to:
-#
-#          python3 scripts/run.py <target>
+#      These correspond to commands registered in scripts/run.py
+#      and are delegated to the Python command registry.
 #
 #      For example:
 #
 #          ./build.sh og-generate
 #
-#      is equivalent to:
+#      executes:
 #
 #          python3 scripts/run.py og-generate
 #
@@ -861,132 +859,91 @@ run_common_checks() {
 # Complete build
 # ------------------------------------------------------------
 #
-# The "all" target performs the complete build pipeline.
+# The "all" target performs the complete production build.
 #
 #     ./build.sh
 #     ./build.sh all
 #
-# The complete build proceeds in the following order:
+# The complete build proceeds in this order:
 #
 #   1.  Prepare diagnostics
+#   2.  Run common generation and validation
+#   3.  Prepare dist
+#   4.  Build HTML
+#   5.  Generate sitemap
+#   6.  Generate robots.txt
+#   7.  Validate Open Graph references
+#   8.  Build all PDF outputs
+#   9.  Check links
+#   10. Print the final diagnostics summary
 #
-#       Remove previous diagnostic output and recreate the
-#       diagnostics directory.
+# Common generation and validation includes:
 #
-#   2.  Generate metadata
+#   - Configuration audit
+#   - Metadata generation
+#   - Source metadata validation
+#   - Generated-file validation
+#   - Open Graph source generation
+#   - Open Graph image generation
+#   - Typst import validation
 #
-#       Discover source files, parse their metadata, generate
-#       the metadata JSON/Typst files, navigation data, and
-#       other generated metadata required by later stages.
+# Open Graph validation is deliberately performed after HTML
+# generation because it checks the generated HTML files in
+# dist/ and verifies their referenced OG images.
 #
-#   3.  Validate source metadata
-#
-#       Check that the metadata supplied by the source Typst
-#       files satisfies the project's metadata requirements.
-#
-#   4.  Validate generated files
-#
-#       Check that generated files are consistent with the
-#       current source metadata.
-#
-#   5.  Generate Open Graph sources
-#
-#       Generate .asy files under:
-#
-#           generated/og/
-#
-#       for lectures that do not already provide a custom
-#       Open Graph image.
-#
-#       If a lecture already specifies an "og_image" in its
-#       metadata, no generated .asy source is created for it.
-#
-#   6.  Build Open Graph images
-#
-#       Recursively process:
-#
-#           generated/og/**/*.asy
-#
-#       and generate corresponding PNG files while preserving
-#       the directory structure.
-#
-#   7.  Validate Typst imports
-#
-#       Verify that imported Typst files exist and that there
-#       are no circular import dependencies.
-#
-#       The detailed dependency graph is written to:
-#
-#           diagnostics/imports.dot
-#
-#   8.  Prepare dist
-#
-#       Remove the previous distribution directory, recreate
-#       the required output directories, and copy the required
-#       static assets.
-#
-#   9.  Build HTML
-#
-#       Compile the lecture and resource pages and place the
-#       resulting website files under:
-#
-#           dist/pages/
-#
-#   10. Generate sitemap
-#
-#       Generate sitemap.xml for the deployed website.
-#
-#   11. Generate robots.txt
-#
-#       Generate the robots.txt file for the deployed website.
-#
-#   12. Build individual PDFs
-#
-#       Generate the PDF corresponding to each page.
-#
-#   13. Build category PDFs
-#
-#       Generate the combined PDF for each category.
-#
-#   14. Build complete course book
-#
-#       Generate the complete course/book PDF.
-#
-#   15. Build complete pages PDF
-#
-#       Generate the combined pages PDF.
-#
-#   16. Check links
-#
-#       Check links in the final generated HTML files.
-#
-#       This check is performed only after the HTML output and
-#       all referenced files have been generated.
-#
-#   17. Print diagnostics summary
-#
-#       After run_build() completes, print_summary() generates
-#       the final build diagnostics summary, including stage
-#       timings.
+# Link validation is performed near the end because all HTML,
+# PDF, and other referenced output files should exist before
+# links are checked.
 #
 #
 # ------------------------------------------------------------
-# Individual generation targets
+# Configuration target
+# ------------------------------------------------------------
+#
+#   config
+#
+#       Audit Python configuration usage throughout the project.
+#
+#       The audit identifies configuration-like values outside
+#       scripts/config.py, including:
+#
+#       - uppercase constants
+#       - Path(...) constructions
+#       - ROOT / ... path constructions
+#       - hardcoded project directory names
+#       - hardcoded project/website strings
+#       - configuration-like numeric values
+#       - imports from scripts.config
+#       - redefinitions of imported configuration names
+#
+#       This is a diagnostic/audit tool rather than a strict
+#       failure for every finding. Local implementation
+#       constants may legitimately remain outside config.py.
+#
+#       Usage:
+#
+#           ./build.sh config
+#
+#
+# ------------------------------------------------------------
+# Generation targets
 # ------------------------------------------------------------
 #
 #   metadata
+#
 #       Generate metadata and generated Typst/JSON files.
+#
+#       This discovers source files, parses their metadata,
+#       generates navigation information, and writes the
+#       generated metadata files used by later build stages.
 #
 #       Usage:
 #
 #           ./build.sh metadata
 #
-#       Delegates to:
-#
-#           python3 scripts/run.py metadata
-#
 #
 #   og-generate
+#
 #       Generate Open Graph Asymptote source files.
 #
 #       Generated files are placed under:
@@ -1005,6 +962,7 @@ run_common_checks() {
 #
 #
 #   og-build
+#
 #       Convert generated Open Graph Asymptote sources into PNG
 #       images.
 #
@@ -1012,11 +970,8 @@ run_common_checks() {
 #
 #           generated/og/**/*.asy
 #
-#       and creates corresponding:
-#
-#           generated/og/**/*.png
-#
-#       while preserving the directory structure.
+#       and creates corresponding PNG files while preserving
+#       the directory structure.
 #
 #       Usage:
 #
@@ -1028,6 +983,7 @@ run_common_checks() {
 # ------------------------------------------------------------
 #
 #   metadata-check
+#
 #       Validate metadata supplied by source Typst files.
 #
 #       Usage:
@@ -1036,6 +992,7 @@ run_common_checks() {
 #
 #
 #   generated
+#
 #       Validate consistency between source metadata and the
 #       generated files.
 #
@@ -1045,19 +1002,44 @@ run_common_checks() {
 #
 #
 #   imports
+#
 #       Check Typst imports and detect missing imports or
 #       circular dependencies.
+#
+#       The detailed dependency graph is written to:
+#
+#           diagnostics/imports.dot
 #
 #       Usage:
 #
 #           ./build.sh imports
 #
 #
+#   og-check
+#
+#       Validate Open Graph references in generated HTML.
+#
+#       The check verifies that:
+#
+#       - expected HTML pages exist
+#       - og:image references are present where required
+#       - OG URLs are valid
+#       - OG images are located under dist/assets/og/
+#       - referenced OG image files exist
+#
+#       This check must normally be run after the HTML build.
+#
+#       Usage:
+#
+#           ./build.sh og-check
+#
+#
 #   links
+#
 #       Check links in the generated website.
 #
 #       This is normally run near the end of the complete
-#       build, after all HTML and referenced output files have
+#       build, after HTML and all referenced output files have
 #       been generated.
 #
 #       Usage:
@@ -1070,6 +1052,7 @@ run_common_checks() {
 # ------------------------------------------------------------
 #
 #   prepare-dist
+#
 #       Prepare the dist directory for a fresh build.
 #
 #       This removes previous distribution output, recreates
@@ -1082,6 +1065,7 @@ run_common_checks() {
 #
 #
 #   prepare-diagnostics
+#
 #       Prepare a clean diagnostics directory before a build.
 #
 #       Usage:
@@ -1094,11 +1078,12 @@ run_common_checks() {
 # ------------------------------------------------------------
 #
 #   html
+#
 #       Build the HTML pages.
 #
 #       This target performs only the HTML build operation.
-#       It does not automatically generate sitemap.xml or
-#       robots.txt.
+#       It does not automatically generate sitemap.xml,
+#       robots.txt, or run OG validation.
 #
 #       Usage:
 #
@@ -1106,6 +1091,7 @@ run_common_checks() {
 #
 #
 #   sitemap
+#
 #       Generate sitemap.xml for the website.
 #
 #       Usage:
@@ -1114,6 +1100,7 @@ run_common_checks() {
 #
 #
 #   robots
+#
 #       Generate robots.txt for the website.
 #
 #       Usage:
@@ -1126,6 +1113,7 @@ run_common_checks() {
 # ------------------------------------------------------------
 #
 #   pdf
+#
 #       Build individual page PDFs.
 #
 #       Usage:
@@ -1134,6 +1122,7 @@ run_common_checks() {
 #
 #
 #   categories
+#
 #       Build the PDF corresponding to each category.
 #
 #       Usage:
@@ -1142,6 +1131,7 @@ run_common_checks() {
 #
 #
 #   book
+#
 #       Build the complete course/book PDF.
 #
 #       Usage:
@@ -1150,6 +1140,7 @@ run_common_checks() {
 #
 #
 #   pages-pdf
+#
 #       Build the combined pages PDF.
 #
 #       Usage:
@@ -1158,6 +1149,7 @@ run_common_checks() {
 #
 #
 #   allpdf
+#
 #       Build every PDF output.
 #
 #       This is a composite target consisting of:
@@ -1177,6 +1169,7 @@ run_common_checks() {
 # ------------------------------------------------------------
 #
 #   report
+#
 #       Generate the diagnostics/build report.
 #
 #       This target delegates directly to:
@@ -1196,6 +1189,10 @@ run_common_checks() {
 #
 # For example:
 #
+#     ./build.sh config
+#
+# performs only the configuration audit.
+#
 #     ./build.sh og-generate
 #
 # performs only Open Graph source generation.
@@ -1203,6 +1200,10 @@ run_common_checks() {
 #     ./build.sh og-build
 #
 # performs only Open Graph PNG generation.
+#
+#     ./build.sh og-check
+#
+# checks the existing generated HTML/OG output.
 #
 #     ./build.sh html
 #
@@ -1250,6 +1251,7 @@ run_common_checks() {
 #
 # ============================================================
 
+
 run_build() {
 
     case "$TARGET" in
@@ -1268,24 +1270,19 @@ run_build() {
 
             # ------------------------------------------------
             # Common generation and validation
+            #
+            # This performs:
+            #
+            #   1. Configuration audit
+            #   2. Metadata generation
+            #   3. Metadata validation
+            #   4. Generated-file validation
+            #   5. Open Graph generation
+            #   6. Open Graph image build
+            #   7. Typst import validation
             # ------------------------------------------------
 
-            generate_metadata
-            validate_metadata
-            validate_generated
-
-            # ------------------------------------------------
-            # Open Graph generation
-            # ------------------------------------------------
-
-            generate_og
-            build_og
-
-            # ------------------------------------------------
-            # Typst dependency validation
-            # ------------------------------------------------
-
-            validate_imports
+            run_common_checks
 
             # ------------------------------------------------
             # Prepare dist
@@ -1302,13 +1299,26 @@ run_build() {
             build_robots
 
             # ------------------------------------------------
+            # Open Graph validation
+            #
+            # This must run after HTML generation because
+            # check_og.py examines the generated HTML files
+            # and their OG image references in dist/.
+            # ------------------------------------------------
+
+            validate_og
+
+            # ------------------------------------------------
             # PDF output
             # ------------------------------------------------
 
             build_allpdf
 
             # ------------------------------------------------
-            # Final validation
+            # Final link validation
+            #
+            # All generated HTML and referenced output files
+            # should now exist.
             # ------------------------------------------------
 
             validate_links
@@ -1326,9 +1336,17 @@ run_build() {
             ;;
 
         # ====================================================
-        # Individual targets
-        #
-        # Delegate directly to scripts/run.py.
+        # Configuration audit
+        # ====================================================
+
+        config)
+
+            python3 scripts/run.py config
+
+            ;;
+
+        # ====================================================
+        # Generation
         # ====================================================
 
         metadata)
@@ -1349,6 +1367,10 @@ run_build() {
 
             ;;
 
+        # ====================================================
+        # Validation
+        # ====================================================
+
         metadata-check)
 
             python3 scripts/run.py metadata-check
@@ -1367,11 +1389,21 @@ run_build() {
 
             ;;
 
+        og-check)
+
+            python3 scripts/run.py og-check
+
+            ;;
+
         links)
 
             python3 scripts/run.py links
 
             ;;
+
+        # ====================================================
+        # Build preparation
+        # ====================================================
 
         prepare-dist)
 
@@ -1384,6 +1416,10 @@ run_build() {
             python3 scripts/run.py prepare-diagnostics
 
             ;;
+
+        # ====================================================
+        # Website output
+        # ====================================================
 
         html)
 
@@ -1402,6 +1438,10 @@ run_build() {
             python3 scripts/run.py robots
 
             ;;
+
+        # ====================================================
+        # PDF output
+        # ====================================================
 
         pdf)
 
@@ -1427,6 +1467,10 @@ run_build() {
 
             ;;
 
+        # ====================================================
+        # Diagnostics
+        # ====================================================
+
         report)
 
             python3 scripts/run.py report
@@ -1435,6 +1479,7 @@ run_build() {
 
     esac
 }
+
 
 # ============================================================
 # Run selected build target
@@ -1447,8 +1492,11 @@ run_build
 # Print summary
 #
 # The report is generated after the selected build target has
-# completed so that all stage timings and diagnostics are
-# available.
+# completed so that all available stage timings and diagnostic
+# information can be included.
+#
+# For the complete build, this produces the final build
+# summary.
 # ============================================================
 
 print_summary
