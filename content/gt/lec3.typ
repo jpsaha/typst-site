@@ -2,12 +2,13 @@
 #import "../../templates/course.typ": *
 
 #let lecture = (
-  file: "lec3",
-  number: 30,
-  title: "Olympiad Inequalities",
-  category: "Olympiad",
-  description: "Introduction to Olympiad Inequalities.",
+  file: "gt3",
+  number: 3,
+  title: "Sylow's theorems",
+  category: "Group theory",
+  description: "Introduction to Group theory.",
 )
+
 
 #show: lecture-layout(lecture)
 
