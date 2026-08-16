@@ -52,12 +52,35 @@ DRY_RUN=false
 SYNC_ITEMS=(
     "templates"
     "assets"
+    "install"
     "scripts"
     "build.sh"
     "book_source.typ"
     "pages_source.typ"
-    "pdflayout.typ"
     ".github/workflows/deploy.yml"
+)
+
+
+# ============================================================
+# Protected target assets
+#
+# These files belong to the individual 26fgt project rather
+# than the template.
+#
+# They must never be overwritten or deleted by synchronization.
+#
+# Paths are relative to:
+#
+#     assets/
+#
+# The entire assets/ directory is otherwise synchronized, so
+# newly added template assets will automatically be copied.
+# ============================================================
+
+PROTECTED_ASSETS=(
+    "og/default.pdf"
+    "og/default.asy"
+    "og/fgt1.png"
 )
 
 
@@ -99,6 +122,12 @@ Expected directory structure:
     ├── typst-site/
     ├── 26fgt/
     └── sync-typst-template.sh
+
+Protected assets:
+
+    assets/og/default.pdf
+    assets/og/default.asy
+    assets/og/fgt1.png
 
 EOF
 }
@@ -145,6 +174,73 @@ die() {
 
 
 # ============================================================
+# Build rsync exclusion arguments for assets
+#
+# Converts:
+#
+#     PROTECTED_ASSETS=(
+#         "og/default.pdf"
+#         "og/default.asy"
+#         "og/fgt1.png"
+#     )
+#
+# into:
+#
+#     --exclude=og/default.pdf
+#     --exclude=og/default.asy
+#     --exclude=og/fgt1.png
+#
+# This keeps the protected-file list separate from the rsync
+# implementation.
+# ============================================================
+
+rsync_assets() {
+
+    local source="$1"
+    local target="$2"
+    local dry_run="${3:-false}"
+
+    local exclude_args=()
+
+    for file in "${PROTECTED_ASSETS[@]}"; do
+        exclude_args+=(--exclude="$file")
+    done
+
+
+    # --------------------------------------------------------
+    # Normal synchronization
+    # --------------------------------------------------------
+
+    if [[ "$dry_run" == "false" ]]; then
+
+        rsync \
+            -a \
+            --delete \
+            "${exclude_args[@]}" \
+            "$source/" \
+            "$target/"
+
+        return
+
+    fi
+
+
+    # --------------------------------------------------------
+    # Dry run
+    # --------------------------------------------------------
+
+    rsync \
+        -a \
+        --delete \
+        --dry-run \
+        --itemize-changes \
+        "${exclude_args[@]}" \
+        "$source/" \
+        "$target/"
+}
+
+
+# ============================================================
 # Header
 # ============================================================
 
@@ -160,6 +256,15 @@ echo "    $TEMPLATE_DIR"
 echo
 echo "Target:"
 echo "    $TARGET_DIR"
+
+echo
+echo "Mode:"
+
+if $DRY_RUN; then
+    echo "    DRY RUN — no files will be changed"
+else
+    echo "    LIVE — files may be changed"
+fi
 
 
 # ============================================================
@@ -189,7 +294,13 @@ git -C "$TARGET_DIR" rev-parse --is-inside-work-tree \
 # ============================================================
 # Protect uncommitted work in 26fgt
 #
-# Do not overwrite a working tree that contains changes.
+# IMPORTANT:
+#
+# This check is performed even for --dry-run.
+#
+# The purpose is to ensure that the synchronization script
+# never previews against a dirty target and then encourages
+# accidental overwriting of local work.
 # ============================================================
 
 if [[ -n "$(git -C "$TARGET_DIR" status --porcelain)" ]]; then
@@ -245,10 +356,25 @@ for item in "${SYNC_ITEMS[@]}"; do
     else
 
         echo "  ⚠ $item"
-        echo "      Source does not exist -- will be skipped."
+        echo "      Source does not exist — will be skipped."
 
     fi
 
+done
+
+
+# ============================================================
+# Show protected assets
+# ============================================================
+
+echo
+echo "=============================================="
+echo " Protected target assets"
+echo "=============================================="
+echo
+
+for file in "${PROTECTED_ASSETS[@]}"; do
+    echo "  🔒 assets/$file"
 done
 
 
@@ -263,37 +389,86 @@ if $DRY_RUN; then
     echo " DRY RUN"
     echo "=============================================="
     echo
+    echo "No files will be changed."
+    echo
+
+    echo
+    echo "=============================================="
+    echo " Synchronization Preview"
+    echo "=============================================="
+    echo
+
 
     for item in "${SYNC_ITEMS[@]}"; do
 
         source="$TEMPLATE_DIR/$item"
         target="$TARGET_DIR/$item"
 
-        [[ -e "$source" ]] || continue
 
-        if [[ -d "$source" ]]; then
+        # ----------------------------------------------------
+        # Missing source
+        # ----------------------------------------------------
 
-            echo "Would synchronize:"
-            echo "    $item/"
+        if [[ ! -e "$source" ]]; then
 
-            rsync \
-                -a \
-                --delete \
-                --dry-run \
-                "$source/" \
-                "$target/"
-
-        else
-
-            echo "Would copy:"
-            echo "    $item"
+            echo "⚠ Skipping missing source: $item"
+            continue
 
         fi
 
-        echo
+
+        # ----------------------------------------------------
+        # Directory
+        # ----------------------------------------------------
+
+        if [[ -d "$source" ]]; then
+
+            echo "→ Synchronizing $item/"
+
+            mkdir -p "$target"
+
+            if [[ "$item" == "assets" ]]; then
+
+                rsync_assets "$source" "$target" true
+
+            else
+
+                rsync \
+                    -a \
+                    --delete \
+                    --dry-run \
+                    --itemize-changes \
+                    "$source/" \
+                    "$target/"
+
+            fi
+
+
+        # ----------------------------------------------------
+        # File
+        # ----------------------------------------------------
+
+        else
+
+            echo "→ Synchronizing $item"
+
+            rsync \
+                -a \
+                --dry-run \
+                --itemize-changes \
+                "$source" \
+                "$target"
+
+        fi
 
     done
 
+
+    echo
+    echo "=============================================="
+    echo " Dry run complete"
+    echo "=============================================="
+    echo
     echo "No files were changed."
 
     exit 0
@@ -359,13 +534,23 @@ for item in "${SYNC_ITEMS[@]}"; do
 
         mkdir -p "$target"
 
-        rsync \
-            -a \
-            --delete \
-            "$source/" \
-            "$target/"
+
+        if [[ "$item" == "assets" ]]; then
+
+            rsync_assets "$source" "$target"
+
+        else
+
+            rsync \
+                -a \
+                --delete \
+                "$source/" \
+                "$target/"
+
+        fi
 
         echo "✓ $item/"
+
 
     # --------------------------------------------------------
     # File
