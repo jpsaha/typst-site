@@ -277,23 +277,25 @@ TYPST_OG_BUILD = False
 # ImageMagick installed just to generate OG images.
 # ------------------------------------------------------------
 
+# GitHub deployment should normally NEVER generate OG images.
+# Keep this False unless the GitHub workflow is deliberately
+# changed to install Asymptote, TeX Live, and ImageMagick.
+
 TYPST_OG_GITBUILD = False
 
-
-# ------------------------------------------------------------
+# ============================================================
 # Effective OG setting
-# ------------------------------------------------------------
+# ============================================================
 #
-# GitHub Actions sets the GITHUB_ACTIONS environment variable.
+# Priority:
 #
-# Local build:
+#   1. Explicit TYPST_OG_BUILD environment variable
+#      (local one-off override)
 #
-#     TYPST_OG = TYPST_OG_BUILD
+#   2. TYPST_OG_GITBUILD when running on GitHub Actions
 #
-# GitHub build:
-#
-#     TYPST_OG = TYPST_OG_GITBUILD
-# ------------------------------------------------------------
+#   3. TYPST_OG_BUILD for normal local builds
+# ============================================================
 
 import os
 
@@ -301,11 +303,20 @@ IS_GITHUB_ACTIONS = (
     os.environ.get("GITHUB_ACTIONS", "").lower() == "true"
 )
 
-TYPST_OG = (
-    TYPST_OG_GITBUILD
-    if IS_GITHUB_ACTIONS
-    else TYPST_OG_BUILD
-)
+if not IS_GITHUB_ACTIONS and "TYPST_OG_BUILD" in os.environ:
+
+    TYPST_OG = (
+        os.environ["TYPST_OG_BUILD"].lower()
+        in ("1", "true", "yes", "on")
+    )
+
+else:
+
+    TYPST_OG = (
+        TYPST_OG_GITBUILD
+        if IS_GITHUB_ACTIONS
+        else TYPST_OG_BUILD
+    )
 
 # ------------------------------------------------------------
 # Default Open Graph image

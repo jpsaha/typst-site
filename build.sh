@@ -4,28 +4,26 @@ set -euo pipefail
 
 export TYPST_FEATURES=html
 
-
 # ============================================================
-# Open Graph build configuration
+# Effective Open Graph setting
 # ============================================================
 #
-# Read the effective TYPST_OG value from scripts/config.py.
+# Let scripts/config.py determine whether OG generation is
+# enabled. This respects:
 #
-# Local:
-#     TYPST_OG_BUILD
+#   TYPST_OG_BUILD
+#   TYPST_OG_GITBUILD
 #
-# GitHub Actions:
-#     TYPST_OG_GITBUILD
-#
-# The Python configuration is the single source of truth.
+# and therefore keeps build.sh and Python configuration
+# synchronized.
 # ============================================================
 
-TYPST_OG="$(
-    python3 -c '
-from scripts.config import TYPST_OG
-print(str(TYPST_OG).lower())
-'
-)"
+TYPST_OG=$(python3 -c \
+    'from scripts.config import TYPST_OG; print(str(TYPST_OG).lower())')
+
+export TYPST_OG
+
+echo "TYPST_OG=$TYPST_OG"
 
 
 # ============================================================

@@ -219,6 +219,8 @@ def print_build_timing(
     time_metadata,
     time_metadata_check,
     time_generated_check,
+    time_og_generate,
+    time_og_build,
     time_import_check,
     time_html,
     time_pdf,
@@ -237,6 +239,8 @@ def print_build_timing(
     print(f"Metadata generation       {time_metadata:>6}s")
     print(f"Metadata validation       {time_metadata_check:>6}s")
     print(f"Generated validation      {time_generated_check:>6}s")
+    print(f"OG source generation      {time_og_generate:>6}s")
+    print(f"OG PNG build              {time_og_build:>6}s")
     print(f"Typst import validation   {time_import_check:>6}s")
     print(f"HTML pages                {time_html:>6}s")
     print(f"Individual PDFs           {time_pdf:>6}s")
@@ -307,6 +311,8 @@ def generate_report():
     time_metadata = env_int("TIME_METADATA")
     time_metadata_check = env_int("TIME_METADATA_CHECK")
     time_generated_check = env_int("TIME_GENERATED_CHECK")
+    time_og_generate = env_int("TIME_OG_GENERATE")
+    time_og_build = env_int("TIME_OG_BUILD")
     time_import_check = env_int("TIME_IMPORT_CHECK")
     time_html = env_int("TIME_HTML")
     time_pdf = env_int("TIME_PDF")
@@ -359,6 +365,8 @@ def generate_report():
         time_metadata=time_metadata,
         time_metadata_check=time_metadata_check,
         time_generated_check=time_generated_check,
+        time_og_generate=time_og_generate,
+        time_og_build=time_og_build,
         time_import_check=time_import_check,
         time_html=time_html,
         time_pdf=time_pdf,
