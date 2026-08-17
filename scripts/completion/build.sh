@@ -1,3 +1,5 @@
+# source scripts/completion/build.sh
+
 _build_sh_completion() {
     local cur prev targets
 
@@ -7,6 +9,7 @@ _build_sh_completion() {
         metadata
         og-generate
         og-build
+        og-refresh
         metadata-check
         generated
         imports
