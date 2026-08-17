@@ -1,6 +1,4 @@
 from pathlib import Path
-import os
-
 
 # ============================================================
 # Project root
@@ -217,12 +215,96 @@ SITE_DESCRIPTION = (
 
 SITE_AUTHOR = ""
 
+# ============================================================
+# Open Graph build mode
+# ============================================================
+#
+# Controls whether Open Graph images are generated during
+# the build.
+#
+# True:
+#     Generate OG .asy files and build PNGs.
+#
+# False:
+#     Reuse the committed OG PNGs already present in
+#     dist/assets/og/.
+#
+# Normal local/deployment build:
+#
+#     False
+#
+# To generate/update OG images locally, temporarily change
+# this to True.
+# ============================================================
 
-TYPST_OG = os.environ.get("TYPST_OG", "true").lower() in (
-    "1",
-    "true",
-    "yes",
-    "on",
+# ======================================================================
+
+# ============================================================
+# Open Graph build mode
+# ============================================================
+
+# ------------------------------------------------------------
+# Local OG generation
+# ------------------------------------------------------------
+#
+# Normally False.
+#
+# Set to True only when new OG images need to be generated,
+# for example when:
+#
+#   - a new lecture is added
+#   - OG-related metadata changes
+#   - the OG template changes
+#
+# After generating the images and committing them, set this
+# back to False.
+# ------------------------------------------------------------
+
+TYPST_OG_BUILD = False
+
+
+# ------------------------------------------------------------
+# GitHub deployment OG generation
+# ------------------------------------------------------------
+#
+# Normally False and expected to remain False.
+#
+# GitHub deployment reuses the committed PNG files in:
+#
+#     dist/assets/og/
+#
+# Therefore GitHub does not need LaTeX, Asymptote, or
+# ImageMagick installed just to generate OG images.
+# ------------------------------------------------------------
+
+TYPST_OG_GITBUILD = False
+
+
+# ------------------------------------------------------------
+# Effective OG setting
+# ------------------------------------------------------------
+#
+# GitHub Actions sets the GITHUB_ACTIONS environment variable.
+#
+# Local build:
+#
+#     TYPST_OG = TYPST_OG_BUILD
+#
+# GitHub build:
+#
+#     TYPST_OG = TYPST_OG_GITBUILD
+# ------------------------------------------------------------
+
+import os
+
+IS_GITHUB_ACTIONS = (
+    os.environ.get("GITHUB_ACTIONS", "").lower() == "true"
+)
+
+TYPST_OG = (
+    TYPST_OG_GITBUILD
+    if IS_GITHUB_ACTIONS
+    else TYPST_OG_BUILD
 )
 
 # ------------------------------------------------------------

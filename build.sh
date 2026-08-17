@@ -6,21 +6,26 @@ export TYPST_FEATURES=html
 
 
 # ============================================================
-# Open Graph generation
+# Open Graph build configuration
 # ============================================================
 #
-# TYPST_OG=true
-#     Generate OG .asy files and PNGs locally.
+# Read the effective TYPST_OG value from scripts/config.py.
 #
-# TYPST_OG=false
-#     Use already-committed OG PNGs.
+# Local:
+#     TYPST_OG_BUILD
 #
-# Default: true for local builds.
+# GitHub Actions:
+#     TYPST_OG_GITBUILD
+#
+# The Python configuration is the single source of truth.
 # ============================================================
 
-TYPST_OG="${TYPST_OG:-true}"
-
-export TYPST_OG
+TYPST_OG="$(
+    python3 -c '
+from scripts.config import TYPST_OG
+print(str(TYPST_OG).lower())
+'
+)"
 
 
 # ============================================================
@@ -385,6 +390,7 @@ generate_og() {
     stage_end TIME_OG_GENERATE
 }
 
+
 # ============================================================
 # 1c. Build Open Graph PNG images
 # ============================================================
@@ -407,7 +413,6 @@ build_og() {
 
     stage_end TIME_OG_BUILD
 }
-
 
 # ============================================================
 # 2. Validation
