@@ -306,8 +306,7 @@ IS_GITHUB_ACTIONS = (
 if not IS_GITHUB_ACTIONS and "TYPST_OG_BUILD" in os.environ:
 
     TYPST_OG = (
-        os.environ["TYPST_OG_BUILD"].lower()
-        in ("1", "true", "yes", "on")
+        os.environ["TYPST_OG_BUILD"].lower() == "true"
     )
 
 else:
