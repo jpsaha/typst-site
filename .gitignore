@@ -8,8 +8,13 @@ dist/*
 # ------------------------------------------------------------
 # Locally generated Open Graph PNGs
 #
-# All of dist/ remains ignored except PNG files under
-# dist/assets/og/.
+# Keep all dist/ output ignored except:
+#
+#     dist/assets/og/**/*.png
+#
+# These PNGs are generated locally and committed so that
+# GitHub deployment does not need LaTeX, Asymptote, or
+# ImageMagick.
 # ------------------------------------------------------------
 
 !dist/assets/
@@ -21,8 +26,8 @@ dist/assets/og/*
 # Allow OG subdirectories
 !dist/assets/og/**/
 
-# Allow OG PNG files
-!dist/assets/og/**/*.pngs
+# Allow generated OG PNG files
+!dist/assets/og/**/*.png
 
 # Build diagnostics
 diagnostics/*
