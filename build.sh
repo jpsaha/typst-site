@@ -73,6 +73,7 @@ Targets:
     │ metadata             │ ./build.sh metadata                 │ Generate metadata                            │
     │ og-generate          │ ./build.sh og-generate              │ Generate Open Graph .asy sources             │
     │ og-build             │ ./build.sh og-build                 │ Build Open Graph PNG images                  │
+    │ og-refresh           │ ./build.sh og-refresh               │ Force regenerate OG sources and PNG images   │
     ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
     │ metadata-check       │ ./build.sh metadata-check           │ Validate source metadata                     │
     │ generated            │ ./build.sh generated                │ Validate generated files                     │
@@ -96,6 +97,41 @@ Targets:
     │ report               │ ./build.sh report                   │ Generate diagnostics/build report            │
     └──────────────────────┴─────────────────────────────────────┴──────────────────────────────────────────────┘
 
+Open Graph configuration:
+
+    Effective TYPST_OG:
+
+        ┌───────────────────┬──────────────────────────┬──────────────────────────────┐
+        │ Environment       │ Setting                  │ Effective TYPST_OG           │
+        ├───────────────────┼──────────────────────────┼──────────────────────────────┤
+        │ Local             │ no override              │ config: TYPST_OG_BUILD       │
+        │ Local             │ TYPST_OG_BUILD=true      │ true                         │
+        │ Local             │ TYPST_OG_BUILD=false     │ false                        │
+        │ GitHub Actions    │ any local override       │ config: TYPST_OG_GITBUILD    │
+        └───────────────────┴──────────────────────────┴──────────────────────────────┘
+
+    Usage:
+
+        ┌────────────────────────────────────┬───────────────────────────────────────┐
+        │ Command                            │ Effect                                │
+        ├────────────────────────────────────┼───────────────────────────────────────┤
+        │ ./build.sh                         │ Normal local build                    │
+        │ TYPST_OG_BUILD=true ./build.sh     │ Enable OG generation locally          │
+        │ TYPST_OG_BUILD=false ./build.sh    │ Disable OG generation locally         │
+        │ ./build.sh og-refresh              │ Force regenerate OG sources + PNGs    │
+        └────────────────────────────────────┴───────────────────────────────────────┘
+
+    GitHub:
+
+        ┌───────────────────────────┬──────────────────────────────────────────────┐
+        │ TYPST_OG_GITBUILD         │ GitHub deployment                            │
+        ├───────────────────────────┼──────────────────────────────────────────────┤
+        │ False                     │ Reuse committed OG PNGs                      │
+        │ True                      │ Generate OG PNGs during deployment           │
+        └───────────────────────────┴──────────────────────────────────────────────┘
+
+    When GitHub OG generation is enabled, the workflow installs:
+        Asymptote + TeX Live + ImageMagick
 
 Options:
 
@@ -148,10 +184,14 @@ case "$TARGET" in
     #     TYPST_OG=true   → generate/build OG images
     #     TYPST_OG=false  → skip OG generation/build
     #
+    # og-refresh is different:
+    #
+    #     og-refresh      → explicitly forces a local OG refresh
+    #
     # og-check remains independent and can always be run.
     # --------------------------------------------------------
 
-    og-generate|og-build)
+    og-generate|og-build|og-refresh)
         ;;
 
     # --------------------------------------------------------
@@ -410,6 +450,40 @@ build_og() {
     fi
 
     stage_end TIME_OG_BUILD
+}
+
+# ============================================================
+# 1d. Refresh Open Graph images
+#
+# Force a local OG regeneration regardless of TYPST_OG_BUILD.
+#
+# This target:
+#
+#   1. Generates OG Asymptote sources
+#   2. Builds the OG PNG images
+#
+# It does NOT rebuild the website.
+# ============================================================
+
+og_refresh() {
+
+    echo
+    echo "🔄 Refreshing Open Graph images..."
+
+    stage_start
+
+    if ! python3 scripts/run.py og-generate; then
+        die "Open Graph source generation failed."
+    fi
+
+    if ! python3 scripts/run.py og-build; then
+        die "Open Graph image build failed."
+    fi
+
+    stage_end TIME_OG_BUILD
+
+    echo
+    echo "✅ Open Graph images refreshed."
 }
 
 # ============================================================
@@ -1437,6 +1511,12 @@ run_build() {
         og-build)
 
             python3 scripts/run.py og-build
+
+            ;;
+
+        og-refresh)
+
+            og_refresh
 
             ;;
 
