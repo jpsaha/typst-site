@@ -32,6 +32,7 @@ from scripts.config import (
     SITE_DESCRIPTION,
     SITE_OG_IMAGE,
     GENERATED_OG_DIR,
+    OG_DIR,
 )
 
 # from scripts.metadata.seo import seo_head
@@ -137,24 +138,78 @@ def compile_page(lecture):
     explicit_og_image = lecture.get("og_image")
 
     if explicit_og_image:
+
+        # ----------------------------------------------------
+        # 1. Explicit OG image supplied in metadata
+        # ----------------------------------------------------
+
         image = explicit_og_image
 
     else:
+
         source_path_relative = Path(source)
+
+        relative_og_path = (
+            source_path_relative.with_suffix(".png")
+        )
+
+        # ----------------------------------------------------
+        # 2. Newly generated OG image
+        #
+        # Used when:
+        #
+        #     TYPST_OG=true
+        #
+        # and the current build generated:
+        #
+        #     generated/og/gt/lec2.png
+        # ----------------------------------------------------
 
         generated_og_path = (
             GENERATED_OG_DIR
-            / source_path_relative.with_suffix(".png")
+            / relative_og_path
+        )
+
+        # ----------------------------------------------------
+        # 3. Existing/committed OG image
+        #
+        # Used when:
+        #
+        #     TYPST_OG=false
+        #
+        # but a previously generated PNG already exists in:
+        #
+        #     dist/assets/og/
+        #
+        # This allows normal builds and GitHub deployments to
+        # reuse committed OG images without regenerating them.
+        # ----------------------------------------------------
+
+        published_og_path = (
+            OG_DIR
+            / relative_og_path
         )
 
         if generated_og_path.exists():
+
             image = (
                 "/assets/og/"
-                + str(
-                    source_path_relative.with_suffix(".png")
-                )
+                + str(relative_og_path)
             )
+
+        elif published_og_path.exists():
+
+            image = (
+                "/assets/og/"
+                + str(relative_og_path)
+            )
+
         else:
+
+            # ------------------------------------------------
+            # 4. Site-wide default
+            # ------------------------------------------------
+
             image = SITE_OG_IMAGE
 
 
