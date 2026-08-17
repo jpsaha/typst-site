@@ -232,46 +232,42 @@ SITE_ROBOTS = "index, follow"
 # Open Graph build mode
 # ============================================================
 #
-# There are two configuration values:
+# These values define the default Open Graph generation policy.
 #
 #     TYPST_OG_BUILD
-#         Default for normal local builds.
+#         Default for local builds.
 #
 #     TYPST_OG_GITBUILD
 #         Default for GitHub Actions builds.
 #
-# The effective value is TYPST_OG.
+# The effective setting used by the build is:
+#
+#     TYPST_OG
+#
+# See the "Effective Open Graph setting" section below for
+# the complete precedence and environment-variable behavior.
 #
 # ------------------------------------------------------------
 # Local builds
 # ------------------------------------------------------------
 #
-# Normally:
+# False:
+#     Reuse existing/committed OG PNG images.
 #
-#     TYPST_OG_BUILD = False
-#
-# This means:
-#
-#     ./build.sh
-#
-# reuses existing/committed OG PNG files.
-#
-# To temporarily generate OG images locally:
-#
-#     TYPST_OG_BUILD=true ./build.sh
+# True:
+#     Generate OG .asy sources and PNG images.
 #
 # ------------------------------------------------------------
 # GitHub Actions
 # ------------------------------------------------------------
 #
-# Normally:
+# False:
+#     Reuse committed OG PNG images.
 #
-#     TYPST_OG_GITBUILD = False
+# True:
+#     Generate OG images during the GitHub build.
 #
-# This means GitHub reuses the committed OG PNG files.
-#
-# If set to True, the GitHub workflow must provide the required
-# OG-generation tools:
+# When enabled on GitHub, the workflow must provide:
 #
 #     Asymptote
 #     TeX Live
@@ -282,7 +278,6 @@ SITE_ROBOTS = "index, follow"
 TYPST_OG_BUILD = False
 
 TYPST_OG_GITBUILD = False
-
 
 # ============================================================
 # Effective Open Graph setting
