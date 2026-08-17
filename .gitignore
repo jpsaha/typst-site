@@ -5,6 +5,25 @@
 # Generated/publication output
 dist/*
 
+# ------------------------------------------------------------
+# Locally generated Open Graph PNGs
+#
+# All of dist/ remains ignored except PNG files under
+# dist/assets/og/.
+# ------------------------------------------------------------
+
+!dist/assets/
+dist/assets/*
+
+!dist/assets/og/
+dist/assets/og/*
+
+# Allow OG subdirectories
+!dist/assets/og/**/
+
+# Allow OG PNG files
+!dist/assets/og/**/*.pngs
+
 # Build diagnostics
 diagnostics/*
 
