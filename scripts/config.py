@@ -103,6 +103,7 @@ DIST_DIR = ROOT / "dist"
 PAGES_DIR = DIST_DIR / "pages"
 PDF_DIR = DIST_DIR / "pdf"
 ASSETS_DIR = DIST_DIR / "assets"
+OG_DIR = ASSETS_DIR / "og"
 
 INDEX_HTML = DIST_DIR / "index.html"
 
