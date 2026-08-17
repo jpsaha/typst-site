@@ -83,8 +83,11 @@ COMMANDS = {
     # Open Graph images
     # --------------------------------------------------------
     #
-    # Generate Asymptote source files and then build the
-    # corresponding PNG images.
+    # "og-generate":
+    #     Generate Asymptote source files.
+    #
+    # "og-build":
+    #     Build the generated Asymptote files into PNG images.
     # --------------------------------------------------------
 
     "og-generate": "scripts.og.generate_og",

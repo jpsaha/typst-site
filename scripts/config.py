@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 
 # ============================================================
@@ -216,6 +217,13 @@ SITE_DESCRIPTION = (
 
 SITE_AUTHOR = ""
 
+
+TYPST_OG = os.environ.get("TYPST_OG", "true").lower() in (
+    "1",
+    "true",
+    "yes",
+    "on",
+)
 
 # ------------------------------------------------------------
 # Default Open Graph image

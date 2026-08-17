@@ -20,44 +20,71 @@ from scripts.config import (
 # Helpers
 # ============================================================
 
-def preserve_og_images():
+def preserve_committed_og():
     """
-    Preserve existing published OG PNGs before dist/ is cleaned.
+    Preserve existing dist/assets/og/*.png files.
 
-    These files are committed to Git and are used when:
+    This is used only when:
 
         TYPST_OG=false
 
-    The preserved files are stored temporarily outside dist/.
+    In that mode the OG PNGs are already committed to Git and
+    must survive the cleaning of dist/.
     """
 
-    if not TYPST_OG:
+    existing_og_dir = ASSETS_DIR / "og"
+
+    if not existing_og_dir.exists():
+        print(
+            "⚠️ No existing dist/assets/og/ directory found"
+        )
         return None
 
-    # When OG generation is enabled, dist/ is a normal fresh build.
-    return None
+    temp_root = Path(
+        tempfile.mkdtemp(
+            prefix="typst-og-"
+        )
+    )
 
+    preserved_og_dir = temp_root / "og"
+
+    shutil.copytree(
+        existing_og_dir,
+        preserved_og_dir,
+    )
+
+    count = sum(
+        1
+        for path in preserved_og_dir.rglob("*.png")
+    )
+
+    print(
+        f"📦 Preserved {count} committed OG image(s)"
+    )
+
+    return preserved_og_dir
+
+
+# ============================================================
+# Main preparation
+# ============================================================
 
 def prepare_dist():
     """
-    Prepare the dist directory for a fresh build.
+    Prepare dist/ for a fresh build.
 
-    Behaviour:
+    TYPST_OG=true
+        ----------------
+        Remove dist completely.
+        Generate OG images separately.
+        Copy generated OG images into dist/assets/og/.
 
-        TYPST_OG=true
-            ----------------
-            Remove dist completely.
-            Generated OG images will be rebuilt and copied.
-
-        TYPST_OG=false
-            ----------------
-            Preserve existing dist/assets/og/*.png files.
-            Remove the rest of dist.
-            Restore the preserved OG images.
-
-    This allows committed OG images to be used during
-    GitHub deployment without requiring LaTeX, Asymptote,
-    or ImageMagick.
+    TYPST_OG=false
+        ----------------
+        Preserve existing committed OG PNGs.
+        Remove dist.
+        Restore the committed OG PNGs.
+        Do not use generated/og/.
     """
 
     print(
@@ -65,51 +92,18 @@ def prepare_dist():
     )
 
     # ========================================================
-    # Preserve committed OG images when OG generation is off
+    # Preserve committed OG images
+    #
+    # Only necessary when OG generation is disabled.
     # ========================================================
 
     preserved_og_dir = None
 
     if not TYPST_OG:
-
-        existing_og_dir = ASSETS_DIR / "og"
-
-        if existing_og_dir.exists():
-
-            temp_root = Path(
-                tempfile.mkdtemp(
-                    prefix="typst-og-"
-                )
-            )
-
-            preserved_og_dir = (
-                temp_root / "og"
-            )
-
-            shutil.copytree(
-                existing_og_dir,
-                preserved_og_dir,
-            )
-
-            preserved_count = sum(
-                1
-                for path in preserved_og_dir.rglob("*.png")
-            )
-
-            print(
-                f"📦 Preserved {preserved_count} "
-                f"committed OG image(s)"
-            )
-
-        else:
-
-            print(
-                "⚠️ No existing dist/assets/og/ "
-                "directory found"
-            )
+        preserved_og_dir = preserve_committed_og()
 
     # ========================================================
-    # Remove previous generated output
+    # Remove previous dist
     # ========================================================
 
     shutil.rmtree(
@@ -129,7 +123,6 @@ def prepare_dist():
         ASSETS_DIR / "images",
         ASSETS_DIR / "og",
     ):
-
         directory.mkdir(
             parents=True,
             exist_ok=True,
@@ -138,20 +131,43 @@ def prepare_dist():
     # ========================================================
     # Restore committed OG images
     #
-    # Only done when:
+    # This happens only when:
     #
     #     TYPST_OG=false
     #
-    # These are the PNGs checked into Git.
+    # The images were committed in Git and existed in dist/
+    # before this preparation step deleted dist/.
     # ========================================================
 
     if preserved_og_dir is not None:
 
-        shutil.copytree(
-            preserved_og_dir,
-            ASSETS_DIR / "og",
-            dirs_exist_ok=True,
-        )
+        # Restore the preserved OG directory.
+        #
+        # The destination directory already exists because it was
+        # created above. Copy the files individually so that this
+        # works with older Python versions as well.
+
+        for source_png in preserved_og_dir.rglob("*.png"):
+
+            relative_path = source_png.relative_to(
+                preserved_og_dir
+            )
+
+            target_png = (
+                ASSETS_DIR
+                / "og"
+                / relative_path
+            )
+
+            target_png.parent.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
+
+            shutil.copy2(
+                source_png,
+                target_png,
+            )
 
         print(
             "📋 Restored committed OG images"
@@ -198,12 +214,15 @@ def prepare_dist():
         )
 
     # ========================================================
-    # Copy all PNG images from assets
-    # ========================================================
+    # Copy project-supplied PNG images
     #
-    # These are project-supplied static PNGs.
+    # These come from:
     #
-    # For example:
+    #     assets/**/*.png
+    #
+    # They are NOT generated by the OG pipeline.
+    #
+    # Example:
     #
     #     assets/og/default.png
     #     assets/og/fgt1.png
@@ -211,7 +230,6 @@ def prepare_dist():
     # They are copied into:
     #
     #     dist/assets/og/
-    #
     # ========================================================
 
     png_count = 0
@@ -247,11 +265,13 @@ def prepare_dist():
     )
 
     # ========================================================
-    # Copy generated Open Graph PNG images
+    # Copy generated OG PNG images
     #
-    # ONLY when TYPST_OG=true.
+    # Only when:
     #
-    # When TYPST_OG=false, the committed PNGs preserved above
+    #     TYPST_OG=true
+    #
+    # When TYPST_OG=false, the committed images restored above
     # are used instead.
     # ========================================================
 
@@ -263,11 +283,6 @@ def prepare_dist():
 
             target_og_dir = (
                 ASSETS_DIR / "og"
-            )
-
-            target_og_dir.mkdir(
-                parents=True,
-                exist_ok=True,
             )
 
             for source_png in (
@@ -311,7 +326,7 @@ def prepare_dist():
 
         print(
             "ℹ️ TYPST_OG=false — "
-            "skipping generated OG images"
+            "using committed OG images"
         )
 
     print(
@@ -329,6 +344,10 @@ def prepare_dist():
             f"Missing {HOMEPAGE_JSON}"
         )
 
+
+# ============================================================
+# Entry point
+# ============================================================
 
 def main():
     prepare_dist()

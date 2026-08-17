@@ -4,6 +4,25 @@ set -euo pipefail
 
 export TYPST_FEATURES=html
 
+
+# ============================================================
+# Open Graph generation
+# ============================================================
+#
+# TYPST_OG=true
+#     Generate OG .asy files and PNGs locally.
+#
+# TYPST_OG=false
+#     Use already-committed OG PNGs.
+#
+# Default: true for local builds.
+# ============================================================
+
+TYPST_OG="${TYPST_OG:-true}"
+
+export TYPST_OG
+
+
 # ============================================================
 # Build target
 #
@@ -107,15 +126,29 @@ case "$TARGET" in
     # --------------------------------------------------------
 
     all)
-
         ;;
 
     # --------------------------------------------------------
-    # Configuration and generation
+    # Configuration and metadata generation
     # --------------------------------------------------------
 
-    config|metadata|og-generate|og-build)
+    config|metadata)
+        ;;
 
+    # --------------------------------------------------------
+    # Open Graph generation
+    #
+    # These targets are valid regardless of TYPST_OG.
+    #
+    # The build logic decides whether they actually run:
+    #
+    #     TYPST_OG=true   → generate/build OG images
+    #     TYPST_OG=false  → skip OG generation/build
+    #
+    # og-check remains independent and can always be run.
+    # --------------------------------------------------------
+
+    og-generate|og-build)
         ;;
 
     # --------------------------------------------------------
@@ -123,7 +156,6 @@ case "$TARGET" in
     # --------------------------------------------------------
 
     metadata-check|generated|imports|links|og-check)
-
         ;;
 
     # --------------------------------------------------------
@@ -131,7 +163,6 @@ case "$TARGET" in
     # --------------------------------------------------------
 
     prepare-dist|prepare-diagnostics)
-
         ;;
 
     # --------------------------------------------------------
@@ -139,7 +170,6 @@ case "$TARGET" in
     # --------------------------------------------------------
 
     html|sitemap|robots)
-
         ;;
 
     # --------------------------------------------------------
@@ -147,7 +177,6 @@ case "$TARGET" in
     # --------------------------------------------------------
 
     pdf|categories|book|pages-pdf|allpdf)
-
         ;;
 
     # --------------------------------------------------------
@@ -155,7 +184,6 @@ case "$TARGET" in
     # --------------------------------------------------------
 
     report)
-
         ;;
 
     # --------------------------------------------------------
@@ -343,6 +371,11 @@ generate_og() {
     echo
     echo "🖼️  Generating Open Graph sources..."
 
+    if [[ "$TYPST_OG" != "true" ]]; then
+        echo "⏭️  Open Graph generation disabled (TYPST_OG=false)"
+        return 0
+    fi
+
     stage_start
 
     if ! python3 scripts/run.py og-generate; then
@@ -359,12 +392,17 @@ generate_og() {
 build_og() {
 
     echo
-    echo "🖼️  Building Open Graph images..."
+    echo "🖼️  Building Open Graph PNGs..."
+
+    if [[ "$TYPST_OG" != "true" ]]; then
+        echo "⏭️  Open Graph build disabled (TYPST_OG=false)"
+        return 0
+    fi
 
     stage_start
 
     if ! python3 scripts/run.py og-build; then
-        die "Open Graph image generation failed."
+        die "Open Graph image build failed."
     fi
 
     stage_end TIME_OG_BUILD
@@ -809,10 +847,22 @@ run_common_checks() {
     validate_generated
 
     # --------------------------------------------------------
-    # Open Graph generation
+    # Open Graph images
     #
-    # Generate the OG source files first, then rasterize them
-    # into PNG images.
+    # Local build:
+    #
+    #     TYPST_OG=true
+    #
+    #     Generate Asymptote sources and build PNG images.
+    #
+    # GitHub build:
+    #
+    #     TYPST_OG=false
+    #
+    #     Skip OG generation/build and use the committed
+    #     dist/assets/og/*.png files.
+    #
+    # The individual functions handle the TYPST_OG switch.
     # --------------------------------------------------------
 
     generate_og
