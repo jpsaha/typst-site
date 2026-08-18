@@ -27,6 +27,7 @@ import sys
 #
 # python3 scripts/run.py og-generate
 # python3 scripts/run.py og-build
+# python3 scripts/run.py og-publish
 #
 # ------------------------------------------------------------
 # Validation
@@ -87,11 +88,18 @@ COMMANDS = {
     #     Generate Asymptote source files.
     #
     # "og-build":
-    #     Build the generated Asymptote files into PNG images.
+    #     Build generated Asymptote files into PNG images.
+    #
+    # "og-publish":
+    #     Copy the generated OG PNG images from generated/og/
+    #     into dist/assets/og/.
+    #
+    # This is deliberately separate from "prepare-dist".
     # --------------------------------------------------------
 
     "og-generate": "scripts.og.generate_og",
     "og-build": "scripts.og.build_og",
+    "og-publish": "scripts.og.publish_og",
 
     # --------------------------------------------------------
     # Validation
@@ -162,6 +170,7 @@ COMMANDS = {
 
     "report": "scripts.build.build_report",
 }
+
 
 # ============================================================
 # Main

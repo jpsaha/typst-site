@@ -10,7 +10,6 @@ from scripts.config import (
     PDF_DIR,
     ASSETS_DIR,
     ASSETS_SOURCE_DIR,
-    GENERATED_OG_DIR,
     HOMEPAGE_JSON,
     TYPST_OG,
 )
@@ -76,8 +75,9 @@ def prepare_dist():
     TYPST_OG=true
         ----------------
         Remove dist completely.
-        Generate OG images separately.
-        Copy generated OG images into dist/assets/og/.
+        Static assets are copied from assets/.
+        Generated OG images are NOT copied here.
+        They are published separately by og-publish.
 
     TYPST_OG=false
         ----------------
@@ -230,6 +230,9 @@ def prepare_dist():
     # They are copied into:
     #
     #     dist/assets/og/
+    #
+    # Generated OG PNGs under generated/og/ are deliberately
+    # excluded from this step.
     # ========================================================
 
     png_count = 0
@@ -265,62 +268,30 @@ def prepare_dist():
     )
 
     # ========================================================
-    # Copy generated OG PNG images
+    # Generated OG images
     #
-    # Only when:
+    # IMPORTANT:
     #
-    #     TYPST_OG=true
+    # Generated OG PNGs are NOT copied here.
     #
-    # When TYPST_OG=false, the committed images restored above
-    # are used instead.
+    # They are produced in:
+    #
+    #     generated/og/
+    #
+    # and published later by:
+    #
+    #     python3 scripts/run.py og-publish
+    #
+    # This separation is necessary because prepare_dist()
+    # deletes and recreates dist/.
     # ========================================================
-
-    generated_og_count = 0
 
     if TYPST_OG:
 
-        if GENERATED_OG_DIR.exists():
-
-            target_og_dir = (
-                ASSETS_DIR / "og"
-            )
-
-            for source_png in (
-                GENERATED_OG_DIR.rglob("*.png")
-            ):
-
-                relative_path = (
-                    source_png.relative_to(
-                        GENERATED_OG_DIR
-                    )
-                )
-
-                target_png = (
-                    target_og_dir / relative_path
-                )
-
-                target_png.parent.mkdir(
-                    parents=True,
-                    exist_ok=True,
-                )
-
-                shutil.copy2(
-                    source_png,
-                    target_png,
-                )
-
-                print(
-                    "📋 Copied generated OG image: "
-                    f"{relative_path}"
-                )
-
-                generated_og_count += 1
-
-        else:
-
-            print(
-                "ℹ️ No generated OG images found"
-            )
+        print(
+            "ℹ️ TYPST_OG=true — "
+            "generated OG images will be published separately"
+        )
 
     else:
 
@@ -328,11 +299,6 @@ def prepare_dist():
             "ℹ️ TYPST_OG=false — "
             "using committed OG images"
         )
-
-    print(
-        f"📋 Copied {generated_og_count} "
-        f"generated OG image(s)"
-    )
 
     # ========================================================
     # Check generated metadata
