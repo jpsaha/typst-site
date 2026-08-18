@@ -307,7 +307,7 @@
       #text(weight: "bold")[
         Proof#if title != "" [: #title].
       ]
-
+      #h(0.5em)
       #content
 
       #grid(
