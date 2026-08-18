@@ -84,6 +84,11 @@ PROTECTED_ASSETS=(
 )
 
 
+PROTECTED_SCRIPTS=(
+    "site_config.py"
+)
+
+
 # ============================================================
 # Usage
 # ============================================================
@@ -239,6 +244,43 @@ rsync_assets() {
         "$target/"
 }
 
+# ============================================================
+# Synchronize scripts while protecting project-specific files
+# ============================================================
+
+rsync_scripts() {
+
+    local source="$1"
+    local target="$2"
+    local dry_run="${3:-false}"
+
+    local exclude_args=()
+
+    for file in "${PROTECTED_SCRIPTS[@]}"; do
+        exclude_args+=(--exclude="$file")
+    done
+
+    if [[ "$dry_run" == "false" ]]; then
+
+        rsync \
+            -a \
+            --delete \
+            "${exclude_args[@]}" \
+            "$source/" \
+            "$target/"
+
+        return
+    fi
+
+    rsync \
+        -a \
+        --delete \
+        --dry-run \
+        --itemize-changes \
+        "${exclude_args[@]}" \
+        "$source/" \
+        "$target/"
+}
 
 # ============================================================
 # Header
@@ -379,6 +421,21 @@ done
 
 
 # ============================================================
+# Show protected target scripts
+# ============================================================
+
+echo
+echo "=============================================="
+echo " Protected target scripts"
+echo "=============================================="
+echo
+
+for file in "${PROTECTED_SCRIPTS[@]}"; do
+    echo "  🔒 scripts/$file"
+done
+
+
+# ============================================================
 # Dry run
 # ============================================================
 
@@ -430,6 +487,10 @@ if $DRY_RUN; then
             if [[ "$item" == "assets" ]]; then
 
                 rsync_assets "$source" "$target" true
+
+            elif [[ "$item" == "scripts" ]]; then
+
+                rsync_scripts "$source" "$target" true
 
             else
 
@@ -538,6 +599,10 @@ for item in "${SYNC_ITEMS[@]}"; do
         if [[ "$item" == "assets" ]]; then
 
             rsync_assets "$source" "$target"
+
+        elif [[ "$item" == "scripts" ]]; then
+
+            rsync_scripts "$source" "$target"
 
         else
 
