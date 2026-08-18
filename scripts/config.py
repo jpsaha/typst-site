@@ -22,6 +22,15 @@ independently.
 import os
 from pathlib import Path
 
+from scripts.site_config import (
+    GITHUB_USERNAME,
+    REPO_NAME,
+    SITE_DESCRIPTION,
+    SITE_TITLE,
+    SITE_SUBTITLE,
+    SITE_ICON,
+    SITE_TAGLINE,
+)
 
 # ============================================================
 # Project root
@@ -156,34 +165,10 @@ LINK_REPORT = DIAGNOSTICS_DIR / "link_report.txt"
 BUILD_REPORT = DIAGNOSTICS_DIR / "build_report.txt"
 
 
-# ============================================================
-# Site identity
-# ============================================================
-
-SITE_TITLE = "Mathematics: Lectures & Notes"
-
-SITE_SUBTITLE = "Typeset with Typst"
-
-SITE_ICON = "🧮"
-
-SITE_TAGLINE = (
-    "These notes may contain typos, "
-    "and need not be a faithful representation of any lecture "
-    "or a course. Please report any errors you find to the author."
-)
-
 
 # ============================================================
 # SEO / Website
 # ============================================================
-
-# ------------------------------------------------------------
-# GitHub repository
-# ------------------------------------------------------------
-
-GITHUB_USERNAME = "jpsaha"
-REPO_NAME = "typst-site"
-
 
 # ------------------------------------------------------------
 # Website URL
@@ -195,15 +180,6 @@ REPO_NAME = "typst-site"
 
 SITE_URL = (
     f"https://{GITHUB_USERNAME}.github.io/{REPO_NAME}"
-)
-
-
-# ------------------------------------------------------------
-# Site-wide description
-# ------------------------------------------------------------
-
-SITE_DESCRIPTION = (
-    "Mathematics lectures, notes, and problem-solving resources."
 )
 
 
