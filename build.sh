@@ -82,11 +82,13 @@ If TARGET is omitted, "all" is used.
 
 
 Targets:
-
     ┌──────────────────────┬─────────────────────────────────────┬──────────────────────────────────────────────┐
     │ Target               │ Example                             │ Description                                  │
     ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
-    │ all                  │ ./build.sh                          │ Complete website + all PDFs + link check     │
+    │ all                  │ ./build.sh                          │ Complete website + committed OG PNGs +       │
+    │                      │                                     │ OG check + all PDFs + link check + report.   │
+    │                      │                                     │ Does not generate OG .asy or PNG files.      │
+    │                      │                                     │ Use og-refresh to regenerate OG assets.      │
     ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
     │ config               │ ./build.sh config                   │ Audit centralized configuration              │
     │ metadata             │ ./build.sh metadata                 │ Generate metadata                            │
