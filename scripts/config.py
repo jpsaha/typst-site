@@ -3,20 +3,24 @@
 """
 Central configuration for the Typst mathematics lecture website.
 
-This module contains:
+This module contains the project's shared configuration:
 
     - Project paths
+    - Source directories
     - Generated-file paths
     - Distribution paths
     - Diagnostic paths
-    - Site identity
+    - Website identity
     - SEO configuration
     - Open Graph configuration
     - Build-mode configuration
 
-All build scripts should import paths and configuration values
-from this module rather than constructing project-specific paths
-independently.
+Build scripts should import project-specific paths and settings
+from this module rather than constructing them independently.
+
+This module should contain configuration only. Build operations
+belong in the scripts/build/, scripts/metadata/, scripts/lint/,
+and scripts/og/ modules.
 """
 
 import os
@@ -31,6 +35,7 @@ from scripts.site_config import (
     SITE_ICON,
     SITE_TAGLINE,
 )
+
 
 # ============================================================
 # Project root
@@ -47,7 +52,9 @@ from scripts.site_config import (
 #
 # ============================================================
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(
+    __file__
+).resolve().parents[1]
 
 
 # ============================================================
@@ -55,16 +62,19 @@ ROOT = Path(__file__).resolve().parents[1]
 # ============================================================
 
 CONTENT_DIR = ROOT / "content"
+
 TEMPLATES_DIR = ROOT / "templates"
+
 GENERATED_DIR = ROOT / "generated"
+
 DIAGNOSTICS_DIR = ROOT / "diagnostics"
 
 
 # ============================================================
-# Source directories
+# Source assets
 # ============================================================
-
-# Static assets supplied directly by the project.
+#
+# Static assets supplied by the project.
 #
 # These are copied into:
 #
@@ -72,30 +82,9 @@ DIAGNOSTICS_DIR = ROOT / "diagnostics"
 #
 # during dist preparation.
 #
+# ============================================================
+
 ASSETS_SOURCE_DIR = ROOT / "assets"
-
-
-# ============================================================
-# Generated Open Graph files
-# ============================================================
-#
-# Generated OG sources and intermediate PNG files are kept
-# outside dist/.
-#
-# Example:
-#
-#     generated/og/gt/lec2.asy
-#     generated/og/gt/lec2.png
-#
-# These files are temporary build products.
-#
-# They are later copied into:
-#
-#     dist/assets/og/
-#
-# by the OG/dist preparation pipeline.
-#
-GENERATED_OG_DIR = GENERATED_DIR / "og"
 
 
 # ============================================================
@@ -103,25 +92,72 @@ GENERATED_OG_DIR = GENERATED_DIR / "og"
 # ============================================================
 
 BOOK_SOURCE = ROOT / "book_source.typ"
+
 PAGES_SOURCE = ROOT / "pages_source.typ"
+
 PDFLAYOUT = TEMPLATES_DIR / "pdflayout.typ"
 
 
 # ============================================================
-# Generated metadata files
+# Generated metadata / Typst files
 # ============================================================
 #
 # These files are produced by the metadata/build pipeline.
-# They should not normally be edited by hand.
+#
+# They should not normally be edited manually.
 #
 # ============================================================
 
-LECTURES_TYP = GENERATED_DIR / "lectures.typ"
-BOOK_TYP = GENERATED_DIR / "book.typ"
-PAGES_TYP = GENERATED_DIR / "pages.typ"
-PAGES_META_TYP = GENERATED_DIR / "pages_meta.typ"
-HOMEPAGE_TYP = GENERATED_DIR / "homepage.typ"
-HOMEPAGE_JSON = GENERATED_DIR / "homepage.json"
+LECTURES_TYP = (
+    GENERATED_DIR / "lectures.typ"
+)
+
+BOOK_TYP = (
+    GENERATED_DIR / "book.typ"
+)
+
+PAGES_TYP = (
+    GENERATED_DIR / "pages.typ"
+)
+
+PAGES_META_TYP = (
+    GENERATED_DIR / "pages_meta.typ"
+)
+
+HOMEPAGE_TYP = (
+    GENERATED_DIR / "homepage.typ"
+)
+
+HOMEPAGE_JSON = (
+    GENERATED_DIR / "homepage.json"
+)
+
+
+# ============================================================
+# Generated Open Graph files
+# ============================================================
+#
+# OG generation happens outside dist/.
+#
+# Example:
+#
+#     generated/
+#     └── og/
+#         ├── lec1.asy
+#         ├── lec1.png
+#         └── ...
+#
+# These are working/generated files.
+#
+# Published OG images belong in:
+#
+#     dist/assets/og/
+#
+# ============================================================
+
+GENERATED_OG_DIR = (
+    GENERATED_DIR / "og"
+)
 
 
 # ============================================================
@@ -135,6 +171,8 @@ HOMEPAGE_JSON = GENERATED_DIR / "homepage.json"
 #
 #     dist/
 #     ├── index.html
+#     ├── sitemap.xml
+#     ├── robots.txt
 #     ├── pages/
 #     ├── pdf/
 #     └── assets/
@@ -145,36 +183,87 @@ HOMEPAGE_JSON = GENERATED_DIR / "homepage.json"
 
 DIST_DIR = ROOT / "dist"
 
-PAGES_DIR = DIST_DIR / "pages"
-PDF_DIR = DIST_DIR / "pdf"
-ASSETS_DIR = DIST_DIR / "assets"
-OG_DIR = ASSETS_DIR / "og"
+PAGES_DIR = (
+    DIST_DIR / "pages"
+)
 
-INDEX_HTML = DIST_DIR / "index.html"
+PDF_DIR = (
+    DIST_DIR / "pdf"
+)
+
+ASSETS_DIR = (
+    DIST_DIR / "assets"
+)
+
+OG_DIR = (
+    ASSETS_DIR / "og"
+)
+
+INDEX_HTML = (
+    DIST_DIR / "index.html"
+)
+
+SITEMAP_XML = (
+    DIST_DIR / "sitemap.xml"
+)
+
+ROBOTS_TXT = (
+    DIST_DIR / "robots.txt"
+)
 
 
 # ============================================================
 # Diagnostic files
 # ============================================================
 
-IMPORTS_DOT = DIAGNOSTICS_DIR / "imports.dot"
+IMPORTS_DOT = (
+    DIAGNOSTICS_DIR / "imports.dot"
+)
 
-METADATA_REPORT = DIAGNOSTICS_DIR / "metadata_report.txt"
-GENERATED_REPORT = DIAGNOSTICS_DIR / "generated_report.txt"
-LINK_REPORT = DIAGNOSTICS_DIR / "link_report.txt"
-BUILD_REPORT = DIAGNOSTICS_DIR / "build_report.txt"
+METADATA_REPORT = (
+    DIAGNOSTICS_DIR / "metadata_report.txt"
+)
 
+GENERATED_REPORT = (
+    DIAGNOSTICS_DIR / "generated_report.txt"
+)
+
+LINK_REPORT = (
+    DIAGNOSTICS_DIR / "link_report.txt"
+)
+
+BUILD_REPORT = (
+    DIAGNOSTICS_DIR / "build_report.txt"
+)
+
+CONFIG_REPORT = (
+    DIAGNOSTICS_DIR / "config_report.txt"
+)
 
 
 # ============================================================
-# SEO / Website
+# Website identity
 # ============================================================
+#
+# The basic site identity is defined in:
+#
+#     scripts/site_config.py
+#
+# This module derives the URL and build-related settings from
+# that central configuration.
+#
+# ============================================================
+
 
 # ------------------------------------------------------------
 # Website URL
 # ------------------------------------------------------------
 #
 # No trailing "/" is used.
+#
+# Example:
+#
+#     https://jpsaha.github.io/typst-site
 #
 # ============================================================
 
@@ -255,45 +344,130 @@ TYPST_OG_BUILD = False
 
 TYPST_OG_GITBUILD = False
 
+
+# ============================================================
+# ===========OLD GITHUB ACTION STUFF==========================
+# ============================================================
+# IS_GITHUB_ACTIONS = (
+#     os.environ.get("GITHUB_ACTIONS", "").lower() == "true"
+# )
+
+
+# if not IS_GITHUB_ACTIONS and "TYPST_OG_BUILD" in os.environ:
+
+#     TYPST_OG = (
+#         os.environ["TYPST_OG_BUILD"].lower() == "true"
+#     )
+
+# else:
+
+#     TYPST_OG = (
+#         TYPST_OG_GITBUILD
+#         if IS_GITHUB_ACTIONS
+#         else TYPST_OG_BUILD
+#     )
+# ============================================================
+# ===========OLD GITHUB ACTION STUFF==========================
+# ============================================================
+
+# ============================================================
+# GitHub Actions detection
+# ============================================================
+
+IS_GITHUB_ACTIONS = (
+    os.environ.get(
+        "GITHUB_ACTIONS",
+        "",
+    ).lower()
+    == "true"
+)
+
+
+# ============================================================
+# Boolean environment helper
+# ============================================================
+
+def env_bool(
+    name,
+    default=False,
+):
+    """
+    Read a boolean environment variable.
+
+    Accepted true values:
+
+        1
+        true
+        yes
+        on
+
+    Accepted false values:
+
+        0
+        false
+        no
+        off
+
+    Unknown values fall back to default.
+    """
+
+    value = os.environ.get(name)
+
+    if value is None:
+        return default
+
+    value = value.strip().lower()
+
+    if value in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }:
+        return True
+
+    if value in {
+        "0",
+        "false",
+        "no",
+        "off",
+    }:
+        return False
+
+    return default
+
+
 # ============================================================
 # Effective Open Graph setting
 # ============================================================
 #
 # Priority:
 #
-#     1. GitHub Actions
-#        → TYPST_OG_GITBUILD
+#     GitHub Actions
+#         → TYPST_OG_GITBUILD
 #
-#     2. Local build with TYPST_OG_BUILD environment variable
-#        → environment variable value
+#     Local + TYPST_OG_BUILD environment variable
+#         → environment variable value
 #
-#     3. Normal local build
-#        → TYPST_OG_BUILD from this configuration file
+#     Normal local build
+#         → TYPST_OG_BUILD from config.py
 #
 # Important:
 #
-# A TYPST_OG_BUILD environment variable does NOT override
-# TYPST_OG_GITBUILD on GitHub Actions.
+# TYPST_OG_BUILD does not override TYPST_OG_GITBUILD
+# on GitHub Actions.
 #
 # ============================================================
 
-IS_GITHUB_ACTIONS = (
-    os.environ.get("GITHUB_ACTIONS", "").lower() == "true"
-)
+if IS_GITHUB_ACTIONS:
 
-
-if not IS_GITHUB_ACTIONS and "TYPST_OG_BUILD" in os.environ:
-
-    TYPST_OG = (
-        os.environ["TYPST_OG_BUILD"].lower() == "true"
-    )
+    TYPST_OG = TYPST_OG_GITBUILD
 
 else:
 
-    TYPST_OG = (
-        TYPST_OG_GITBUILD
-        if IS_GITHUB_ACTIONS
-        else TYPST_OG_BUILD
+    TYPST_OG = env_bool(
+        "TYPST_OG_BUILD",
+        default=TYPST_OG_BUILD,
     )
 
 
@@ -301,16 +475,11 @@ else:
 # Default Open Graph image
 # ============================================================
 #
-# Used when a page has neither:
+# This is a PUBLIC URL.
 #
-#     1. an explicit og_image, nor
-#     2. an available generated/published page-specific image.
+# It is NOT a filesystem path.
 #
-# Source:
-#
-#     assets/og/default.png
-#
-# Published:
+# Published file:
 #
 #     dist/assets/og/default.png
 #
@@ -318,28 +487,33 @@ else:
 #
 #     /assets/og/default.png
 #
-# This is a PUBLIC URL, not a filesystem path.
-#
 # ============================================================
 
-SITE_OG_IMAGE = "/assets/og/default.png"
+SITE_OG_IMAGE = (
+    "/assets/og/default.png"
+)
 
 
 # ============================================================
-# Open Graph generation
-# ============================================================
-#
-# Configuration shared by:
-#
-#     scripts/og/generate_og.py
-#     scripts/og/build_og.py
-#
+# Open Graph directories
 # ============================================================
 
+# Generated OG sources and intermediate PNG files.
 
-# ------------------------------------------------------------
-# Asymptote template
-# ------------------------------------------------------------
+OG_GENERATED_DIR = (
+    GENERATED_DIR / "og"
+)
+
+# Published OG images.
+
+OG_PUBLISHED_DIR = (
+    DIST_DIR / "assets" / "og"
+)
+
+
+# ============================================================
+# Open Graph template
+# ============================================================
 #
 # Template used to generate Asymptote source files.
 #
@@ -355,29 +529,58 @@ OG_TEMPLATE_FILE = (
 )
 
 
-# ------------------------------------------------------------
-# Final Open Graph image dimensions
-# ------------------------------------------------------------
+# ============================================================
+# Open Graph image dimensions
+# ============================================================
 #
-# Standard Open Graph landscape dimensions:
+# Standard landscape Open Graph dimensions:
 #
 #     1200 × 630 pixels
 #
 # ============================================================
 
 OG_WIDTH = 1200
+
 OG_HEIGHT = 630
 
 
-# ------------------------------------------------------------
-# Open Graph rasterization density
-# ------------------------------------------------------------
+# ============================================================
+# Open Graph rasterization
+# ============================================================
 #
 # Asymptote first produces an intermediate PDF.
 #
-# ImageMagick then rasterizes that PDF at this density before
-# resizing the result to OG_WIDTH × OG_HEIGHT.
+# ImageMagick then rasterizes that PDF at the configured
+# density and resizes the result to exactly:
+#
+#     1200 × 630
 #
 # ============================================================
 
 OG_DENSITY = 300
+
+OG_FILTER = "Lanczos"
+
+
+# ============================================================
+# Open Graph file format
+# ============================================================
+
+OG_FORMAT = "png"
+
+
+# ============================================================
+# Open Graph public path
+# ============================================================
+#
+# Public URL prefix for generated OG images.
+#
+# Example:
+#
+#     /assets/og/lec1.png
+#
+# ============================================================
+
+OG_PUBLIC_PATH = (
+    "/assets/og"
+)
