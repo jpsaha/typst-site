@@ -1330,14 +1330,22 @@ run_build
 
 
 # ============================================================
-# Print summary
+# Print final summary
 #
-# The report is generated after the selected build target has
-# completed so that all available stage timings and diagnostic
-# information can be included.
-#
-# For the complete build, this produces the final build
+# Only the complete "all" build produces the final diagnostics
 # summary.
+#
+# Individual targets execute only their requested operation.
+# This prevents commands such as:
+#
+#     ./build.sh config
+#     ./build.sh metadata
+#     ./build.sh html
+#     ./build.sh pdf
+#
+# from unexpectedly generating diagnostics/build_report.txt.
 # ============================================================
 
-print_summary
+if [[ "$TARGET" == "all" ]]; then
+    print_summary
+fi
