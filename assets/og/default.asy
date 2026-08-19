@@ -80,7 +80,7 @@ draw(
 
 // Inner rounded cream panel
 fill(
-  roundedbox((12,12),(W-12,H-72),22),
+  roundedbox((12,12),(W-12,H-6),22),
   cream
 );
 
@@ -213,21 +213,21 @@ label(
 // Decorative line above title
 // ------------------------------------------------------------
 
-draw(
-  (390,445)--(810,445),
-  lightgreen + linewidth(1)
-);
+// draw(
+//   (390,445)--(810,445),
+//   lightgreen + linewidth(1)
+// );
 
-dot((390,445), lightgreen);
-dot((810,445), lightgreen);
+// dot((390,445), lightgreen);
+// dot((810,445), lightgreen);
 
 
 // ------------------------------------------------------------
 // Pi circle
 // ------------------------------------------------------------
 
-pair PI = (600,475);
-real PIR = 28;
+pair PI = (600,500);
+real PIR = 40;
 
 fill(
   circle(PI,PIR),
@@ -237,7 +237,7 @@ fill(
 label(
   "$\pi$",
   PI + (0,-2),
-  white + fontsize(25)
+  white + fontsize(80)
 );
 
 
