@@ -430,11 +430,11 @@ Old version of boxed.
     spacing: 0.75em
     
   )
-  // set text(
+  set text(
   //   font: fonts.text,
-  //   size: 11pt,
+    size: 12pt,
   //   fallback: false,
-  // )
+  )
 
 // ============================================================
 // END: Later addition/modification
