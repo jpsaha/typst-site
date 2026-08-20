@@ -109,6 +109,7 @@
   fmt,
   base: none,
   base-level: none,
+  number-fn: none,
 ) = {
 
   let global_numbering = numbering
@@ -124,77 +125,156 @@
     restate: false,
     defer: false,
     restate-keys: (counter, ),
+
+    // ----------------------------------------------------------
+    // Reference formatting
+    // ----------------------------------------------------------
+
     ref-fmt: (supplement, thm) => {
-      if supplement != none { supplement = [#supplement~] }
-      link(thm.loc, [#supplement#(thm.number)])
+      if supplement != none {
+        supplement = [#supplement~]
+      }
+
+      link(
+        thm.loc,
+        [#supplement#(thm.number)]
+      )
     },
+
   ) => {
+
     let name = none
+
     if args != none and args.pos().len() > 0 {
       name = args.pos().first()
     }
 
     let result = none
+
+    // ----------------------------------------------------------
+    // Determine whether this theorem has a number
+    // ----------------------------------------------------------
+
     if number == auto and numbering == none {
       number = none
     }
 
     let number_ = number
+
+    // ----------------------------------------------------------
+    // Normal thm-env numbering
+    //
+    // This is retained for existing theorem environments.
+    // ----------------------------------------------------------
+
     if number == auto and numbering != none {
+
       result = context {
+
         let loc = here()
+
         return thm-counters.update(thmpair => {
+
           let counters = thmpair.at("counters")
+
           // Manually update heading counter
           counters.at("heading") = heading-counter.at(loc)
+
           if not counter in counters.keys() {
             counters.insert(counter, (0, ))
           }
 
           let tc = counters.at(counter)
+
           if base != none {
+
             let bc = counters.at(base)
 
             // Pad or chop the base count
             if base-level != none {
+
               if bc.len() < base-level {
                 bc = bc + (0,) * (base-level - bc.len())
-              } else if bc.len() > base-level{
+
+              } else if bc.len() > base-level {
                 bc = bc.slice(0, base-level)
               }
             }
 
             // Reset counter if the base counter has updated
             if tc.slice(0, -1) == bc {
-              counters.at(counter) = (..bc, tc.last() + 1)
+              counters.at(counter) = (
+                ..bc,
+                tc.last() + 1,
+              )
             } else {
-              counters.at(counter) = (..bc, 1)
+              counters.at(counter) = (
+                ..bc,
+                1,
+              )
             }
+
           } else {
-            // If we have no base counter, just count one level
-            counters.at(counter) = (tc.last() + 1,)
-            let latest = counters.at(counter)
+
+            // No base counter:
+            // simply increment the last level.
+            counters.at(counter) = (
+              tc.last() + 1,
+            )
           }
 
           let latest = counters.at(counter)
+
           return (
             "counters": counters,
-            "latest": latest
+            "latest": latest,
           )
         })
       }
 
-      number = context global_numbering(numbering, ..thm-counters.get().latest)
+      number = context global_numbering(
+        numbering,
+        ..thm-counters.get().latest,
+      )
     }
 
+    // ----------------------------------------------------------
+    // Store theorem information
+    // ----------------------------------------------------------
+
     result = result + context {
+
       let loc = here()
+
+      // Default: use the number determined above.
       let number__ = number_
-      if number__ == auto and numbering != none {
+
+      // --------------------------------------------------------
+      // External numbering source
+      //
+      // For math blocks this will be math-number.
+      // --------------------------------------------------------
+
+      if number-fn != none {
+
+        number__ = number-fn()
+
+      } else if number__ == auto and numbering != none {
+
         number__ = thm-counters.at(loc).latest
-        number__ = global_numbering(numbering, ..number__)
+
+        number__ = global_numbering(
+          numbering,
+          ..number__,
+        )
       }
+
+      // --------------------------------------------------------
+      // Store theorem
+      // --------------------------------------------------------
+
       thm-stored.update(x => {
+
         let thm = (
           args: args,
           name: name,
@@ -210,8 +290,9 @@
           loc: loc,
           counter: counter,
           base: base,
-          base-level: base-level
+          base-level: base-level,
         )
+
         if x == none {
           return (thm, )
         } else {
@@ -220,14 +301,28 @@
       })
     }
 
+    // ----------------------------------------------------------
+    // Deferred theorem
+    // ----------------------------------------------------------
+
     if defer {
       return result
     }
 
+    // ----------------------------------------------------------
+    // Referenceable output
+    // ----------------------------------------------------------
+
     return figure(
-      result +  // hacky!
-      fmt(name, number, body, ..args.named()) +
+      result +
+      fmt(
+        name,
+        number,
+        body,
+        ..args.named(),
+      ) +
       [#metadata(counter) <meta:thm-env-counter>],
+
       kind: "thm-env",
       outlined: false,
       caption: name,

@@ -574,14 +574,14 @@
   }
 
   thm-env(
-    "math",
+    "math-block-ref",
     fmt,
-    base: "heading",
-    base-level: none,
+    base: none,
+    number-fn: math-number,
   ).with(
-    numbering: "1.1",
+    numbering: none,
     supplement: label,
-    restate-keys: ("math",),
+    restate-keys: ("math-block-ref",),
   )
 }
 
