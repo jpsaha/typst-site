@@ -15,16 +15,56 @@ rm -rf .git
 rm -rf coding/ content/ diagnostics/ dist/ docs/ generated/
 rm -f pdflayout_old.typ README.md
 
-open scripts/config.py
-
 mkdir -p content/lectures
-touch content/lectures/lec1.typ
-touch content/lectures/lec1_content.typ
+
+cat > content/lectures/lec1.typ <<'EOF'
+// src/lec1.typ
+#import "../../templates/course.typ": *
+
+#let lecture = (
+  file: "lec1",
+  type: "lecture",
+  number: 1,
+  title: "Group theory",
+  category: "Algebra",
+  tags: ["Lagrange's theorem", "Cayley's theorem"],
+  description: "lec1 description.",
+  // og_image: "assets/og/lec1.png", // Open Graph image for social media sharing. Provide or comment out if not needed.
+)
+
+#show: lecture-layout(lecture)
+
+#show: doc => {
+  reset-counters(lecture.number)
+  doc
+}
+
+#page-header(lecture, chap: true)
+
+#include "lec1_content.typ"
+
+#previous-next(lecture)
+EOF
+
+cat > content/lectures/lec1_content.typ <<'EOF'
+#import "../../templates/course.typ": *
+EOF
+
+open scripts/site_config.py
+
+```
+
+Next, edit `scripts/site_config.py` to set the site title, author, and other metadata.
+
+Finally, initialize a new Git repository:
+
+```bash
 
 git init
-git branch -M main
 git add .
 git commit -m "Initial commit"
+git branch -M main
+
 ```
 
 ## What the commands do
@@ -37,7 +77,7 @@ git commit -m "Initial commit"
 | `rm -rf .git`                                                 | Remove the Git history from the template          |
 | `rm -rf coding/ content/ diagnostics/ dist/ docs/ generated/` | Remove old project-specific and generated files   |
 | `rm -f pdflayout_old.typ README.md`                           | Remove obsolete files                             |
-| `open scripts/config.py`                                      | Open the site configuration                       |
+| `open scripts/site_config.py`                                 | Open the site configuration                       |
 | `mkdir -p content/lectures`                                   | Create the initial lecture-content directory      |
 | `touch content/lectures/lec1.typ`                             | Create an empty lecture file                      |
 | `touch content/lectures/lec1_content.typ`                     | Create an empty lecture content file              |
