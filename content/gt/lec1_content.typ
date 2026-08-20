@@ -1,14 +1,35 @@
 // #import "../../pdflayout.typ":* // required so that defn etc makes sense
+#import "../../templates/pdflayout.typ": *
 // #import "../../templates/theorems.typ":*
 #import "../../templates/course.typ": *
-
 #exer("26")[
   Consider a 
-]
+]<text>
 
-#exer[funn]
+@text
 
-== Fields
+// #ex[funn]<funny-exercise>
+
+// @funny-exercise
+
+
+#defn("Vector Space")[
+  ...
+]<def-vector-space1>
+
+@def-vector-space1.
+
+
+
+== Fields<fields>
+
+#defn("Vector Space")[
+  ...
+]<def-vector-space>
+
+@def-vector-space.
+
+
 
 We begin by establishing the properties of fields mapping vector components.
 
@@ -18,11 +39,9 @@ We begin by establishing the properties of fields mapping vector components.
   
   1. Additivity: $T(u + v) = T(u) + T(v)$ for all $u, v in V$
   2. Homogeneity: $T(c v) = c T(v)$ for all $c in F$ and $v in V$
-]
+]<defn-linear-map>
 
-#defn("Vector Space")[
-  ...
-]<def-vector-space>
+@defn-linear-map.
 
 == Degree of an extension
 
