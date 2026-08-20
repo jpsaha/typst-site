@@ -1,5 +1,4 @@
 // theorem / definition / exercise
-#import "theorems.typ": thm-env
 #import "render.typ": block-container
 #import "colors.typ": block-colors
 #import "block-engine.typ": make-block
@@ -545,61 +544,16 @@
 // }
 // 
 
-// #let make-block-arg(kind, label) = {
-//   (..args) => {
-//     let args = args.pos()
-
-//     if args.len() == 1 {
-//       make-block(kind, label, none, args.at(0))
-//     } else {
-//       make-block(kind, label, args.at(0), args.at(1))
-//     }
-//   }
-// }
 #let make-block-arg(kind, label) = {
-  let c = block-colors.at(kind)
+  (..args) => {
+    let args = args.pos()
 
-  let fmt(
-    name,
-    number,
-    body,
-    title: auto,
-    ..args,
-  ) = {
-    let heading = if number == none {
-      label
+    if args.len() == 1 {
+      make-block(kind, label, none, args.at(0))
     } else {
-      label + " " + number
+      make-block(kind, label, args.at(0), args.at(1))
     }
-
-    if title != auto and title != none {
-      heading += " (" + title + ")"
-    }
-
-    block(
-      width: 100%,
-      stroke: 0.9pt + rgb(c.border),
-      fill: none,
-      inset: 9pt,
-      radius: 5pt,
-      breakable: true,
-      [
-        #text(weight: "bold", size: 0.9em)[#heading.]
-        #body
-      ],
-    )
   }
-
-  thm-env(
-    kind,
-    fmt,
-    base: "heading",
-    base-level: none,
-  ).with(
-    numbering: "1.1",
-    supplement: label,
-    restate-keys: (kind,),
-  )
 }
 
 #let theorem = make-block-arg("theorem", "Theorem")
