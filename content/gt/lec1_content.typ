@@ -4,9 +4,13 @@
 
 #exer("26")[
   Consider a 
-]
+]<26>
 
-#exer[funn]
+See @26.
+
+#exer[funn]<funn>
+
+Solve @funn.
 
 == Fields
 
@@ -18,7 +22,9 @@ We begin by establishing the properties of fields mapping vector components.
   
   1. Additivity: $T(u + v) = T(u) + T(v)$ for all $u, v in V$
   2. Homogeneity: $T(c v) = c T(v)$ for all $c in F$ and $v in V$
-]
+]<defn-linmap>
+
+@defn-linmap.
 
 #defn("Vector Space")[
   ...

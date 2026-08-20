@@ -14,7 +14,9 @@ In this session, we analyze how linear transformations scale specific vector sub
   $ T(v) = lambda v $
   
   The scalar $lambda$ is called the *eigenvalue* corresponding to the eigenvector $v$.
-]
+]<defn-eeigenvalue-eigeenvector>
+
+See @defn-eeigenvalue-eigeenvector for the formal definition of eigenvalues and eigenvectors.
 
 == Fundamental Theorems
 
