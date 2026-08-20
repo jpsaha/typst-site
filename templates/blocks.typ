@@ -556,80 +556,51 @@
 //     }
 //   }
 // }
-
 #let make-block-arg(kind, label) = {
+  let c = block-colors.at(kind)
+
   let fmt(
     name,
     number,
     body,
     title: auto,
-    ..args_individual,
+    ..args,
   ) = {
-    make-block(
-      kind,
-      label,
-      if title == auto { none } else { title },
-      body,
+    let heading = if number == none {
+      label
+    } else {
+      label + " " + number
+    }
+
+    if title != auto and title != none {
+      heading += " (" + title + ")"
+    }
+
+    block(
+      width: 100%,
+      stroke: 0.9pt + rgb(c.border),
+      fill: none,
+      inset: 9pt,
+      radius: 5pt,
+      breakable: true,
+      [
+        #text(weight: "bold", size: 0.9em)[#heading.]
+        #body
+      ],
     )
   }
 
   thm-env(
-    "math",
+    kind,
     fmt,
     base: "heading",
     base-level: none,
   ).with(
     numbering: "1.1",
     supplement: label,
-    restate-keys: ("math",),
+    restate-keys: (kind,),
   )
 }
-
-// #let make-block-arg(kind, label) = {
-//   let c = block-colors.at(kind)
-
-//   let fmt(
-//     name,
-//     number,
-//     body,
-//     title: auto,
-//     ..args,
-//   ) = {
-//     let heading = if number == none {
-//       label
-//     } else {
-//       label + " " + number
-//     }
-
-//     if title != auto and title != none {
-//       heading += " (" + title + ")"
-//     }
-
-//     block(
-//       width: 100%,
-//       stroke: 0.9pt + rgb(c.border),
-//       fill: none,
-//       inset: 9pt,
-//       radius: 5pt,
-//       breakable: true,
-//       [
-//         #text(weight: "bold", size: 0.9em)[#heading.]
-//         #body
-//       ],
-//     )
-//   }
-
-//   thm-env(
-//     kind,
-//     fmt,
-//     base: "heading",
-//     base-level: none,
-//   ).with(
-//     numbering: "1.1",
-//     supplement: label,
-//     restate-keys: (kind,),
-//   )
-// }
 
 #let theorem = make-block-arg("theorem", "Theorem")
 #let thm = make-block-arg("theorem", "Theorem")
