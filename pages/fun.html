@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>/* Alignment */
+mtable.right-align mtd,
+mtable mtd.right-align,
+mtable.left-align mtd.right-align,
+mtable.aligned mtd:nth-child(odd) {
+  justify-items: end;
+  text-align: right;
+}
+mtable.cases mtd,
+mtable.left-align mtd,
+mtable mtd.left-align,
+mtable.aligned mtd:nth-child(even),
+math:is(:not([display])) > mtable.multiline-equation mtd {
+  justify-items: start;
+  text-align: left;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.left-flush {
+  padding-left: 0;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.right-flush {
+  padding-right: 0;
+}
+
+/* Tables */
+mtable {
+  math-style: inherit;
+}
+mtd {
+  math-depth: auto-add;
+  math-style: compact;
+  math-shift: compact;
+}
+
+/* Equations */
+mtable.multiline-equation mtd {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+  padding: 0;
+}
+math > mtable.multiline-equation mtr:not(:last-child) mtd {
+  padding-bottom: 0.5em;
+}
+
+/* Fractions */
+mfrac {
+  padding-inline: 0;
+  margin-inline: 0.1em;
+}
+
+/* Accents */
+mover[accent="true" i] > :first-child {
+  font-feature-settings: "dtls";
+}
+mover.dotted[accent="true" i] > :first-child {
+  font-feature-settings: "dtls" 0;
+}
+
+/* Other rules for scriptlevel, displaystyle and math-shift */
+munder > :nth-child(2),
+munderover > :nth-child(2) {
+  math-shift: compact
+}
+munder[accentunder="true" i] > :not(:first-child),
+mover[accent="true" i] > :not(:first-child) {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+}</style><title>Fun Lecture</title>
+<meta name="description" content="Mathematics lectures, notes, and problem-solving resources.">
+<link rel="canonical" href="https://jpsaha.github.io/typst-site/pages/fun.html">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fun Lecture">
+<meta property="og:description" content="Mathematics lectures, notes, and problem-solving resources.">
+<meta property="og:url" content="https://jpsaha.github.io/typst-site/pages/fun.html">
+<meta property="og:site_name" content="Mathematics: Lectures &amp; Notes">
+<meta property="og:image" content="https://jpsaha.github.io/typst-site/assets/og/courses/fun.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fun Lecture">
+<meta name="twitter:description" content="Mathematics lectures, notes, and problem-solving resources.">
+<meta name="twitter:image" content="https://jpsaha.github.io/typst-site/assets/og/courses/fun.png">
+</head><body><nav class="breadcrumb"><a href="../index.html">🏠 Home</a> <span class="breadcrumb-sep">/</span> Extras <span class="breadcrumb-sep">/</span> Fun Lecture</nav><div class="download-buttons"><p><a href="../pdf/fun.pdf">⬇ PDF</a></p></div><h1 style="font-family: system-ui, sans-serif;
+        color: #111;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;">Fun Lecture</h1><div class="lecture-meta"></div><h2>Core Definitions</h2><p>aaa</p><figure><div class="math-card theorem" style="width: 100%;border: 1px solid #0066cc;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Theorem 0.1</strong></div><div class="math-card-body">There are infinitely many prime numbers of the form <math><mn>4</mn><mi>𝑛</mi><mo>+</mo><mn>3</mn></math>.</div></div></figure></body></html>

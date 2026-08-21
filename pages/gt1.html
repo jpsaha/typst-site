@@ -1,0 +1,108 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>/* Alignment */
+mtable.right-align mtd,
+mtable mtd.right-align,
+mtable.left-align mtd.right-align,
+mtable.aligned mtd:nth-child(odd) {
+  justify-items: end;
+  text-align: right;
+}
+mtable.cases mtd,
+mtable.left-align mtd,
+mtable mtd.left-align,
+mtable.aligned mtd:nth-child(even),
+math:is(:not([display])) > mtable.multiline-equation mtd {
+  justify-items: start;
+  text-align: left;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.left-flush {
+  padding-left: 0;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.right-flush {
+  padding-right: 0;
+}
+
+/* Tables */
+mtable {
+  math-style: inherit;
+}
+mtd {
+  math-depth: auto-add;
+  math-style: compact;
+  math-shift: compact;
+}
+
+/* Equations */
+mtable.multiline-equation mtd {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+  padding: 0;
+}
+math > mtable.multiline-equation mtr:not(:last-child) mtd {
+  padding-bottom: 0.5em;
+}
+
+/* Fractions */
+mfrac {
+  padding-inline: 0;
+  margin-inline: 0.1em;
+}
+
+/* Accents */
+mover[accent="true" i] > :first-child {
+  font-feature-settings: "dtls";
+}
+mover.dotted[accent="true" i] > :first-child {
+  font-feature-settings: "dtls" 0;
+}
+
+/* Other rules for scriptlevel, displaystyle and math-shift */
+munder > :nth-child(2),
+munderover > :nth-child(2) {
+  math-shift: compact
+}
+munder[accentunder="true" i] > :not(:first-child),
+mover[accent="true" i] > :not(:first-child) {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+}</style><title>Groups</title>
+<meta name="description" content="Introduction to Group theory.">
+<link rel="canonical" href="https://jpsaha.github.io/typst-site/pages/gt1.html">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Groups">
+<meta property="og:description" content="Introduction to Group theory.">
+<meta property="og:url" content="https://jpsaha.github.io/typst-site/pages/gt1.html">
+<meta property="og:site_name" content="Mathematics: Lectures &amp; Notes">
+<meta property="og:image" content="https://jpsaha.github.io/typst-site/assets/og/gt/lec1.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Groups">
+<meta name="twitter:description" content="Introduction to Group theory.">
+<meta name="twitter:image" content="https://jpsaha.github.io/typst-site/assets/og/gt/lec1.png">
+</head><body><nav class="breadcrumb"><a href="../index.html">🏠 Home</a> <span class="breadcrumb-sep">/</span> Group theory <span class="breadcrumb-sep">/</span> Groups</nav><div class="download-buttons"><p><a href="../pdf/gt1.pdf">⬇ PDF</a></p></div><h1 style="font-family: system-ui, sans-serif;
+        color: #111;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;">1. Groups</h1><div class="lecture-meta"><p>📅 2026-08-10<br></p></div><figure id="loc-1"><div class="math-card exercise" style="width: 100%;border: 1px solid #c62828;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Exercise 1.1</strong></div><div class="math-card-body">Consider a</div></div></figure><p>See <a href="#loc-1">Exercise 1.1</a>.</p><figure id="funn"><div class="math-card exercise" style="width: 100%;border: 1px solid #c62828;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Exercise 1.2</strong></div><div class="math-card-body">funn</div></div></figure><p>Solve <a href="#funn">Exercise 1.2</a>.</p><h3>Fields</h3><p>We begin by establishing the properties of fields mapping vector components.</p><figure id="defn-linmap"><div class="math-card definition" style="width: 100%;border: 1px solid #2e7d32;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Definition 1.3</strong></div><div class="math-card-body"><p>A function <math><mi>𝑇</mi><mo lspace="0.2777777777777778em" rspace="0.2777777777777778em">:</mo><mi>𝑉</mi><mo stretchy="false">→</mo><mi>𝑊</mi></math> between two vector spaces over the same field <math><mi>𝐹</mi></math> is called a <strong>linear transformation</strong> if it satisfies:</p><ol><li value="1">Additivity: <math><mi>𝑇</mi><mrow><mo>(</mo><mrow><mi>𝑢</mi><mo>+</mo><mi>𝑣</mi></mrow><mo>)</mo></mrow><mo>=</mo><mi>𝑇</mi><mrow><mo>(</mo><mi>𝑢</mi><mo>)</mo></mrow><mo>+</mo><mi>𝑇</mi><mrow><mo>(</mo><mi>𝑣</mi><mo>)</mo></mrow></math> for all <math><mi>𝑢</mi><mo>,</mo><mi>𝑣</mi><mo>∈</mo><mi>𝑉</mi></math></li><li value="2">Homogeneity: <math><mi>𝑇</mi><mrow><mo>(</mo><mrow><mi>𝑐</mi><mi>𝑣</mi></mrow><mo>)</mo></mrow><mo>=</mo><mi>𝑐</mi><mi>𝑇</mi><mrow><mo>(</mo><mi>𝑣</mi><mo>)</mo></mrow></math> for all <math><mi>𝑐</mi><mo>∈</mo><mi>𝐹</mi></math> and <math><mi>𝑣</mi><mo>∈</mo><mi>𝑉</mi></math></li></ol></div></div></figure><p><a href="#defn-linmap">Definition 1.3</a>.</p><figure><div class="math-card definition" style="width: 100%;border: 1px solid #2e7d32;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Definition 1.4</strong></div><div class="math-card-body">…</div></div></figure><h3>Degree of an extension</h3><figure><div class="math-card theorem" style="width: 100%;border: 1px solid #0066cc;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Theorem 1.5</strong></div><div class="math-card-body"><p>Let <math><mi>𝑉</mi></math> and <math><mi>𝑊</mi></math> be vector spaces, where <math><mi>𝑉</mi></math> is finite-dimensional. If <math><mi>𝑇</mi><mo lspace="0.2777777777777778em" rspace="0.2777777777777778em">:</mo><mi>𝑉</mi><mo stretchy="false">→</mo><mi>𝑊</mi></math> is a linear map, then:</p><math display="block"><mo lspace="0em" rspace="0em">dim</mo><mrow><mo>(</mo><mrow><mtext>null</mtext><mspace width="0.2222em"/><mi>𝑇</mi></mrow><mo>)</mo></mrow><mo>+</mo><mo form="prefix" lspace="0em" rspace="0em">dim</mo><mrow><mo>(</mo><mrow><mtext>range</mtext><mspace width="0.2222em"/><mi>𝑇</mi></mrow><mo>)</mo></mrow><mo>=</mo><mo form="prefix" lspace="0em" rspace="0.16666666666666666em">dim</mo><mi>𝑉</mi></math></div></div></figure><h3>Exercises</h3><figure><div class="math-card exercise" style="width: 100%;border: 1px solid #c62828;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Exercise 1.6</strong></div><div class="math-card-body"><p>Let <math><mi>𝑇</mi><mo lspace="0.2777777777777778em" rspace="0.2777777777777778em">:</mo><msup><mi>ℝ</mi><mn>3</mn></msup><mo stretchy="false">→</mo><msup><mi>ℝ</mi><mn>2</mn></msup></math> be defined by <math><mi>𝑇</mi><mrow><mo>(</mo><mrow><mi>𝑥</mi><mo>,</mo><mi>𝑦</mi><mo>,</mo><mi>𝑧</mi></mrow><mo>)</mo></mrow><mo>=</mo><mrow><mo>(</mo><mrow><mi>𝑥</mi><mo>+</mo><mi>𝑦</mi><mo>,</mo><mi>𝑧</mi></mrow><mo>)</mo></mrow></math>. Find a structured matrix representation <math><msub><mi>𝑀</mi><mi>𝑇</mi></msub></math> and verify the output dimension explicitly:</p><math display="block"><msub><mi>𝑀</mi><mi>𝑇</mi></msub><mo>=</mo><mrow><mo>(</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable><mo>)</mo></mrow></math></div></div></figure><div class="math-card exercise" style="border-left: 5px solid #c62828;
+           background-color: #ffebee;
+           padding: 18px;
+           margin: 24px 0;
+           border-radius: 0 4px 4px 0;"><p><strong class="math-card-title" style="color: #c62828;
+             display: block;
+             font-size: 1.1em;
+             margin-bottom: 8px;"><p>Exercise 1.7 (Identity Dimension Mapping).</p></strong></p><div class="math-card-body"><p>Let <math><mi>𝑇</mi><mo lspace="0.2777777777777778em" rspace="0.2777777777777778em">:</mo><msup><mi>ℝ</mi><mn>3</mn></msup><mo stretchy="false">→</mo><msup><mi>ℝ</mi><mn>2</mn></msup></math> be defined by <math><mi>𝑇</mi><mrow><mo>(</mo><mrow><mi>𝑥</mi><mo>,</mo><mi>𝑦</mi><mo>,</mo><mi>𝑧</mi></mrow><mo>)</mo></mrow><mo>=</mo><mrow><mo>(</mo><mrow><mi>𝑥</mi><mo>+</mo><mi>𝑦</mi><mo>,</mo><mi>𝑧</mi></mrow><mo>)</mo></mrow></math>. Find the dimension of the null space.</p></div><details class="exercise-solution-panel" style="margin-top: 14px;
+               background-color: #ffffff;
+               border: 1px solid #ffcdd2;
+               border-radius: 6px;
+               padding: 12px;"><summary style="font-weight: bold;
+                 color: #c62828;
+                 cursor: pointer;"><p>💡 Click to Reveal Solution</p></summary><div class="solution-body" style="margin-top: 10px;
+                 padding-top: 8px;
+                 border-top: 1px dashed ffcdd2;"><p>By inspecting the matrix row parameters:</p><math display="block"><msub><mi>𝑀</mi><mi>𝑇</mi></msub><mo>=</mo><mrow><mo>(</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable><mo>)</mo></mrow></math><p>The rank is clearly 2 because the two rows are linearly independent. By Rank-Nullity, <math><mo lspace="0em" rspace="0em">dim</mo><mrow><mo>(</mo><mrow><mtext>null</mtext><mspace width="0.2222em"/><mi>𝑇</mi></mrow><mo>)</mo></mrow><mo>=</mo><mn>3</mn><mo>−</mo><mn>2</mn><mo>=</mo><mn>1</mn></math>.</p></div></details></div><figure><div class="math-card note" style="width: 100%;border: 1px solid #1565c0;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Note 1.8</strong></div><div class="math-card-body">Remember that every basis is linearly independent.</div></div></figure><figure><div class="math-card warning" style="width: 100%;border: 1px solid #ef6c00;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Warning 1.9</strong></div><div class="math-card-body">Do <strong>not</strong> confuse image and codomain.</div></div></figure><figure><div class="math-card example" style="width: 100%;border: 1px solid #6a1b9a;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Example 1.10</strong></div><div class="math-card-body"><p>Let</p><math display="block"><mi>𝑇</mi><mrow><mo>(</mo><mrow><mi>𝑥</mi><mo>,</mo><mi>𝑦</mi></mrow><mo>)</mo></mrow><mo>=</mo><mrow><mo>(</mo><mrow><mi>𝑥</mi><mo>+</mo><mi>𝑦</mi><mo>,</mo><mi>𝑦</mi></mrow><mo>)</mo></mrow><mi>.</mi></math></div></div></figure><div class="proof-block" style="margin: 20px 0; padding-left: 18px; border-left: 4px solid #2e7d32;"><p><strong>Proof.</strong></p><p>We proceed by induction…</p></div><figure><div class="math-card remark" style="width: 100%;border: 1px solid #616161;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Remark 1.11</strong></div><div class="math-card-body">The converse is false.</div></div></figure><figure><div class="math-card history" style="width: 100%;border: 1px solid #795548;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>History 1.12</strong></div><div class="math-card-body">The Rank-Nullity theorem appeared in the nineteenth century.</div></div></figure><figure><div class="math-card lemma" style="width: 100%;border: 1px solid #1565c0;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Lemma 1.13</strong></div><div class="math-card-body">lemma statement</div></div></figure><figure><div class="math-card proposition" style="width: 100%;border: 1px solid #0277bd;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Proposition 1.14</strong></div><div class="math-card-body">proposition statement</div></div></figure><figure><div class="math-card claim" style="width: 100%;border: 1px solid #5e35b1;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Claim 1.15</strong></div><div class="math-card-body">claim statement</div></div></figure><figure><div class="math-card corollary" style="width: 100%;border: 1px solid #00838f;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Corollary 1.16</strong></div><div class="math-card-body">corollary statement</div></div></figure><div class="lecture-navigation"><p></p><p><a href="gt2.html">Symmetric groups →</a></p></div></body></html>
