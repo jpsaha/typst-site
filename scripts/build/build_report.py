@@ -402,6 +402,8 @@ def print_build_statistics(
 def print_build_timing(
     time_prepare_diagnostics,
     time_metadata,
+    time_refmap,
+    time_fix_refs,
     time_metadata_check,
     time_generated_check,
     time_og_generate,
@@ -446,6 +448,14 @@ def print_build_timing(
 
     print(
         f"Metadata generation       {time_metadata:>6}s"
+    )
+
+    print(
+        f"Reference map             {time_refmap:>6}s"
+    )
+
+    print(
+        f"HTML reference fixing     {time_fix_refs:>6}s"
     )
 
     print(
@@ -631,6 +641,14 @@ def generate_report():
         "TIME_METADATA"
     )
 
+    time_refmap = env_int(
+        "TIME_REFMAP"
+    )
+
+    time_fix_refs = env_int(
+        "TIME_FIX_REFS"
+    )
+
     time_metadata_check = env_int(
         "TIME_METADATA_CHECK"
     )
@@ -790,6 +808,8 @@ def generate_report():
     print_build_timing(
         time_prepare_diagnostics=time_prepare_diagnostics,
         time_metadata=time_metadata,
+        time_refmap=time_refmap,
+        time_fix_refs=time_fix_refs,
         time_metadata_check=time_metadata_check,
         time_generated_check=time_generated_check,
         time_og_generate=time_og_generate,

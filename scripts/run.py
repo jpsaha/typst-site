@@ -211,6 +211,12 @@ COMMANDS = {
     "metadata":
         "scripts.build.generate_metadata",
 
+    "refmap":
+        "scripts.refs.build_refmap",
+
+    "fix-refs":
+        "scripts.refs.fix_html_refs",
+
 
     # ========================================================
     # Open Graph images
@@ -347,6 +353,8 @@ COMMAND_GROUPS = {
 
     "Generation": (
         "metadata",
+        "refmap",
+        "fix-refs",
     ),
 
     "Open Graph": (

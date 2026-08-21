@@ -41,6 +41,8 @@ echo "TYPST_OG=$TYPST_OG"
 #     all
 #     config
 #     metadata
+#     refmap
+#     fix-refs
 #     og-generate
 #     og-build
 #     og-publish
@@ -237,7 +239,7 @@ case "$TARGET" in
     # Website output
     # --------------------------------------------------------
 
-    html|sitemap|robots)
+    html|refmap|fix-refs|sitemap|robots)
         ;;
 
     # --------------------------------------------------------
@@ -292,6 +294,8 @@ BUILD_START=$(date +%s)
 
 TIME_CONFIG="0"
 TIME_METADATA="0"
+TIME_REFMAP="0"
+TIME_FIX_REFS="0"
 TIME_OG_GENERATE="0"
 TIME_OG_BUILD="0"
 TIME_OG_PUBLISH="0"
@@ -611,6 +615,23 @@ og_refresh() {
 # ============================================================
 # 2. Validation
 # ============================================================
+#
+# Validation operates on the generated project state.
+#
+# Reference-map generation and HTML reference fixing are NOT
+# validation steps. They are generation/transformation steps
+# and therefore run before this section.
+#
+# The normal order is:
+#
+#     metadata
+#     refmap
+#     html
+#     fix-html-refs
+#     ...
+#     validation
+#
+# ============================================================
 
 
 # ============================================================
@@ -892,7 +913,45 @@ build_html() {
 
 
 # ============================================================
-# 4b. Generate sitemap
+# 4b. Build reference map
+# ============================================================
+
+build_refmap() {
+
+    echo
+    echo "🔖 Building reference map..."
+
+    stage_start
+
+    if ! python3 scripts/run.py refmap; then
+        die "reference map generation failed."
+    fi
+
+    stage_end TIME_REFMAP
+}
+
+
+# ============================================================
+# 4c. Fix HTML references
+# ============================================================
+
+fix_html_refs() {
+
+    echo
+    echo "🔗 Fixing HTML references..."
+
+    stage_start
+
+    if ! python3 scripts/run.py fix-refs; then
+        die "HTML reference fixing failed."
+    fi
+
+    stage_end TIME_FIX_REFS
+}
+
+
+# ============================================================
+# 4d. Generate sitemap
 # ============================================================
 
 build_sitemap() {
@@ -911,7 +970,7 @@ build_sitemap() {
 
 
 # ============================================================
-# 4c. Generate robots.txt
+# 4e. Generate robots.txt
 # ============================================================
 
 build_robots() {
@@ -1072,6 +1131,8 @@ print_summary() {
     BUILD_TIME="$BUILD_TIME" \
     TIME_CONFIG="$TIME_CONFIG" \
     TIME_METADATA="$TIME_METADATA" \
+    TIME_REFMAP="$TIME_REFMAP" \
+    TIME_FIX_REFS="$TIME_FIX_REFS" \
     TIME_OG_GENERATE="$TIME_OG_GENERATE" \
     TIME_OG_BUILD="$TIME_OG_BUILD" \
     TIME_OG_PUBLISH="$TIME_OG_PUBLISH" \
@@ -1143,6 +1204,9 @@ run_build() {
             prepare_dist
 
             build_html
+            build_refmap
+            fix_html_refs
+
             build_sitemap
             build_robots
 
@@ -1183,6 +1247,10 @@ run_build() {
             python3 scripts/run.py metadata
 
             ;;
+
+        # ----------------------------------------------------
+        # Open Graph
+        # ----------------------------------------------------
 
         og-generate)
 
@@ -1239,6 +1307,22 @@ run_build() {
         links)
 
             python3 scripts/run.py links
+
+            ;;
+
+        # ----------------------------------------------------
+        # Reference processing
+        # ----------------------------------------------------
+
+        refmap)
+
+            python3 scripts/run.py refmap
+
+            ;;
+
+        fix-refs)
+
+            python3 scripts/run.py fix-refs
 
             ;;
 
