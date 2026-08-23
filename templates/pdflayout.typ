@@ -496,9 +496,27 @@ Old version of boxed.
     )
     it
   }
+
+// ============================================================
+// BEGIN: Later addition/modification
+// ============================================================
+
   show ref: it => {
-    link(it.target, it)
+    let el = it.element
+    if el != none and el.func() == heading and el.level == 1 and it.supplement == auto and report-style {
+      ref(it.target, supplement: "Chapter")
+    } else {
+      it
+    }
   }
+  // show ref: it => {
+  //   link(it.target, it)
+  // }
+
+// ============================================================
+// END: Later addition/modification
+// ============================================================
+
 
   // Gentle clues default font should be sans
   show: gentle-clues.with(
