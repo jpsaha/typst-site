@@ -94,6 +94,9 @@ Targets:
     ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
     │ config               │ ./build.sh config                   │ Audit centralized configuration              │
     │ metadata             │ ./build.sh metadata                 │ Generate metadata                            │
+    │ refmap               │ ./build.sh refmap                   │ Build site-wide reference map from HTML      │
+    │ fix-refs             │ ./build.sh fix-refs                 │ Fix/canonicalize internal HTML references    │
+    ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
     │ og-generate          │ ./build.sh og-generate              │ Generate Open Graph .asy sources             │
     │ og-build             │ ./build.sh og-build                 │ Build Open Graph PNG images                  │
     │ og-publish           │ ./build.sh og-publish               │ Publish OG PNG images into dist/assets/og/   │
