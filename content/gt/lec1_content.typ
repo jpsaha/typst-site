@@ -2,11 +2,15 @@
 // #import "../../templates/theorems.typ":*
 #import "../../templates/course.typ": *
 
-#exer("26")[
-  Consider a 
-]<26>
+This material follows the standard treatment in 
+a @dummitfoote.
 
-See @26.
+
+#exer("26")[
+  Consider an exercise.
+]<exer-26>
+
+See @exer-26.
 
 #exer[funn]<funn>
 
@@ -94,3 +98,9 @@ The Rank-Nullity theorem appeared in the nineteenth century.
 #proposition[proposition statement]
 #claim[claim statement]
 #corollary[corollary statement]
+
+
+This material follows the standard treatment in 
+a @dummitfoote.
+
+#bibliography("../../bibliography/references.bib")
