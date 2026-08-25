@@ -501,14 +501,24 @@ Old version of boxed.
 // BEGIN: Later addition/modification
 // ============================================================
 
-  show ref: it => {
-    let el = it.element
-    if el != none and el.func() == heading and el.level == 1 and it.supplement == auto and report-style {
-      ref(it.target, supplement: "Chapter")
-    } else {
-      it
-    }
+show ref: it => {
+  let el = it.element
+
+  set text(fill: colors.label)
+
+  if (
+    el != none
+    and el.func() == heading
+    and el.level == 1
+    and it.supplement == auto
+    and report-style
+  ) {
+    ref(it.target, supplement: "Chapter")
+  } else {
+    it
   }
+}
+
   // show ref: it => {
   //   link(it.target, it)
   // }
