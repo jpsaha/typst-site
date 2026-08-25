@@ -180,38 +180,52 @@ def prepare_dist():
             ignore_errors=True,
         )
 
-    # ========================================================
-    # Copy CSS
-    # ========================================================
+        # ========================================================
+        # Copy CSS
+        # ========================================================
 
-    source_css = (
-        ASSETS_SOURCE_DIR
-        / "css"
-        / "style.css"
-    )
-
-    target_css = (
-        ASSETS_DIR
-        / "css"
-        / "style.css"
-    )
-
-    if source_css.exists():
-
-        shutil.copy2(
-            source_css,
-            target_css,
+        source_css_dir = (
+            ASSETS_SOURCE_DIR
+            / "css"
         )
 
-        print(
-            "📋 Copied style.css"
+        target_css_dir = (
+            ASSETS_DIR
+            / "css"
         )
 
-    else:
-
-        print(
-            "⚠️ Warning: assets/css/style.css not found"
+        target_css_dir.mkdir(
+            parents=True,
+            exist_ok=True,
         )
+
+        if source_css_dir.exists():
+
+            css_files = sorted(
+                source_css_dir.glob("*.css")
+            )
+
+            for source_css in css_files:
+
+                target_css = (
+                    target_css_dir
+                    / source_css.name
+                )
+
+                shutil.copy2(
+                    source_css,
+                    target_css,
+                )
+
+                print(
+                    f"📋 Copied {source_css.name}"
+                )
+
+        else:
+
+            print(
+                "⚠️ Warning: assets/css directory not found"
+            )
 
     # ========================================================
     # Copy project-supplied PNG images
