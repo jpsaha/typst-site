@@ -503,26 +503,10 @@ Old version of boxed.
 
   show ref: it => {
     let el = it.element
-
-    if (
-      el != none
-      and el.func() == heading
-      and el.level == 1
-      and it.supplement == auto
-      and report-style
-    ) {
-      link(
-        it.target,
-        ref(
-          it.target,
-          supplement: "Chapter",
-        ),
-      )
+    if el != none and el.func() == heading and el.level == 1 and it.supplement == auto and report-style {
+      ref(it.target, supplement: "Chapter")
     } else {
-      link(
-        it.target,
-        it,
-      )
+      it
     }
   }
   // show ref: it => {
