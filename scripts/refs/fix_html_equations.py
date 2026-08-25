@@ -191,19 +191,33 @@ def fix_file(html_path):
 
         # ----------------------------------------------------
         # Do not process equations already inside our wrapper.
+        #
+        # Find the most recent wrapper and the most recent
+        # closing div before this equation. If the wrapper is
+        # more recent, the equation is already wrapped.
+        #
+        # This makes the transformation idempotent and avoids
+        # relying on a fixed number of preceding characters.
         # ----------------------------------------------------
 
         start = match.start()
 
-        preceding = html[
-            max(0, start - 100):
-            start
-        ]
+        preceding = html[:start]
 
-        if preceding.endswith(
-            '<div class="html-equation">'
-        ):
+        last_wrapper = preceding.rfind(
+            '<div class="html-equation"'
+        )
+
+        last_close = preceding.rfind(
+            '</div>'
+        )
+
+        if last_wrapper > last_close:
             return equation
+
+        # ----------------------------------------------------
+        # This is a new labelled block equation.
+        # ----------------------------------------------------
 
         equation_count += 1
 
