@@ -11,11 +11,12 @@ but does not render the equation number visually.
 
 This script:
 
-1. Reads generated/refmap.json when available.
-2. Processes dist/pages/*.html.
-3. Finds block equations with an id.
-4. Inserts a visible equation number.
-5. Preserves the equation id so internal references continue to work.
+1. Processes dist/pages/*.html.
+2. Finds block equations with an id.
+3. Inserts a visible equation number.
+4. Preserves the equation id so internal references continue to work.
+5. Wraps the equation and number in .html-equation.
+6. Injects the equation-only stylesheet.
 
 Example:
 
@@ -56,6 +57,16 @@ from scripts.config import PAGES_DIR
 
 
 # ============================================================
+# Equation-only stylesheet
+# ============================================================
+
+EQUATION_STYLESHEET = (
+    '<link rel="stylesheet" '
+    'href="../assets/css/html-equations.css">\n'
+)
+
+
+# ============================================================
 # Equation pattern
 # ============================================================
 
@@ -69,17 +80,6 @@ EQUATION_RE = re.compile(
     r'</math>'
     r')',
     re.IGNORECASE | re.DOTALL,
-)
-
-
-# ============================================================
-# Already wrapped equation
-# ============================================================
-
-WRAPPED_RE = re.compile(
-    r'<div\s+class="html-equation"[^>]*>'
-    r'\s*<math\b',
-    re.IGNORECASE,
 )
 
 
@@ -123,6 +123,41 @@ def make_equation_html(
 
 
 # ============================================================
+# Inject equation stylesheet
+# ============================================================
+
+def inject_equation_stylesheet(html):
+    """
+    Inject the equation-only stylesheet into <head>.
+
+    The operation is idempotent.
+    """
+
+    # --------------------------------------------------------
+    # Already present.
+    # --------------------------------------------------------
+
+    if "html-equations.css" in html:
+        return html
+
+    # --------------------------------------------------------
+    # Every lecture HTML page should have </head>.
+    # --------------------------------------------------------
+
+    if "</head>" not in html:
+
+        raise RuntimeError(
+            "Generated HTML has no </head>"
+        )
+
+    return html.replace(
+        "</head>",
+        f"    {EQUATION_STYLESHEET}</head>",
+        1,
+    )
+
+
+# ============================================================
 # Fix one HTML file
 # ============================================================
 
@@ -142,6 +177,10 @@ def fix_file(html_path):
     equation_count = 0
     changes = 0
 
+    # --------------------------------------------------------
+    # Equation replacement
+    # --------------------------------------------------------
+
     def replace(match):
 
         nonlocal equation_count
@@ -151,9 +190,7 @@ def fix_file(html_path):
         anchor = match.group("id")
 
         # ----------------------------------------------------
-        # Ignore equations that have already been processed.
-        #
-        # This also makes the script idempotent.
+        # Do not process equations already inside our wrapper.
         # ----------------------------------------------------
 
         start = match.start()
@@ -163,10 +200,8 @@ def fix_file(html_path):
             start
         ]
 
-        if (
-            preceding.endswith(
-                '<div class="html-equation">'
-            )
+        if preceding.endswith(
+            '<div class="html-equation">'
         ):
             return equation
 
@@ -189,9 +224,25 @@ def fix_file(html_path):
             number,
         )
 
+    # --------------------------------------------------------
+    # Transform equations.
+    # --------------------------------------------------------
+
     updated = EQUATION_RE.sub(
         replace,
         html,
+    )
+
+    # --------------------------------------------------------
+    # Inject equation-only CSS.
+    #
+    # This is intentionally done here rather than in
+    # build_html.py so that the normal lecture-page styling
+    # remains untouched.
+    # --------------------------------------------------------
+
+    updated = inject_equation_stylesheet(
+        updated
     )
 
     # --------------------------------------------------------
