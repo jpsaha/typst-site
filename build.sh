@@ -43,6 +43,7 @@ echo "TYPST_OG=$TYPST_OG"
 #     metadata
 #     refmap
 #     fix-refs
+#     fix-equations
 #     og-generate
 #     og-build
 #     og-publish
@@ -96,6 +97,7 @@ Targets:
     │ metadata             │ ./build.sh metadata                 │ Generate metadata                            │
     │ refmap               │ ./build.sh refmap                   │ Build site-wide reference map from HTML      │
     │ fix-refs             │ ./build.sh fix-refs                 │ Fix/canonicalize internal HTML references    │
+    │ fix-equations        │ ./build.sh fix-equations            │ Fix/canonicalize internal HTML equations     │
     ├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────┤
     │ og-generate          │ ./build.sh og-generate              │ Generate Open Graph .asy sources             │
     │ og-build             │ ./build.sh og-build                 │ Build Open Graph PNG images                  │
@@ -242,7 +244,7 @@ case "$TARGET" in
     # Website output
     # --------------------------------------------------------
 
-    html|refmap|fix-refs|sitemap|robots)
+    html|refmap|fix-refs|fix-equations|sitemap|robots)
         ;;
 
     # --------------------------------------------------------
@@ -299,6 +301,7 @@ TIME_CONFIG="0"
 TIME_METADATA="0"
 TIME_REFMAP="0"
 TIME_FIX_REFS="0"
+TIME_FIX_EQUATIONS="0"
 TIME_OG_GENERATE="0"
 TIME_OG_BUILD="0"
 TIME_OG_PUBLISH="0"
@@ -954,7 +957,26 @@ fix_html_refs() {
 
 
 # ============================================================
-# 4d. Generate sitemap
+# 4d. Fix HTML equations
+# ============================================================
+
+fix_html_equations() {
+
+    echo
+    echo "🔢 Fixing HTML equation numbers..."
+
+    stage_start
+
+    if ! python3 scripts/run.py fix-equations; then
+        die "HTML equation fixing failed."
+    fi
+
+    stage_end TIME_FIX_EQUATIONS
+}
+
+
+# ============================================================
+# 4e. Generate sitemap
 # ============================================================
 
 build_sitemap() {
@@ -973,7 +995,7 @@ build_sitemap() {
 
 
 # ============================================================
-# 4e. Generate robots.txt
+# 4f. Generate robots.txt
 # ============================================================
 
 build_robots() {
@@ -1136,6 +1158,7 @@ print_summary() {
     TIME_METADATA="$TIME_METADATA" \
     TIME_REFMAP="$TIME_REFMAP" \
     TIME_FIX_REFS="$TIME_FIX_REFS" \
+    TIME_FIX_EQUATIONS="$TIME_FIX_EQUATIONS" \
     TIME_OG_GENERATE="$TIME_OG_GENERATE" \
     TIME_OG_BUILD="$TIME_OG_BUILD" \
     TIME_OG_PUBLISH="$TIME_OG_PUBLISH" \
@@ -1209,6 +1232,7 @@ run_build() {
             build_html
             build_refmap
             fix_html_refs
+            fix_html_equations
 
             build_sitemap
             build_robots
@@ -1326,6 +1350,12 @@ run_build() {
         fix-refs)
 
             python3 scripts/run.py fix-refs
+
+            ;;
+
+        fix-equations)
+
+            python3 scripts/run.py fix-equations
 
             ;;
 

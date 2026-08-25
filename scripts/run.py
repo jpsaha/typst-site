@@ -217,6 +217,9 @@ COMMANDS = {
     "fix-refs":
         "scripts.refs.fix_html_refs",
 
+    "fix-equations":
+        "scripts.refs.fix_html_equations",
+
 
     # ========================================================
     # Open Graph images
@@ -354,6 +357,7 @@ COMMAND_GROUPS = {
     "Generation": (
         "metadata",
         "refmap",
+        "fix-equations",
         "fix-refs",
     ),
 
