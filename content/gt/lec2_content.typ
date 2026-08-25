@@ -1,5 +1,23 @@
 #import "../../templates/course.typ": *
 
+== eqn test
+
+  #eqn[
+    $
+      a  = b.
+    $
+    <eqn-ab>
+  ]
+  Study the equation in @eqn-ab.
+  
+  #eqn[
+    $
+      c  = d.
+    $
+    <eqn-cd>
+  ]
+  Study the equation in @eqn-cd.
+  
 == Core Definitions
 
 In this session, we analyze how linear transformations scale specific vector subspaces.
