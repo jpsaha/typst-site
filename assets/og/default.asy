@@ -1,10 +1,10 @@
 // ============================================================
-// assets/promo/hero_banner.asy
+// assets/og/default.asy
 //
 // Promotional Feature Banner with Inline Premium OG Card Layout
 // Dimensions: 1200 × 600
 //
-// Compile Command: asy -f png -r 1200 hero_banner.asy
+// Compile Command: asy -f png -r 1200 default.asy
 // ============================================================
 
 import graph;
@@ -14,9 +14,9 @@ import fontsize;
 usersetting();
 texpreamble("\usepackage{amsmath}");
 
-size(1200, 600);
+size(1200, 630);
 real W = 1200;
-real H = 600;
+real H = 630;
 
 // ------------------------------------------------------------
 // Color Palette (Premium Editorial Math Journal Slate Theme)
