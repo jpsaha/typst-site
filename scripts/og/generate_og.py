@@ -63,6 +63,7 @@ from scripts.config import (
     OG_TEMPLATE_FILE,
 )
 
+from scripts.site_config import (REPO_NAME, GITHUB_USERNAME)
 
 # ============================================================
 # Files used by Open Graph source generation
@@ -188,6 +189,24 @@ def generate_asy(
     source = source.replace(
         "__TAGS__",
         escape_asy_string(tag_text),
+    )
+
+    # --------------------------------------------------------
+    # GitHub username
+    # --------------------------------------------------------
+
+    source = source.replace(
+        "__GITHUB_USERNAME__",
+        escape_asy_string(GITHUB_USERNAME),
+    )
+
+    # --------------------------------------------------------
+    # Repository name
+    # --------------------------------------------------------
+
+    source = source.replace(
+        "__REPO_NAME__",
+        escape_asy_string(REPO_NAME),
     )
 
     return source
