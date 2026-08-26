@@ -180,52 +180,52 @@ def prepare_dist():
             ignore_errors=True,
         )
 
-        # ========================================================
-        # Copy CSS
-        # ========================================================
+    # ========================================================
+    # Copy CSS
+    # ========================================================
 
-        source_css_dir = (
-            ASSETS_SOURCE_DIR
-            / "css"
+    source_css_dir = (
+        ASSETS_SOURCE_DIR
+        / "css"
+    )
+
+    target_css_dir = (
+        ASSETS_DIR
+        / "css"
+    )
+
+    target_css_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    if source_css_dir.exists():
+
+        css_files = sorted(
+            source_css_dir.glob("*.css")
         )
 
-        target_css_dir = (
-            ASSETS_DIR
-            / "css"
-        )
+        for source_css in css_files:
 
-        target_css_dir.mkdir(
-            parents=True,
-            exist_ok=True,
-        )
-
-        if source_css_dir.exists():
-
-            css_files = sorted(
-                source_css_dir.glob("*.css")
+            target_css = (
+                target_css_dir
+                / source_css.name
             )
 
-            for source_css in css_files:
-
-                target_css = (
-                    target_css_dir
-                    / source_css.name
-                )
-
-                shutil.copy2(
-                    source_css,
-                    target_css,
-                )
-
-                print(
-                    f"📋 Copied {source_css.name}"
-                )
-
-        else:
+            shutil.copy2(
+                source_css,
+                target_css,
+            )
 
             print(
-                "⚠️ Warning: assets/css directory not found"
+                f"📋 Copied {source_css.name}"
             )
+
+    else:
+
+        print(
+            "⚠️ Warning: assets/css directory not found"
+        )
 
     # ========================================================
     # Copy project-supplied PNG images
