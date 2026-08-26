@@ -1143,9 +1143,9 @@ build_allpdf() {
 #
 #             ./build.sh og-refresh
 #
-# TIME_OG_PUBLISH remains zero during the normal "all" build,
-# because the normal build copies generated OG images through
-# prepare_dist() rather than calling og-publish.
+# TIME_OG_PUBLISH records OG publishing performed during
+# the normal "all" build and by the explicit "og-refresh"
+# target.
 # ============================================================
 
 print_summary() {
@@ -1228,6 +1228,7 @@ run_build() {
             run_common_checks
 
             prepare_dist
+            publish_og
 
             build_html
             build_refmap
