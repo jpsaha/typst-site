@@ -130,6 +130,7 @@ def generate_asy(
     number,
     title,
     category,
+    tags,
 ):
     """
     Generate one Asymptote source from content metadata.
@@ -139,6 +140,7 @@ def generate_asy(
         __LECTURE_NUMBER__
         __TITLE__
         __CATEGORY__
+        __TAGS__
 
     which are replaced with escaped metadata values.
     """
@@ -174,6 +176,18 @@ def generate_asy(
     source = source.replace(
         "__CATEGORY__",
         escape_asy_string(category),
+    )
+
+
+    # --------------------------------------------------------
+    # Tags
+    # --------------------------------------------------------
+
+    tag_text = " · ".join(tags)
+
+    source = source.replace(
+        "__TAGS__",
+        escape_asy_string(tag_text),
     )
 
     return source
@@ -413,6 +427,15 @@ def main():
             )
 
             # -------------------------------------------------
+            # Tags associated with this lecture.
+            # -------------------------------------------------
+
+            tags = page.get(
+                "tags",
+                [],
+            )
+
+            # -------------------------------------------------
             # The outer dictionary key is the category name.
             # -------------------------------------------------
 
@@ -427,6 +450,7 @@ def main():
                 number=number,
                 title=title,
                 category=category_name,
+                tags=tags,
             )
 
             # =================================================
