@@ -70,9 +70,9 @@ for (real y = 40; y < H - 12; y += 40) {
 // ============================================================
 
 // 1. Top Section Category Tag
-path greenBadge = roundedBoxPath((60, 425), (380, 465), 12);
+path greenBadge = roundedBoxPath((60, 410), (460, 480), 12);
 fill(greenBadge, badgeBgGreen);
-label("Mathematics Olympiad", (220, 445), badgeTxtGreen + Helvetica("b") + fontsize(18));
+label("Mathematics Olympiad", (260, 445), badgeTxtGreen + Helvetica("b") + fontsize(35));
 
 // 2. High Impact Main Title Header
 label("Lectures Notes", (60, 345), E, borderDark + Helvetica("b") + fontsize(52));
@@ -82,9 +82,9 @@ label("Comprehensive courses, problem banks,", (60, 265), E, textMain + Helvetic
 label("and interactive visualization tools.", (60, 225), E, textMain + Helvetica() + fontsize(22));
 
 // 4. Target Exam Access Buttons Group
-path blueBadge = roundedBoxPath((60, 125), (360, 175), 8);
+path blueBadge = roundedBoxPath((60, 125), (420, 175), 8);
 fill(blueBadge, btnBgBlue);
-label("IOQM $\cdot$ RMO $\cdot$ INMO", (210, 150), white + Helvetica("b") + fontsize(18));
+label("IOQM $\cdot$ RMO $\cdot$ INMO", (240, 150), white + Helvetica("b") + fontsize(35));
 
 
 // ============================================================
@@ -172,17 +172,18 @@ label("MATHEMATICS", tf(600, 395), primary + mockTitleFont);
 label("LECTURES", tf(600, 325), primary + mockTitleFont);
 
 draw(tf(480, 292)--tf(720, 292), gridLine + linewidth(1.2 * s));
-label("Rigorous Notes  $\cdot$  Curated Problem Sets  $\cdot$  Visual Proofs", tf(600, 262), textMain + fontsize(16 * s));
+// label("Rigorous Notes  $\cdot$  Curated Problem Sets  $\cdot$  Visual Proofs", tf(600, 262), textMain + fontsize(16 * s));
+
 
 // ------------------------------------------------------------
 // MOCK CARD CONTENT: TOPIC BADGE PILL
 // ------------------------------------------------------------
-path mockBadgeBox = roundedBoxPath(tf(380, 192), tf(820, 230), 6 * s);
+path mockBadgeBox = roundedBoxPath(tf(120, 192), tf(1080, 230), 6 * s);
 fill(mockBadgeBox, rgb("#EFF6FF")); 
 draw(mockBadgeBox, accentBlue + linewidth(1 * s));
 
-pen mockBadgeFont = Palatino(series="b", shape="n") + fontsize(12 * s);
-label("ALGEBRA  $\cdot$  CALCULUS  $\cdot$  PROBABILITY  $\cdot$  GEOMETRY", tf(600, 209), primary + mockBadgeFont);
+pen mockBadgeFont = Palatino(series="b", shape="n") + fontsize(30 * s);
+label("ALGEBRA  $\cdot$  COMBINATORICS  $\cdot$  GEOMETRY  $\cdot$  NUMBER THEORY", tf(600, 211), primary + mockBadgeFont);
 
 // ------------------------------------------------------------
 // MOCK CARD CONTENT: FOOTER TRACK & URL
