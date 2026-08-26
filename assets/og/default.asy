@@ -1,7 +1,7 @@
 // ============================================================
 // assets/promo/hero_banner.asy
 //
-// Promotional / Hero Feature Banner Layout
+// Promotional Feature Banner with Inline Premium OG Card Layout
 // Dimensions: 1200 × 600
 //
 // Compile Command: asy -f png -r 1200 hero_banner.asy
@@ -10,7 +10,7 @@
 import graph;
 import fontsize;
 
-// Fix for complex LaTeX rendering
+// Fix for complex LaTeX rendering & packages
 usersetting();
 texpreamble("\usepackage{amsmath}");
 
@@ -19,33 +19,28 @@ real W = 1200;
 real H = 600;
 
 // ------------------------------------------------------------
-// Color Palette
+// Color Palette (Premium Editorial Math Journal Slate Theme)
 // ------------------------------------------------------------
-pen bgMain       = rgb("#FFFFFF");
-pen topBarBlue   = rgb("#0284C7"); // Top accent header line
+pen bgCanvas    = rgb("#F7F9FC"); // Cream-tinged modern light gray
+pen bgPanel     = rgb("#FFFFFF"); // Crisp white inner card
+pen borderDark  = rgb("#0F172A"); // Slate-900 sharp border
+pen primary     = rgb("#1E3A8A"); // Deep luxury ink blue
+pen accentBlue  = rgb("#3B82F6"); // Vibrant engineering blue
+pen textMain    = rgb("#334155"); // Slate-700 neutral dark
+pen mathWater   = rgb("#CBD5E1"); // Slate-300 background math
+pen gridLine    = rgb("#E2E8F0"); // Slate-200 geometry layout
+pen gridFaint   = rgb("#F1F5F9"); // Super faint blueprint grid lines
 
-// Left Column Colors
+// Left Promo Column Specific Pens
+pen topBarBlue   = rgb("#0284C7");
 pen badgeBgGreen = rgb("#E6F7F0"); 
 pen badgeTxtGreen= rgb("#0D9488");
-pen textTitle    = rgb("#0F172A");
-pen textSub      = rgb("#64748B");
-pen btnBgBlue    = rgb("#3B82F6");
-
-// Right Card Mockup Colors
-pen cardBg       = rgb("#FDFCF7");
-pen cardCream    = rgb("#F8F6EE");
-pen cardDarkGreen= rgb("#174D35");
-pen cardGreen    = rgb("#2E7D32");
-pen cardFaint    = rgb("#E2E8F0");
-
-// Background Decorative Circles
-pen circleTeal   = rgb("#E6F4EA");
-pen circleBlue   = rgb("#DBEAFE");
+pen btnBgBlue    = rgb("#2563EB");
 
 // ------------------------------------------------------------
-// Helper: Rounded Box Path
+// Standalone Native Rounded Box Helper
 // ------------------------------------------------------------
-path roundedBox(pair A, pair B, real r) {
+path roundedBoxPath(pair A, pair B, real r) {
     real x1 = min(A.x, B.x), x2 = max(A.x, B.x);
     real y1 = min(A.y, B.y), y2 = max(A.y, B.y);
     return (x1+r, y1) -- (x2-r, y1) .. arc((x2-r, y1+r), r, -90, 0) -- 
@@ -55,86 +50,161 @@ path roundedBox(pair A, pair B, real r) {
 }
 
 // ------------------------------------------------------------
-// Base Canvas Backdrop
+// Base Promo Layout Backdrop
 // ------------------------------------------------------------
-fill(box((0,0), (W,H)), bgMain);
+fill(box((0,0), (W,H)), bgCanvas);
 
 // Top colored accent strip
 fill(box((0, H-12), (W, H)), topBarBlue);
 
-// ------------------------------------------------------------
-// Decorative Background Graphic Blobs (Right Side)
-// ------------------------------------------------------------
-fill(circle((700, 380), 120), circleTeal);
-fill(circle((920, 120), 110), circleBlue);
+// Subtle underlying background mesh layer on the left area
+for (real x = 40; x < 500; x += 40) {
+    draw((x, 12)--(x, H - 12), gridFaint + linewidth(0.5));
+}
+for (real y = 40; y < H - 12; y += 40) {
+    draw((12, y)--(500, y), gridFaint + linewidth(0.5));
+}
 
 // ============================================================
-// LEFT SIDE CONTENT COLUMN
+// LEFT SIDE BRAND CONTENT COLUMN
 // ============================================================
 
-// 1. Top Category Badge
-path greenBadge = roundedBox((70, 420), (390, 462), 14);
+// 1. Top Section Category Tag
+path greenBadge = roundedBoxPath((60, 425), (380, 465), 12);
 fill(greenBadge, badgeBgGreen);
-label("Mathematics Olympiad", (230, 441), badgeTxtGreen + Helvetica("b") + fontsize(20));
+label("Mathematics Olympiad", (220, 445), badgeTxtGreen + Helvetica("b") + fontsize(18));
 
-// 2. Main Title Text 
-label("Lectures Notes", (70, 340), E, textTitle + Helvetica("b") + fontsize(54));
+// 2. High Impact Main Title Header
+label("Lectures Notes", (60, 345), E, borderDark + Helvetica("b") + fontsize(52));
 
-// 3. Informative Subtitle Description 
-label("Mathematics lectures, notes, and", (70, 255), E, textSub + Helvetica() + fontsize(24));
-label("problem-solving resources.", (70, 215), E, textSub + Helvetica() + fontsize(24));
+// 3. Narrative Description Block
+label("Comprehensive courses, problem banks,", (60, 265), E, textMain + Helvetica() + fontsize(22));
+label("and interactive visualization tools.", (60, 225), E, textMain + Helvetica() + fontsize(22));
 
-// 4. Bottom Target Exam Tags Badge
-path blueBadge = roundedBox((70, 115), (350, 165), 8);
+// 4. Target Exam Access Buttons Group
+path blueBadge = roundedBoxPath((60, 125), (360, 175), 8);
 fill(blueBadge, btnBgBlue);
-label("IOQM $\bullet$ RMO $\bullet$ INMO", (210, 140), white + Helvetica("b") + fontsize(18));
+label("IOQM $\cdot$ RMO $\cdot$ INMO", (210, 150), white + Helvetica("b") + fontsize(18));
 
 
 // ============================================================
-// RIGHT SIDE: MATH CARD GRAPHIC MOCKUP
+// RIGHT SIDE: PREMIUM MATH CARD GRAPHIC MOCKUP
 // ============================================================
-// Base frame positioning anchors for the inner card canvas
-pair cMin = (560, 140);
-pair cMax = (1130, 490);
-real cW = cMax.x - cMin.x;
-real cH = cMax.y - cMin.y;
+// Setting frame transformations coordinates mapping 1200x630 space to relative card box
+// Card box dimensions: Width=620, Height=325.5 (Preserves precise 1200:630 aspect ratio)
+pair mockOrigin = (530, 135); 
+real s = 0.52; // Absolute uniform geometry scale modifier parameter
 
-// Drop shadow mockup layer
-fill(shift(4, -6) * roundedBox(cMin, cMax, 16), rgb("#E2E8F0"));
+// Helper utility closure to transform relative coordinates cleanly onto mock preview space
+pair tf(real origX, real origY) {
+    return mockOrigin + (origX * s, origY * s);
+}
 
-// Main mockup card body
-fill(roundedBox(cMin, cMax, 16), cardBg);
-draw(roundedBox(cMin, cMax, 16), cardDarkGreen + linewidth(1.5));
+// Base drop-shadow backdrop plate behind card mockup frame
+path cardShadow = roundedBoxPath(tf(16,16) - (0,3), tf(1200-16, 630-16) - (0,3), 24 * s);
+fill(cardShadow, rgb("#E2E8F0"));
 
-// Inner colored frame/container layout
-fill(roundedBox(cMin + (8,8), (cMax.x - 8, cMax.y - 45), 12), cardCream);
+// Main Outer Card Mockup Shell Frame
+path mockCanvasFrame = roundedBoxPath(tf(16, 16), tf(1200-16, 630-16), 24 * s);
+fill(mockCanvasFrame, bgPanel);
+draw(mockCanvasFrame, borderDark + linewidth(2.5 * s));
 
-// Miniature inner graphics & layouts
-pair innerCenter = (cMin.x + cW/2, cMin.y + cH/2);
+// Subtle internal blueprint gridding lines inside card layout matrix
+for (real x = 40; x < 1200 - 20; x += 40) {
+    draw(tf(x, 20)--tf(x, 630 - 20), gridFaint + linewidth(0.5 * s));
+}
+for (real y = 40; y < 630 - 20; y += 40) {
+    draw(tf(20, y)--tf(1200 - 20, y), gridFaint + linewidth(0.5 * s));
+}
 
-// Center Badge Icon
-fill(circle((innerCenter.x, cMax.y - 95), 18), cardDarkGreen);
-label("$\pi$", (innerCenter.x, cMax.y - 95), white + fontsize(14));
+// ------------------------------------------------------------
+// MOCK CARD CONTENT: REFINED WATERMARKS
+// ------------------------------------------------------------
+label("$\begin{pmatrix} \cos\theta \\& -\sin\theta \\ \sin\theta \\& \cos\theta \end{pmatrix}$", tf(170, 535), mathWater + fontsize(14 * s));
+label("$\oint_C \mathbf{F} \cdot d\mathbf{r} = \iint_S (\nabla \times \mathbf{F}) \cdot d\mathbf{S}$", tf(1010, 545), mathWater + fontsize(13 * s));
+label("$e^{i\pi} + 1 = 0$", tf(1010, 505), mathWater + fontsize(16 * s));
 
-// Mock Title text lines inside card mockup
-label("MATHEMATICS", (innerCenter.x, cMax.y - 145), cardDarkGreen + Palatino("b") + fontsize(26));
-label("LECTURES", (innerCenter.x, cMax.y - 180), cardDarkGreen + Palatino("b") + fontsize(26));
+// ------------------------------------------------------------
+// MOCK CARD CONTENT: LEFT GEOMETRY WIDGET
+// ------------------------------------------------------------
+pair mockC = tf(150, 340);
+real mockGeomR = 60 * s;
 
-// Text separator rule
-draw((innerCenter.x - 70, cMax.y - 202)--(innerCenter.x + 70, cMax.y - 202), cardGreen + linewidth(0.6));
-label("Notes $\bullet$ Problems $\bullet$ Resources", (innerCenter.x, cMax.y - 218), textTitle + fontsize(10));
+draw(circle(mockC, mockGeomR), gridLine + linewidth(1 * s));
+draw((mockC.x - mockGeomR - 15*s, mockC.y)--(mockC.x + mockGeomR + 15*s, mockC.y), gridLine + linewidth(0.6 * s));
+draw((mockC.x, mockC.y - mockGeomR - 15*s)--(mockC.x, mockC.y + mockGeomR + 15*s), gridLine + linewidth(0.6 * s));
 
-// Tiny low-profile sub-badge inside card
-path miniBadge = box((innerCenter.x - 90, cMax.y - 262), (innerCenter.x + 90, cMax.y - 242));
-fill(miniBadge, rgb("#E8EBDD"));
-draw(miniBadge, rgb("#C5CBB7") + linewidth(0.5));
-label("ALGEBRA $\bullet$ NUMBER THEORY", (innerCenter.x, cMax.y - 253), cardDarkGreen + Palatino("b") + fontsize(8));
+pair mockP = mockC + mockGeomR*dir(38);
+draw(mockC--mockP, accentBlue + linewidth(1.5 * s));
+dot(mockC, primary + linewidth(4 * s));
+label("$r$", mockC + (22*s, 24*s), mathWater + fontsize(12 * s));
+label("$\theta$", mockC + (16*s, 6*s), mathWater + fontsize(11 * s));
 
-// Subtle geometric wireframe outlines on background card corners
-draw(circle((cMin.x + 60, cMin.y + 110), 30), cardFaint + linewidth(0.8));
-draw((cMin.x + 30, cMin.y + 110)--(cMin.x + 90, cMin.y + 110), cardFaint + linewidth(0.6));
-draw((cMin.x + 60, cMin.y + 80)--(cMin.x + 60, cMin.y + 140), cardFaint + linewidth(0.6));
+// ------------------------------------------------------------
+// MOCK CARD CONTENT: RIGHT FUNCTION GRAPH
+// ------------------------------------------------------------
+real mgx1 = 930, mgx2 = 1110;
+real mgy  = 340;
 
-draw(circle((cMax.x - 50, cMin.y + 90), 22), cardFaint + linewidth(0.8));
-path innerLat = ellipse((cMax.x - 50, cMin.y + 90), 22, 7); // FIXED: Data type declared as path
-draw(innerLat, cardFaint + linewidth(0.6));
+draw(tf(mgx1, mgy)--tf(mgx2, mgy), gridLine + linewidth(0.8 * s));
+draw(tf(1020, 270)--tf(1020, 410), gridLine + linewidth(0.8 * s));
+
+real mockPoly(real x) {
+  real t = (x - 1020)/50;
+  return mgy - 25*t + 12*t^3; 
+}
+draw(graph(new real(real x) { return tf(x, mockPoly(x)).y; }, mgx1, mgx2, n=100), accentBlue + linewidth(1.2 * s));
+
+// ------------------------------------------------------------
+// MOCK CARD CONTENT: CENTER TYPOGRAPHY & EMBLEM
+// ------------------------------------------------------------
+pair mockEmblem = tf(600, 485);
+fill(circle(mockEmblem, 36 * s), primary);
+label("$\sum$", mockEmblem, white + fontsize(36 * s));
+
+draw(tf(420, 485)--tf(535, 485), accentBlue + linewidth(1 * s));
+draw(tf(665, 485)--tf(780, 485), accentBlue + linewidth(1 * s));
+dot(tf(535, 485), accentBlue + linewidth(3 * s));
+dot(tf(665, 485), accentBlue + linewidth(3 * s));
+
+pen mockTitleFont = Palatino(series="b", shape="n") + fontsize(56 * s);
+label("MATHEMATICS", tf(600, 395), primary + mockTitleFont);
+label("LECTURES", tf(600, 325), primary + mockTitleFont);
+
+draw(tf(480, 292)--tf(720, 292), gridLine + linewidth(1.2 * s));
+label("Rigorous Notes  $\cdot$  Curated Problem Sets  $\cdot$  Visual Proofs", tf(600, 262), textMain + fontsize(16 * s));
+
+// ------------------------------------------------------------
+// MOCK CARD CONTENT: TOPIC BADGE PILL
+// ------------------------------------------------------------
+path mockBadgeBox = roundedBoxPath(tf(380, 192), tf(820, 230), 6 * s);
+fill(mockBadgeBox, rgb("#EFF6FF")); 
+draw(mockBadgeBox, accentBlue + linewidth(1 * s));
+
+pen mockBadgeFont = Palatino(series="b", shape="n") + fontsize(12 * s);
+label("ALGEBRA  $\cdot$  CALCULUS  $\cdot$  PROBABILITY  $\cdot$  GEOMETRY", tf(600, 209), primary + mockBadgeFont);
+
+// ------------------------------------------------------------
+// MOCK CARD CONTENT: FOOTER TRACK & URL
+// ------------------------------------------------------------
+real mBaseY = 60;
+real mWaveA(real x) { return mBaseY + 12 * sin(0.025 * x); }
+real mWaveB(real x) { return mBaseY + 8 * cos(0.035 * x + 0.5); }
+
+draw(graph(new real(real x) { return tf(x, mWaveA(x)).y; }, 30, 1200 - 30, n=150), gridLine + linewidth(1 * s));
+draw(graph(new real(real x) { return tf(x, mWaveB(x)).y; }, 30, 1200 - 30, n=150), mathWater + linewidth(0.8 * s));
+
+for (int i = 1; i <= 10; ++i) {
+    real dotX = 40 + i * 105;
+    if (dotX < 430 || dotX > 770) {
+        dot(tf(dotX, mWaveA(dotX)), primary + linewidth(4 * s));
+        dot(tf(dotX + 25, mWaveB(dotX + 25)), accentBlue + linewidth(3 * s));
+    }
+}
+
+path mockFooterBox = roundedBoxPath(tf(440, 40), tf(760, 80), 10 * s);
+fill(shift(0, -3 * s) * mockFooterBox, mathWater);
+fill(mockFooterBox, borderDark);
+
+pen mockUrlFont = Palatino(series="b", shape="n") + fontsize(15 * s);
+label("math-lectures.com", tf(600, 60), white + mockUrlFont);
