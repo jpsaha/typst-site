@@ -187,6 +187,28 @@ jobs:
 
 
       # ========================================================
+      # Check Open Graph image checksums
+      #
+      # This makes it possible to verify exactly which PNG
+      # is being deployed and whether default.png differs
+      # from the committed source image.
+      # ========================================================
+
+      - name: Check Open Graph image checksums
+        run: |
+          echo "Source assets/og/default.png:"
+          sha256sum assets/og/default.png
+
+          echo
+          echo "Built dist/assets/og/default.png:"
+          sha256sum dist/assets/og/default.png
+
+          echo
+          echo "All dist Open Graph PNGs:"
+          find dist/assets/og -type f -name "*.png" -print0 \
+            | sort -z \
+            | xargs -0 sha256sum
+      # ========================================================
       # Deploy to GitHub Pages
       # ========================================================
 
