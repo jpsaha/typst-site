@@ -205,24 +205,24 @@ for (int i = 1; i <= 10; ++i) {
 }
 
 // Construct transformed pairs directly to avoid winding rule blackouts
-pair fMinTrans = tf(440, 40);
-pair fMaxTrans = tf(760, 80);
+pair fMinTrans = tf(250, 70);
+pair fMaxTrans = tf(950, 130);
 real finalRadius = 10 * s;
 
 // Soft, transparent drop shadow behind the pill container
 path mockShadowBox = roundedBoxPath(fMinTrans + (0, -2 * s), fMaxTrans + (0, -2 * s), finalRadius);
 //fill(mockShadowBox, rgb("#E2E8F0"));
 // Soft, transparent drop shadow behind the pill container
-fill(mockShadowBox, rgb("#EAE7DC")); // Warm sandstone shadow tint
+fill(mockShadowBox, btnBgBlue); // Warm sandstone shadow tint
 
 // Front Pill Layer: Soft, vibrant ice blue backdrop instead of borderDark
 path mockFooterBox = roundedBoxPath(fMinTrans, fMaxTrans, finalRadius);
 //fill(mockFooterBox, rgb("#EFF6FF")); // Premium light blue container
 // Front Pill Layer: Luxury academic ivory page texture
-fill(mockFooterBox, rgb("#FAF8F5")); // Crisp warm alabaster ivory
+//fill(mockFooterBox, rgb("#FAF8F5")); // Crisp warm alabaster ivory
 draw(mockFooterBox, primary + linewidth(1 * s)); // Sharp thin accent boundary line
 
 
 // Contrast Label text layered cleanly on top (swapped from white to deep primary ink)
-pen mockUrlFont = Palatino(series="b", shape="n") + fontsize(15 * s);
-label("https://jpsaha.github.io/typst-site", tf(600, 60), primary + mockUrlFont);
+pen mockUrlFont = Palatino(series="b", shape="n") + fontsize(45 * s);
+label("https://jpsaha.github.io/typst-site/", tf(600, 100), white + mockUrlFont);
