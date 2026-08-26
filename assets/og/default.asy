@@ -185,9 +185,10 @@ draw(mockBadgeBox, accentBlue + linewidth(1 * s));
 pen mockBadgeFont = Palatino(series="b", shape="n") + fontsize(30 * s);
 label("ALGEBRA  $\cdot$  COMBINATORICS  $\cdot$  GEOMETRY  $\cdot$  NUMBER THEORY", tf(600, 211), primary + mockBadgeFont);
 
-// ------------------------------------------------------------
-// MOCK CARD CONTENT: FOOTER TRACK & URL
-// ------------------------------------------------------------
+
+// ============================================================
+// MOCK CARD CONTENT: FOOTER TRACK & URL (BRIGHT THEME OPTIMIZED)
+// ============================================================
 real mBaseY = 60;
 real mWaveA(real x) { return mBaseY + 12 * sin(0.025 * x); }
 real mWaveB(real x) { return mBaseY + 8 * cos(0.035 * x + 0.5); }
@@ -203,9 +204,25 @@ for (int i = 1; i <= 10; ++i) {
     }
 }
 
-path mockFooterBox = roundedBoxPath(tf(440, 40), tf(760, 80), 10 * s);
-fill(shift(0, -3 * s) * mockFooterBox, mathWater);
-fill(mockFooterBox, borderDark);
+// Construct transformed pairs directly to avoid winding rule blackouts
+pair fMinTrans = tf(440, 40);
+pair fMaxTrans = tf(760, 80);
+real finalRadius = 10 * s;
 
+// Soft, transparent drop shadow behind the pill container
+path mockShadowBox = roundedBoxPath(fMinTrans + (0, -2 * s), fMaxTrans + (0, -2 * s), finalRadius);
+//fill(mockShadowBox, rgb("#E2E8F0"));
+// Soft, transparent drop shadow behind the pill container
+fill(mockShadowBox, rgb("#EAE7DC")); // Warm sandstone shadow tint
+
+// Front Pill Layer: Soft, vibrant ice blue backdrop instead of borderDark
+path mockFooterBox = roundedBoxPath(fMinTrans, fMaxTrans, finalRadius);
+//fill(mockFooterBox, rgb("#EFF6FF")); // Premium light blue container
+// Front Pill Layer: Luxury academic ivory page texture
+fill(mockFooterBox, rgb("#FAF8F5")); // Crisp warm alabaster ivory
+draw(mockFooterBox, primary + linewidth(1 * s)); // Sharp thin accent boundary line
+
+
+// Contrast Label text layered cleanly on top (swapped from white to deep primary ink)
 pen mockUrlFont = Palatino(series="b", shape="n") + fontsize(15 * s);
-label("math-lectures.com", tf(600, 60), white + mockUrlFont);
+label("https://jpsaha.github.io/typst-site", tf(600, 60), primary + mockUrlFont);
