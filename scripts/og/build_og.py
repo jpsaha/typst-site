@@ -27,6 +27,7 @@ import subprocess
 from scripts.config import (
     ROOT,
     GENERATED_OG_DIR,
+    ASSETS_SOURCE_DIR,
     OG_WIDTH,
     OG_HEIGHT,
     OG_DENSITY,
@@ -92,14 +93,43 @@ from scripts.config import (
 def build_og_image(source):
     """
     Convert one Asymptote source into a 1200×630 PNG.
+
+    The PNG is rebuilt only when:
+        - it does not exist, or
+        - the .asy source is newer than the PNG.
     """
 
-    relative = source.relative_to(GENERATED_OG_DIR)
+    # --------------------------------------------------------
+    # Determine output location
+    #
+    # Generated OG sources:
+    #
+    #     generated/og/fgt/lec1.asy
+    #         →
+    #     generated/og/fgt/lec1.png
+    #
+    # Default OG source:
+    #
+    #     assets/og/default.asy
+    #         →
+    #     assets/og/default.png
+    # --------------------------------------------------------
 
     output_base = source.with_suffix("")
-
     pdf = output_base.with_suffix(".pdf")
     png = output_base.with_suffix(".png")
+
+    # --------------------------------------------------------
+    # Incremental check
+    # --------------------------------------------------------
+
+    if png.exists() and png.stat().st_mtime >= source.stat().st_mtime:
+        print(
+            f"⏭️  Skipping "
+            f"{source.relative_to(ROOT)}"
+            f" — PNG is up to date"
+        )
+        return False
 
     # --------------------------------------------------------
     # Ensure output directory exists
@@ -109,6 +139,8 @@ def build_og_image(source):
         parents=True,
         exist_ok=True,
     )
+
+    relative = source.relative_to(ROOT)
 
     # --------------------------------------------------------
     # Asymptote → PDF
@@ -136,9 +168,9 @@ def build_og_image(source):
 
     print(
         f"🖼️  Converting "
-        f"{relative.with_suffix('.pdf')}"
+        f"{pdf.relative_to(ROOT)}"
         f" → "
-        f"{relative.with_suffix('.png')}"
+        f"{png.relative_to(ROOT)}"
     )
 
     subprocess.run(
@@ -177,6 +209,8 @@ def build_og_image(source):
         f"{png.relative_to(ROOT)}"
     )
 
+    return True
+
 
 # ============================================================
 # Main
@@ -184,24 +218,43 @@ def build_og_image(source):
 
 def main():
 
-    if not GENERATED_OG_DIR.exists():
-        print(
-            f"⚠️  OG directory does not exist: "
-            f"{GENERATED_OG_DIR}"
-        )
-        return
+    # ========================================================
+    # Collect OG sources
+    # ========================================================
+
+    sources = []
 
     # --------------------------------------------------------
-    # Find all Asymptote sources recursively
+    # Default OG image
+    #
+    # This is a manually maintained source asset.
     # --------------------------------------------------------
 
-    sources = sorted(
-        GENERATED_OG_DIR.rglob("*.asy")
+    default_source = (
+        ASSETS_SOURCE_DIR / "og" / "default.asy"
     )
+
+    if default_source.exists():
+        sources.append(default_source)
+
+    # --------------------------------------------------------
+    # Generated OG images
+    # --------------------------------------------------------
+
+    if GENERATED_OG_DIR.exists():
+        sources.extend(
+            sorted(
+                GENERATED_OG_DIR.rglob("*.asy")
+            )
+        )
+
+    # --------------------------------------------------------
+    # Nothing to build
+    # --------------------------------------------------------
 
     if not sources:
         print(
-            "ℹ️  No .asy files found."
+            "ℹ️  No OG .asy files found."
         )
         return
 
@@ -211,32 +264,37 @@ def main():
 
     print()
 
-    # --------------------------------------------------------
+    # ========================================================
     # Build images
-    # --------------------------------------------------------
+    # ========================================================
 
     built = 0
+    skipped = 0
 
     for source in sources:
 
-        build_og_image(source)
-
-        built += 1
+        if build_og_image(source):
+            built += 1
+        else:
+            skipped += 1
 
         print()
 
-    # --------------------------------------------------------
+    # ========================================================
     # Summary
-    # --------------------------------------------------------
+    # ========================================================
 
     print(
         "OG image generation complete."
     )
 
     print(
-        f"Generated : {built}"
+        f"Built     : {built}"
     )
 
+    print(
+        f"Skipped   : {skipped}"
+    )
 
 # ============================================================
 # Entry point
