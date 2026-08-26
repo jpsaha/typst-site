@@ -35,3 +35,18 @@ SITE_TAGLINE = (
     "and need not be a faithful representation of any lecture "
     "or a course. Please report any errors you find to the author."
 )
+
+
+# ------------------------------------------------------------
+# OG image configuration
+# ------------------------------------------------------------
+
+ASY_TOP_SECTION = "Mathematics Olympiad"
+ASY_TARGET_EXAM = (
+    "IOQM  •  RMO  •  INMO"
+)
+ASY_MOCKTITLE_A = "MATHEMATICS"
+ASY_MOCKTITLE_B = "LECTURES"
+ASY_MOCKCARD_TOPIC = (
+    "ALGEBRA  •  COMBINATORICS  •  GEOMETRY  •  NUMBER THEORY"
+)

@@ -11,6 +11,11 @@
 //     __TAGS__
 //     __GITHUB_USERNAME__
 //     __REPO_NAME__
+//     __ASY_TOP_SECTION__
+//     __ASY_TARGET_EXAM__
+//     __ASY_MOCKTITLE_A__
+//     __ASY_MOCKTITLE_B__
+//     __ASY_MOCKCARD_TOPIC__
 //
 // Output:
 //     1200 × 630
@@ -90,7 +95,7 @@ for (real y = 40; y < H - 12; y += 40) {
 // 1. Top Section Category Tag
 path greenBadge = roundedBoxPath((60, 410), (460, 480), 12);
 fill(greenBadge, badgeBgGreen);
-label("Mathematics Olympiad", (260, 445), badgeTxtGreen + Helvetica("b") + fontsize(35));
+label("__ASY_TOP_SECTION__", (260, 445), badgeTxtGreen + Helvetica("b") + fontsize(35));
 
 // 2. High Impact Main Title Header
 label("__CATEGORY__", (60, 345), E, borderDark + Helvetica("b") + fontsize(35));
@@ -105,7 +110,7 @@ label("__TAGS__", (60, 185), E, textMain + Helvetica() + fontsize(22));
 // 4. Target Exam Access Buttons Group
 path blueBadge = roundedBoxPath((60, 85), (420, 135), 8);
 fill(blueBadge, btnBgBlue);
-label("IOQM $\cdot$ RMO $\cdot$ INMO", (240, 110), white + Helvetica("b") + fontsize(35));
+label("__ASY_TARGET_EXAM__", (240, 110), white + Helvetica("b") + fontsize(35));
 
 
 // ============================================================
@@ -189,8 +194,8 @@ dot(tf(535, 485), accentBlue + linewidth(3 * s));
 dot(tf(665, 485), accentBlue + linewidth(3 * s));
 
 pen mockTitleFont = Palatino(series="b", shape="n") + fontsize(56 * s);
-label("MATHEMATICS", tf(600, 395), primary + mockTitleFont);
-label("LECTURES", tf(600, 325), primary + mockTitleFont);
+label("__ASY_MOCKTITLE_A__", tf(600, 395), primary + mockTitleFont);
+label("__ASY_MOCKTITLE_B__", tf(600, 325), primary + mockTitleFont);
 
 draw(tf(480, 292)--tf(720, 292), gridLine + linewidth(1.2 * s));
 // label("Rigorous Notes  $\cdot$  Curated Problem Sets  $\cdot$  Visual Proofs", tf(600, 262), textMain + fontsize(16 * s));
@@ -204,7 +209,7 @@ fill(mockBadgeBox, rgb("#EFF6FF"));
 draw(mockBadgeBox, accentBlue + linewidth(1 * s));
 
 pen mockBadgeFont = Palatino(series="b", shape="n") + fontsize(30 * s);
-label("ALGEBRA  $\bullet$  COMBINATORICS  $\bullet$  GEOMETRY  $\bullet$  NUMBER THEORY", tf(600, 211), primary + mockBadgeFont);
+label("__ASY_MOCKCARD_TOPIC__", tf(600, 211), primary + mockBadgeFont);
 
 
 // ============================================================

@@ -63,7 +63,15 @@ from scripts.config import (
     OG_TEMPLATE_FILE,
 )
 
-from scripts.site_config import (REPO_NAME, GITHUB_USERNAME)
+from scripts.site_config import (
+    REPO_NAME, 
+    GITHUB_USERNAME, 
+    ASY_TOP_SECTION, 
+    ASY_TARGET_EXAM,
+    ASY_MOCKTITLE_A,
+    ASY_MOCKTITLE_B,
+    ASY_MOCKCARD_TOPIC
+    )
 
 # ============================================================
 # Files used by Open Graph source generation
@@ -207,6 +215,51 @@ def generate_asy(
     source = source.replace(
         "__REPO_NAME__",
         escape_asy_string(REPO_NAME),
+    )
+
+    # --------------------------------------------------------
+    # Asymptote top section
+    # --------------------------------------------------------
+
+    source = source.replace(
+        "__ASY_TOP_SECTION__",
+        escape_asy_string(ASY_TOP_SECTION),
+    )
+
+    # --------------------------------------------------------
+    # Asymptote target exam
+    # --------------------------------------------------------
+
+    source = source.replace(
+        "__ASY_TARGET_EXAM__",
+        escape_asy_string(ASY_TARGET_EXAM),
+    )
+
+    # --------------------------------------------------------
+    # Asymptote mockcard title A
+    # --------------------------------------------------------
+
+    source = source.replace(
+        "__ASY_MOCKTITLE_A__",
+        escape_asy_string(ASY_MOCKTITLE_A),
+    )
+
+    # --------------------------------------------------------
+    # Asymptote mockcard title B
+    # --------------------------------------------------------
+
+    source = source.replace(
+        "__ASY_MOCKTITLE_B__",
+        escape_asy_string(ASY_MOCKTITLE_B),
+    )
+
+    # --------------------------------------------------------
+    # Asymptote mockcard topic
+    # --------------------------------------------------------
+
+    source = source.replace(
+        "__ASY_MOCKCARD_TOPIC__",
+        escape_asy_string(ASY_MOCKCARD_TOPIC),
     )
 
     return source
