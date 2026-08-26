@@ -8,6 +8,9 @@
 //     __TITLE__
 //     __CATEGORY__
 //     __FILE__
+//     __TAGS__
+//     __GITHUB_USERNAME__
+//     __REPO_NAME__
 //
 // Output:
 //     1200 × 630
@@ -243,4 +246,4 @@ draw(mockFooterBox, primary + linewidth(1 * s)); // Sharp thin accent boundary l
 
 // Contrast Label text layered cleanly on top (swapped from white to deep primary ink)
 pen mockUrlFont = Palatino(series="b", shape="n") + fontsize(45 * s);
-label("https://jpsaha.github.io/typst-site/", tf(600, 100), primary + mockUrlFont);
+label("https://__GITHUB_USERNAME__.github.io/__REPO_NAME__/", tf(600, 100), primary + mockUrlFont);
