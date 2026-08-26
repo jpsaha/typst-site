@@ -196,18 +196,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           force_orphan: true
-      
-      - name: Verify gh-pages default.png
-        run: |
-          git fetch origin gh-pages
-
-          echo "gh-pages default.png:"
-          git show origin/gh-pages:assets/og/default.png | sha256sum
-
-          echo
-          echo "main/assets/og/default.png:"
-          sha256sum assets/og/default.png
-
-          echo
-          echo "dist/assets/og/default.png:"
-          sha256sum dist/assets/og/default.png
