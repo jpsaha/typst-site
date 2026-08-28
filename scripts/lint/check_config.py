@@ -61,32 +61,31 @@ import ast
 import re
 
 
-# ============================================================
-# Project paths
-# ============================================================
-#
-# This script lives at:
-#
-#     scripts/lint/check_config.py
-#
-# Therefore:
-#
-#     parents[0] = scripts/lint
-#     parents[1] = scripts
-#     parents[2] = project root
-#
-# These paths belong to this audit script itself and are not
-# project configuration. They are deliberately kept local.
-# ============================================================
+from scripts.config import (
+    ROOT,
+    CONTENT_DIR,
+    DIST_DIR,
+    DIAGNOSTICS_DIR,
+    GENERATED_DIR,
+    SCRIPTS_DIR,
+    TEMPLATES_DIR,
+    CONFIG_FILE,
+    CONFIG_REPORT,
+)
 
-ROOT = Path(__file__).resolve().parents[2]
+from scripts.site_config import (
+    GITHUB_USERNAME,
+    REPO_NAME,
+)
 
-SCRIPTS_DIR = ROOT / "scripts"
-CONFIG_FILE = SCRIPTS_DIR / "config.py"
 
-DIAGNOSTICS_DIR = ROOT / "diagnostics"
-REPORT_FILE = DIAGNOSTICS_DIR / "config_report.txt"
+SITE_CONFIG_FILE = SCRIPTS_DIR / "site_config.py"
+AUDIT_FILE = Path(__file__).resolve()
 
+CONFIG_MODULES = {
+    CONFIG_FILE,
+    SITE_CONFIG_FILE,
+}
 
 # ============================================================
 # Configuration-like patterns
@@ -98,32 +97,44 @@ REPORT_FILE = DIAGNOSTICS_DIR / "config_report.txt"
 # ============================================================
 
 PROJECT_DIRECTORIES = {
-    "content",
-    "templates",
-    "generated",
-    "diagnostics",
-    "dist",
+    CONTENT_DIR.name,
+    TEMPLATES_DIR.name,
+    GENERATED_DIR.name,
+    DIAGNOSTICS_DIR.name,
+    DIST_DIR.name,
+    # ASSETS_DIR.name,
+    SCRIPTS_DIR.name,
     "assets",
     "pages",
     "pdf",
-    "scripts",
 }
 
+# PROJECT_DIRECTORIES = {
+#     # "content",
+#     # "templates",
+#     # "generated",
+#     # "diagnostics",
+#     # "dist",
+#     "assets",
+#     "pages",
+#     "pdf",
+#     # "scripts",
+# }
 
-# ------------------------------------------------------------
+
 # Project-specific strings
-# ------------------------------------------------------------
 #
-# These are values tied to this particular website/repository.
-# They are useful for detecting accidental hard-coding.
-# ============================================================
+# These values belong to site_config.py because they identify
+# the individual project/repository rather than the reusable
+# Typst infrastructure.
+#
+# They are imported here only so the audit can detect accidental
+# hard-coding elsewhere.
 
 PROJECT_STRINGS = {
-    "jpsaha",
-    "typst-site",
-    "github.io",
+    GITHUB_USERNAME,
+    REPO_NAME,
 }
-
 
 # ------------------------------------------------------------
 # Configuration-like numbers
@@ -160,6 +171,8 @@ IMPLEMENTATION_CONSTANT_NAMES = {
 
     # Command dispatch
     "COMMANDS",
+    "COMMAND_GROUPS",
+    "COMPOSITE_COMMANDS",
 
     # Import checking
     "TYPST_DIRS",
@@ -171,6 +184,9 @@ IMPLEMENTATION_CONSTANT_NAMES = {
     "CONTENT_INCLUDE_RE",
     "LECTURE_START_RE",
     "LECTURE_METADATA_PATTERN",
+
+
+    "EQUATION_STYLESHEET",
 
     # Metadata-specific generated paths/configuration
     # are intentionally NOT listed here if they represent
@@ -530,7 +546,7 @@ def main():
         # Skip config.py for duplicate-definition checks
         # ====================================================
 
-        if path != CONFIG_FILE:
+        if path not in CONFIG_MODULES and path != AUDIT_FILE:
 
             # ------------------------------------------------
             # 1. Uppercase constants
@@ -846,7 +862,7 @@ def main():
 
     lines.append(
         "1. CONFIGURATION-LIKE CONSTANTS DEFINED "
-        "OUTSIDE config.py"
+        "OUTSIDE CONFIGURATION MODULES"
     )
 
     lines.append("-" * 70)
@@ -876,7 +892,7 @@ def main():
 
     lines.append(
         "2. IMPLEMENTATION CONSTANTS DEFINED "
-        "OUTSIDE config.py"
+        "OUTSIDE CONFIGURATION MODULES"
     )
 
     lines.append("-" * 70)
@@ -905,10 +921,24 @@ def main():
     # ========================================================
 
     lines.append(
-        "3. Path(...) CONSTRUCTIONS OUTSIDE config.py"
+        "3. LOCAL PATH CONSTRUCTION CANDIDATES"
     )
 
     lines.append("-" * 70)
+
+    lines.append(
+        "  NOTE: Path(...) calls are reported as audit candidates."
+    )
+
+    lines.append(
+        "  They are not necessarily configuration and often represent"
+    )
+
+    lines.append(
+        "  normal runtime conversion of strings to Path objects."
+    )
+
+    lines.append("")
 
     if findings["local_paths"]:
 
@@ -934,7 +964,7 @@ def main():
     # ========================================================
 
     lines.append(
-        "4. ROOT / ... PATH CONSTRUCTIONS"
+        "4. PROJECT PATH CONSTRUCTIONS OUTSIDE CONFIGURATION MODULES"
     )
 
     lines.append("-" * 70)
@@ -1117,7 +1147,7 @@ def main():
 
     lines.append(
         f"Configuration constants "
-        f"outside config.py          : "
+        f"outside configuration modules : "
         f"{len(findings['configuration_constants'])}"
     )
 
@@ -1185,7 +1215,7 @@ def main():
 
     report = "\n".join(lines) + "\n"
 
-    REPORT_FILE.write_text(
+    CONFIG_REPORT.write_text(
         report,
         encoding="utf-8",
     )
@@ -1199,7 +1229,7 @@ def main():
 
     print(
         f"📄 Report written to "
-        f"{relative(REPORT_FILE)}"
+        f"{relative(CONFIG_REPORT)}"
     )
 
 
