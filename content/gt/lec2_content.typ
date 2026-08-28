@@ -42,7 +42,9 @@ See @defn-eeigenvalue-eigeenvector for the formal definition of eigenvalues and 
   Let $T: V -> V$ be a linear operator. If $v_1, v_2, ..., v_m$ are eigenvectors 
   corresponding to *distinct* eigenvalues $lambda_1, lambda_2, ..., lambda_m$, 
   then the set $\{v_1, v_2, ..., v_m\}$ is linearly independent.
-]
+]<thm-linear-independence-eigenvectors>
+
+By @thm-linear-independence-eigenvectors, we conclude that eigenvectors corresponding to distinct eigenvalues are linearly independent.
 
 == Homework Practice
 
@@ -55,4 +57,14 @@ See @defn-eeigenvalue-eigeenvector for the formal definition of eigenvalues and 
   2. Find the distinct eigenvalues $lambda_1$ and $lambda_2$ by solving:
   
   $ lambda^2 - 7lambda + 10 = 0 $
-]
+]<exer-characteristic-polynomial-evaluation>
+
+By @exer-characteristic-polynomial-evaluation.
+
+
+#lemma[
+  lemma
+]<lemma-test>
+
+by @lemma-test.
+
