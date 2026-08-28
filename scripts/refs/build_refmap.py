@@ -24,25 +24,13 @@ import sys
 # Project root
 # ============================================================
 
-ROOT = Path(__file__).resolve().parents[2]
-
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-
 from scripts.config import (
+    ROOT,
     PAGES_DIR,
     GENERATED_DIR,
     HOMEPAGE_JSON,
+    REFMAP_JSON,
 )
-
-
-# ============================================================
-# Output
-# ============================================================
-
-REFMAP_JSON = GENERATED_DIR / "refmap.json"
-
 
 # ============================================================
 # Reference pattern
