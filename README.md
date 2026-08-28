@@ -2933,6 +2933,13 @@ The metadata model can eventually support richer educational structures such as:
 * learning objectives
 * prerequisite knowledge
 * estimated study time
+* **Semantic mathematical metadata**, including structured topics,
+  concepts, techniques, difficulty, prerequisites, and relationships
+  between definitions, theorems, examples, exercises, problems,
+  and solutions.
+* **Automatic related-problem discovery** based on mathematical
+  concepts and techniques rather than only text similarity.
+* **Mathematical knowledge graph generation** from semantic metadata.
 
 This would allow the same publishing engine to support not only lecture notes but complete **teaching collections**.
 
