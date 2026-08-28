@@ -63,6 +63,8 @@ ROOT = Path(
 
 CONTENT_DIR = ROOT / "content"
 
+SCRIPTS_DIR = ROOT / "scripts"
+
 TEMPLATES_DIR = ROOT / "templates"
 
 GENERATED_DIR = ROOT / "generated"
