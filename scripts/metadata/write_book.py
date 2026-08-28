@@ -68,6 +68,10 @@ def write_imports(file, title=None):
         ')\n\n'
     )
 
+    file.write(
+        '#toc\n\n'
+    )
+
 
 def write_header_and_imports(file, title=None):
     """Write the standard header and imports."""
