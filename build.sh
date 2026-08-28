@@ -990,7 +990,7 @@ build_html() {
 
     stage_end TIME_HTML
 
-    print_ok "Course pages built."
+    print_ok "Course HTML pages built."
 }
 
 
