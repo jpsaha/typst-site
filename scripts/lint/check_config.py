@@ -79,7 +79,26 @@ from scripts.site_config import (
 )
 
 
-SITE_CONFIG_FILE = SCRIPTS_DIR / "site_config.py"
+# ============================================================
+# Audit files
+# ============================================================
+#
+# This script audits project configuration usage.
+#
+# There are two intentional configuration modules:
+#
+#     scripts/config.py
+#     scripts/site_config.py
+#
+# Neither should be reported as defining configuration
+# "outside" the configuration modules.
+#
+# ============================================================
+
+SITE_CONFIG_FILE = (
+    SCRIPTS_DIR / "site_config.py"
+)
+
 AUDIT_FILE = Path(__file__).resolve()
 
 CONFIG_MODULES = {
@@ -87,13 +106,29 @@ CONFIG_MODULES = {
     SITE_CONFIG_FILE,
 }
 
+
 # ============================================================
 # Configuration-like patterns
 # ============================================================
 #
-# These are project-specific directory names that should
-# normally be represented through config.py when they are used
-# as filesystem paths.
+# Project directory names are used by the text-based audit to
+# detect hard-coded paths in scripts.
+#
+# Whenever possible, derive these names from the centralized
+# path constants in config.py rather than repeating literals.
+#
+# Some nested output directory names are included explicitly:
+#
+#     assets
+#     pages
+#     pdf
+#
+# because they are components of centralized paths such as:
+#
+#     ASSETS_DIR
+#     PAGES_DIR
+#     PDF_DIR
+#
 # ============================================================
 
 PROJECT_DIRECTORIES = {
@@ -102,34 +137,24 @@ PROJECT_DIRECTORIES = {
     GENERATED_DIR.name,
     DIAGNOSTICS_DIR.name,
     DIST_DIR.name,
-    # ASSETS_DIR.name,
     SCRIPTS_DIR.name,
+
     "assets",
     "pages",
     "pdf",
 }
 
-# PROJECT_DIRECTORIES = {
-#     # "content",
-#     # "templates",
-#     # "generated",
-#     # "diagnostics",
-#     # "dist",
-#     "assets",
-#     "pages",
-#     "pdf",
-#     # "scripts",
-# }
 
-
+# ============================================================
 # Project-specific strings
+# ============================================================
 #
-# These values belong to site_config.py because they identify
-# the individual project/repository rather than the reusable
-# Typst infrastructure.
+# These values identify this particular GitHub repository/site.
 #
-# They are imported here only so the audit can detect accidental
-# hard-coding elsewhere.
+# They come from site_config.py so that the audit does not
+# duplicate the actual project identity.
+#
+# ============================================================
 
 PROJECT_STRINGS = {
     GITHUB_USERNAME,
