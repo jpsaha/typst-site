@@ -602,9 +602,31 @@ The source organization can remain simple while the generated metadata provides 
 
 ## Semantic tags
 
-Exercises, problems, examples, and other mathematical objects can carry structured tags describing their mathematical content.
+Every mathematical or educational object should eventually be able to carry a small set of semantic tags describing the mathematical ideas involved.
 
-Potential metadata includes:
+The purpose of these tags is not merely classification. They provide a **semantic fingerprint** that can later be used to discover mathematically similar material.
+
+For example:
+
+```typst
+#let problem = (
+  file: "problem-17",
+  title: "Counting subgroups of a finite group",
+  type: "problem",
+  category: "Group theory",
+
+  tags: (
+    topic: ["group-theory", "subgroups"],
+    concept: ["lagrange-theorem"],
+    technique: ["counting", "cosets"],
+    difficulty: "intermediate",
+  ),
+)
+```
+
+The exact tag vocabulary is expected to evolve as the repository grows. The important architectural principle is that the tags describe the **mathematical characteristics of the object**, rather than simply its location.
+
+Potential semantic metadata includes:
 
 ```text
 topic
@@ -618,31 +640,192 @@ prerequisites
 
 For example:
 
-```typst
-#let exercise = (
-  file: "problem-07",
-  title: "A subgroup counting problem",
-  type: "exercise",
-  category: "Group theory",
-
-  tags: (
-    topic: ["group-theory", "subgroups"],
-    concept: ["lagrange-theorem"],
-    technique: ["counting", "cosets"],
-    difficulty: "intermediate",
-  ),
-)
+```text
+Problem P17
+    tags:
+        group-theory
+        subgroups
+        lagrange-theorem
+        cosets
+        counting
 ```
 
-The purpose of these tags is not merely to organize the website.
+Another problem might have:
 
-They provide the foundation for discovering **mathematically related content**.
+```text
+Problem P31
+    tags:
+        group-theory
+        finite-groups
+        lagrange-theorem
+        counting
+```
+
+The two problems do not need to belong to the same lecture, course, or collection to be recognized as related.
+
+The publishing system can eventually use shared tags and other semantic information to generate:
+
+```text
+Related Problems
+Similar Exercises
+Problems on the Same Concept
+Problems Using the Same Technique
+Problems of Similar Difficulty
+Further Practice
+Prerequisite Material
+```
+
+The goal is therefore to support **mathematical similarity**, not merely keyword search.
+
+---
+
+## Problems, exercises, and solutions
+
+In particular, **exercises, problems, and solutions should eventually carry a small set of meaningful semantic tags**.
+
+For example:
+
+```text
+Exercise E12
+    tags:
+        ["number-theory", "divisibility", "pigeonhole"]
+
+Problem P31
+    tags:
+        ["number-theory", "divisibility", "pigeonhole", "olympiad"]
+
+Solution S31
+    tags:
+        ["number-theory", "divisibility", "pigeonhole", "olympiad"]
+```
+
+A solution may inherit or repeat some of the tags of its associated problem because the solution is also a mathematical object that can be discovered through those concepts and techniques.
+
+The problem and solution should nevertheless remain distinct objects.
+
+For example:
+
+```text
+Problem P31
+    └── has-solution → Solution S31
+```
+
+This distinction becomes important when the system generates different views of the same material.
+
+A problem page may expose:
+
+```text
+Problem P31
+
+Topics
+    → Number theory
+    → Divisibility
+
+Techniques
+    → Pigeonhole principle
+
+Similar Problems
+    → P18
+    → P24
+    → P42
+
+Solution
+    → Solution P31
+```
+
+while a solution page may expose:
+
+```text
+Solution P31
+
+Solves
+    → Problem P31
+
+Related Problems
+    → P18
+    → P24
+    → P42
+```
+
+The same semantic information can therefore be reused in multiple directions.
+
+---
+
+## Tags and relationships are different
+
+Tags and relationships should remain conceptually separate.
+
+**Tags describe what an object is about.**
+
+**Relationships describe how objects are connected.**
+
+For example:
+
+```text
+Problem P17
+    tags:
+        group-theory
+        subgroups
+        cosets
+        counting
+```
+
+describes the mathematical content of the problem.
+
+A relationship expresses a stronger structural statement:
+
+```text
+Problem P17
+    ├── requires → Definition D5
+    ├── uses → Theorem T8
+    ├── has-solution → Solution S17
+    └── related-to → Problem P12
+```
+
+A tag such as:
+
+```text
+lagrange-theorem
+```
+
+does not necessarily mean that a particular theorem object is being used.
+
+It only says that the concept is relevant to the object.
+
+An explicit relationship can express:
+
+```text
+Problem P17
+    └── uses → Theorem T8
+```
+
+This distinction prevents the semantic metadata from becoming ambiguous as the repository grows.
 
 ---
 
 ## Relationships between mathematical objects
 
-The system can eventually represent relationships such as:
+The publishing system can eventually represent relationships between different types of mathematical objects.
+
+For example:
+
+```text
+Definition: Normal subgroup
+        │
+        ▼
+Theorem: Quotient Group Theorem
+        │
+        ├── illustrated by → Example E4
+        │
+        ├── used by → Exercise X7
+        │
+        └── used by → Problem P17
+                              │
+                              ▼
+                         Solution S17
+```
+
+Possible relationship types include:
 
 ```text
 requires
@@ -650,104 +833,202 @@ uses
 illustrates
 proves
 solves
-extends
+has-solution
 related-to
+extends
 follows-from
 ```
 
-For example:
+These relationships do not necessarily have to be entered manually everywhere.
+
+Where appropriate, they can be **derived from structured metadata**.
+
+For example, a solution can be associated with its problem through an explicit identifier:
 
 ```text
-Problem P17
-   │
-   ├── uses → Lagrange's theorem
-   ├── requires → Normal subgroups
-   ├── technique → Coset counting
-   └── solution → Solution P17
+Problem P31
+    id: "P31"
+
+Solution S31
+    solves: "P31"
 ```
 
-Similarly:
+while related problems can be discovered from their semantic tags.
+
+This gives the system two complementary mechanisms:
 
 ```text
-Theorem
-   │
-   ├── introduced in → Lecture 4
-   ├── illustrated by → Example 4.2
-   ├── used by → Exercise 4.5
-   └── applied in → Problem P17
+                  Mathematical Object
+                         │
+              ┌──────────┴──────────┐
+              │                     │
+              ▼                     ▼
+           Tags                Relationships
+              │                     │
+              ▼                     ▼
+        "what is it       "how is it connected?"
+          about?"
 ```
 
-These relationships can eventually be used to generate navigation automatically rather than requiring every cross-reference to be maintained manually.
+Together they provide a richer model than either mechanism alone.
 
 ---
 
-## Related problems
+## Similarity versus explicit relationships
 
-One particularly useful application is automatic discovery of similar problems.
+This distinction is especially useful for problem collections.
 
-If problems contain structured metadata such as:
-
-```text
-topic
-concept
-technique
-difficulty
-prerequisites
-```
-
-the publishing engine can eventually generate sections such as:
+**Semantic similarity** can be discovered automatically:
 
 ```text
-Related Problems
-
-• Problems involving Lagrange's theorem
-• Problems involving coset counting
-• Problems using the same technique
-• Problems with similar difficulty
-• Problems requiring the same prerequisites
+Problem P31
+       │
+       │ shared concepts / techniques
+       ▼
+Problem P18
+Problem P24
+Problem P42
 ```
 
-This can be much more useful than ordinary text-based search because the relationships are based on the **mathematical characteristics of the problems**.
+while **explicit relationships** represent known structural connections:
+
+```text
+Problem P31
+       │
+       ├── uses → Theorem T8
+       ├── requires → Definition D5
+       └── has-solution → Solution S31
+```
+
+Thus the system does not have to maintain a manually curated list of every "similar problem."
+
+An author can describe the mathematical object accurately, and the publishing engine can later derive useful connections from that description.
+
+This is particularly valuable when the repository becomes large.
+
+A new problem added months or years later can automatically become related to older problems if its semantic metadata overlaps with theirs.
 
 ---
 
-## Prerequisite navigation
+## Semantic navigation
 
-Semantic metadata can also support learning-oriented navigation.
-
-For example:
+As the semantic metadata becomes richer, the website can eventually generate navigation such as:
 
 ```text
-Current Problem
-      │
-      ▼
-Required concepts
-      │
-      ▼
-Prerequisite definitions
-      │
-      ▼
-Relevant examples
-      │
-      ▼
-Earlier exercises
-      │
-      ▼
-Current Problem
+Problem P31
+
+Prerequisites
+    → Divisibility
+    → Pigeonhole principle
+
+Uses
+    → Theorem T8
+
+Similar Problems
+    → P18
+    → P24
+    → P42
+
+Solution
+    → Solution P31
+
+Further Practice
+    → Exercise E12
+    → Exercise E19
 ```
 
-This provides a foundation for features such as:
+The same information can also support:
 
-* prerequisite material
-* recommended exercises
-* suggested next problems
-* related theorems
-* related examples
-* concept-based navigation
-* difficulty-based progression
-* topic collections
+```text
+Topic pages
+Technique pages
+Concept indexes
+Difficulty collections
+Prerequisite graphs
+Problem recommendations
+Exercise sequences
+```
 
-The same mechanism can therefore support both **publishing** and **teaching**.
+The important principle is that these links should increasingly be **derived from structured semantic information**, rather than manually duplicated throughout the website.
+
+---
+
+## From metadata to a mathematical knowledge graph
+
+As the semantic metadata becomes richer, the repository can be viewed as a network of mathematical objects:
+
+```text
+                     Definition
+                         │
+                         ▼
+                      Theorem
+                     /       \
+                    ▼         ▼
+                Example     Exercise
+                              │
+                     ┌────────┴────────┐
+                     ▼                 ▼
+                  Problem          Related Problem
+                     │
+                     ▼
+                  Solution
+```
+
+Each object can have both:
+
+```text
+semantic attributes
+```
+
+and
+
+```text
+relationships to other objects
+```
+
+This creates the possibility of a future **mathematical knowledge graph** derived directly from the source material.
+
+The important architectural principle is:
+
+> **The publishing engine should eventually understand not only where mathematical content belongs, but how mathematical ideas, results, examples, problems, and solutions relate to one another.**
+
+---
+
+## Author once, connect once, publish everywhere
+
+The semantic model is intended to remain independent of any particular frontend.
+
+The same relationships could eventually drive:
+
+```text
+Website
+   ├── Related problems
+   ├── Prerequisites
+   ├── Recommended material
+   └── Concept navigation
+
+PDF
+   ├── Related exercises
+   └── References
+
+Course
+   ├── Learning sequence
+   ├── Prerequisites
+   └── Problem sets
+
+Problem collection
+   ├── Topic index
+   ├── Technique index
+   └── Difficulty index
+```
+
+The underlying mathematical content remains the authoritative source.
+
+The website, PDFs, books, indexes, and future educational interfaces are simply different views generated from that source.
+
+This reinforces the central architectural principle of the project:
+
+> **Author the mathematics once. Structure it carefully. Connect it meaningfully. Validate it automatically. Publish it in whatever educational formats are needed.**
 
 ---
 
