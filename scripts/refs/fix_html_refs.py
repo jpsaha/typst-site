@@ -44,29 +44,15 @@ import sys
 
 
 # ============================================================
-# Project root
-# ============================================================
-
-ROOT = Path(__file__).resolve().parents[2]
-
-sys.path.insert(
-    0,
-    str(ROOT),
-)
-
-
-# ============================================================
 # Configuration
 # ============================================================
 
 from scripts.config import (
+    ROOT,
     PAGES_DIR,
     GENERATED_DIR,
+    REFMAP_JSON,
 )
-
-
-REFMAP = GENERATED_DIR / "refmap.json"
-
 
 # ============================================================
 # Match every href
@@ -98,11 +84,11 @@ HREF_RE = re.compile(
 
 def load_refmap():
 
-    if not REFMAP.exists():
+    if not REFMAP_JSON.exists():
 
         print(
             f"ERROR: reference map not found:\n"
-            f"    {REFMAP}\n\n"
+            f"    {REFMAP_JSON}\n\n"
             f"Run:\n"
             f"    python3 scripts/refs/build_refmap.py"
         )
@@ -112,7 +98,7 @@ def load_refmap():
     try:
 
         data = json.loads(
-            REFMAP.read_text(
+            REFMAP_JSON.read_text(
                 encoding="utf-8"
             )
         )
@@ -120,7 +106,7 @@ def load_refmap():
     except json.JSONDecodeError as error:
 
         print(
-            f"ERROR: invalid JSON in {REFMAP}\n"
+            f"ERROR: invalid JSON in {REFMAP_JSON}\n"
             f"    {error}"
         )
 
