@@ -101,6 +101,13 @@ PDFLAYOUT = TEMPLATES_DIR / "pdflayout.typ"
 
 
 # ============================================================
+# Project configuration files
+# ============================================================
+
+CONFIG_FILE = SCRIPTS_DIR / "config.py"
+
+
+# ============================================================
 # Generated metadata / Typst files
 # ============================================================
 #
@@ -133,6 +140,11 @@ HOMEPAGE_TYP = (
 HOMEPAGE_JSON = (
     GENERATED_DIR / "homepage.json"
 )
+
+REFMAP_JSON = (
+    GENERATED_DIR / "refmap.json"
+)
+
 
 
 # ============================================================
