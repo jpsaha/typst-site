@@ -52,7 +52,7 @@ DRY_RUN=false
 SYNC_ITEMS=(
     "templates"
     "assets"
-    "install"
+    # "install"
     "scripts"
     "build.sh"
     "book_source.typ"
@@ -80,7 +80,16 @@ SYNC_ITEMS=(
 PROTECTED_ASSETS=(
     "og/default.pdf"
     "og/default.asy"
+    "og/default.png"
     "og/fgt1.png"
+    "og/default_1.asy"
+    "og/default_2.asy"
+    "og/default_3.asy"
+    "og/default_4.asy"
+    "og/default_5.asy"
+    "og/default_6.asy"
+    "og/default_7.asy"
+    "og/default_8.asy"
 )
 
 
