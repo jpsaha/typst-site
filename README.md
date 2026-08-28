@@ -517,6 +517,319 @@ This also creates a path toward a future **mathematical knowledge graph**, where
 
 ---
 
+# Semantic Mathematical Metadata
+
+The metadata system is intended to evolve beyond simple publication information such as titles, categories, dates, and tags.
+
+A long-term goal is to allow the publishing engine to describe the **mathematical structure and relationships within the content itself**.
+
+A mathematical collection can contain different kinds of objects:
+
+```text
+Definition
+   ↓
+Theorem
+   ↓
+Example
+   ↓
+Exercise
+   ↓
+Problem
+   ↓
+Solution
+```
+
+These objects are not merely pieces of text. They have mathematical relationships with one another.
+
+For example:
+
+```text
+Definition: Normal subgroup
+          │
+          ▼
+Theorem: Quotient group theorem
+          │
+          ├───────────────┐
+          ▼               ▼
+ Example: S₃          Exercise: 4.3
+                          │
+                          ▼
+                      Problem: P17
+                          │
+                          ▼
+                     Solution: P17
+```
+
+The metadata layer can eventually describe these relationships explicitly.
+
+---
+
+## Mathematical object types
+
+Content can eventually be classified using semantic types such as:
+
+```text
+definition
+theorem
+lemma
+proposition
+corollary
+example
+remark
+exercise
+problem
+solution
+```
+
+These types describe the **role of a piece of content in the mathematical or educational structure**, rather than its location in the repository.
+
+A lecture may therefore contain many different semantic objects:
+
+```text
+Lecture 5
+├── Definition
+├── Example
+├── Theorem
+├── Proof
+├── Exercise
+├── Problem
+└── Solution
+```
+
+The source organization can remain simple while the generated metadata provides a richer model of the material.
+
+---
+
+## Semantic tags
+
+Exercises, problems, examples, and other mathematical objects can carry structured tags describing their mathematical content.
+
+Potential metadata includes:
+
+```text
+topic
+subtopic
+concept
+technique
+method
+difficulty
+prerequisites
+```
+
+For example:
+
+```typst
+#let exercise = (
+  file: "problem-07",
+  title: "A subgroup counting problem",
+  type: "exercise",
+  category: "Group theory",
+
+  tags: (
+    topic: ["group-theory", "subgroups"],
+    concept: ["lagrange-theorem"],
+    technique: ["counting", "cosets"],
+    difficulty: "intermediate",
+  ),
+)
+```
+
+The purpose of these tags is not merely to organize the website.
+
+They provide the foundation for discovering **mathematically related content**.
+
+---
+
+## Relationships between mathematical objects
+
+The system can eventually represent relationships such as:
+
+```text
+requires
+uses
+illustrates
+proves
+solves
+extends
+related-to
+follows-from
+```
+
+For example:
+
+```text
+Problem P17
+   │
+   ├── uses → Lagrange's theorem
+   ├── requires → Normal subgroups
+   ├── technique → Coset counting
+   └── solution → Solution P17
+```
+
+Similarly:
+
+```text
+Theorem
+   │
+   ├── introduced in → Lecture 4
+   ├── illustrated by → Example 4.2
+   ├── used by → Exercise 4.5
+   └── applied in → Problem P17
+```
+
+These relationships can eventually be used to generate navigation automatically rather than requiring every cross-reference to be maintained manually.
+
+---
+
+## Related problems
+
+One particularly useful application is automatic discovery of similar problems.
+
+If problems contain structured metadata such as:
+
+```text
+topic
+concept
+technique
+difficulty
+prerequisites
+```
+
+the publishing engine can eventually generate sections such as:
+
+```text
+Related Problems
+
+• Problems involving Lagrange's theorem
+• Problems involving coset counting
+• Problems using the same technique
+• Problems with similar difficulty
+• Problems requiring the same prerequisites
+```
+
+This can be much more useful than ordinary text-based search because the relationships are based on the **mathematical characteristics of the problems**.
+
+---
+
+## Prerequisite navigation
+
+Semantic metadata can also support learning-oriented navigation.
+
+For example:
+
+```text
+Current Problem
+      │
+      ▼
+Required concepts
+      │
+      ▼
+Prerequisite definitions
+      │
+      ▼
+Relevant examples
+      │
+      ▼
+Earlier exercises
+      │
+      ▼
+Current Problem
+```
+
+This provides a foundation for features such as:
+
+* prerequisite material
+* recommended exercises
+* suggested next problems
+* related theorems
+* related examples
+* concept-based navigation
+* difficulty-based progression
+* topic collections
+
+The same mechanism can therefore support both **publishing** and **teaching**.
+
+---
+
+## From metadata to a mathematical knowledge graph
+
+As the semantic metadata becomes richer, the repository can be viewed as a network of mathematical objects:
+
+```text
+                     Definition
+                         │
+                         ▼
+                      Theorem
+                     /       \
+                    ▼         ▼
+                Example     Exercise
+                              │
+                     ┌────────┴────────┐
+                     ▼                 ▼
+                  Problem          Related Problem
+                     │
+                     ▼
+                  Solution
+```
+
+Each object can have both:
+
+```text
+semantic attributes
+```
+
+and
+
+```text
+relationships to other objects
+```
+
+This creates the possibility of a future **mathematical knowledge graph** derived directly from the source material.
+
+The important architectural principle is:
+
+> **The publishing engine should eventually understand not only where mathematical content belongs, but how mathematical ideas, results, examples, problems, and solutions relate to one another.**
+
+---
+
+## Author once, connect once, publish everywhere
+
+The semantic model is intended to remain independent of any particular frontend.
+
+The same relationships could eventually drive:
+
+```text
+Website
+   ├── Related problems
+   ├── Prerequisites
+   ├── Recommended material
+   └── Concept navigation
+
+PDF
+   ├── Related exercises
+   └── References
+
+Course
+   ├── Learning sequence
+   ├── Prerequisites
+   └── Problem sets
+
+Problem collection
+   ├── Topic index
+   ├── Technique index
+   └── Difficulty index
+```
+
+The underlying mathematical content remains the authoritative source.
+
+The website, PDFs, books, indexes, and future educational interfaces are simply different views generated from that source.
+
+This reinforces the central architectural principle of the project:
+
+> **Author the mathematics once. Structure it carefully. Connect it meaningfully. Validate it automatically. Publish it in whatever educational formats are needed.**
+
+---
+
 # Adding New Content
 
 The normal workflow for adding a lecture, course, olympiad page, or similar content is:
