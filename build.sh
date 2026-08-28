@@ -5,6 +5,65 @@ set -euo pipefail
 export TYPST_FEATURES=html
 
 # ============================================================
+# Output colors / print helpers
+# ============================================================
+
+if [[ -t 1 ]]; then
+    C_RESET=$'\033[0m'
+    C_GREEN=$'\033[32m'
+    C_YELLOW=$'\033[33m'
+    C_RED=$'\033[31m'
+    C_BLUE=$'\033[34m'
+    C_CYAN=$'\033[36m'
+    C_BOLD=$'\033[1m'
+else
+    C_RESET=""
+    C_GREEN=""
+    C_YELLOW=""
+    C_RED=""
+    C_BLUE=""
+    C_CYAN=""
+    C_BOLD=""
+fi
+
+
+print_step() {
+    printf '\n%s%s%s\n' \
+        "$C_BOLD$C_BLUE" "$1" "$C_RESET"
+}
+
+
+print_ok() {
+    printf '    %s✅ %s %s\n' \
+        "$C_GREEN" "$C_RESET" "$1"
+}
+
+
+print_skip() {
+    printf '    %s⏭️  %s %s\n' \
+        "$C_YELLOW" "$C_RESET" "$1"
+}
+
+
+print_warn() {
+    printf '    %s⚠️  %s %s\n' \
+        "$C_YELLOW" "$C_RESET" "$1"
+}
+
+
+print_fail() {
+    printf '    %s❌ %s %s\n' \
+        "$C_RED" "$C_RESET" "$1"
+}
+
+
+print_info() {
+    printf '    %sℹ️  %s %s\n' \
+        "$C_CYAN" "$C_RESET" "$1"
+}
+
+
+# ============================================================
 # Effective Open Graph setting
 # ============================================================
 #
@@ -23,7 +82,8 @@ TYPST_OG=$(python3 -c \
 
 export TYPST_OG
 
-echo "TYPST_OG=$TYPST_OG"
+printf '%sTYPST_OG=%s%s\n' \
+    "$C_CYAN" "$TYPST_OG" "$C_RESET"
 
 
 # ============================================================
@@ -267,7 +327,7 @@ case "$TARGET" in
 
     *)
 
-        echo "Unknown build target: $TARGET"
+        print_fail "Unknown build target: $TARGET"
         echo
         echo "Run './build.sh --help' for usage information."
         exit 1
@@ -357,7 +417,7 @@ TIME_REPORT="0"
 # ============================================================
 
 die() {
-    echo "Build failed: $1"
+    print_fail "Build failed: $1"
     exit 1
 }
 
@@ -401,8 +461,7 @@ cleanup() {
         -print -quit |
         grep -q .
     then
-        echo
-        echo "🧹 Cleaning Python bytecode..."
+        print_step "🧹 Cleaning Python bytecode..."
 
         find scripts \
             -type d \
@@ -410,7 +469,7 @@ cleanup() {
             -prune \
             -exec rm -rf {} +
 
-        echo "✓ Python bytecode removed."
+        print_ok "Python bytecode removed."
     fi
 
     return "$status"
@@ -429,8 +488,7 @@ trap cleanup EXIT
 
 generate_metadata() {
 
-    echo
-    echo "📋 Generating metadata..."
+    print_step "📋 Generating metadata..."
 
     stage_start
 
@@ -439,6 +497,8 @@ generate_metadata() {
     fi
 
     stage_end TIME_METADATA
+
+    print_ok "Metadata generated."
 }
 
 
@@ -448,11 +508,10 @@ generate_metadata() {
 
 generate_og() {
 
-    echo
-    echo "🖼️  Generating Open Graph sources..."
+    print_step "🖼️  Generating Open Graph sources..."
 
     if [[ "$TYPST_OG" != "true" ]]; then
-        echo "⏭️  Open Graph generation disabled (TYPST_OG=false)"
+        print_skip "Open Graph generation disabled (TYPST_OG=false)"
         return 0
     fi
 
@@ -463,6 +522,8 @@ generate_og() {
     fi
 
     stage_end TIME_OG_GENERATE
+
+    print_ok "Open Graph sources generated."
 }
 
 
@@ -472,11 +533,10 @@ generate_og() {
 
 build_og() {
 
-    echo
-    echo "🖼️  Building Open Graph PNGs..."
+    print_step "🖼️  Building Open Graph PNGs..."
 
     if [[ "$TYPST_OG" != "true" ]]; then
-        echo "⏭️  Open Graph build disabled (TYPST_OG=false)"
+        print_skip "Open Graph build disabled (TYPST_OG=false)"
         return 0
     fi
 
@@ -487,6 +547,8 @@ build_og() {
     fi
 
     stage_end TIME_OG_BUILD
+
+    print_ok "Open Graph PNGs built."
 }
 
 
@@ -517,11 +579,10 @@ build_og() {
 
 publish_og() {
 
-    echo
-    echo "📦 Publishing Open Graph PNGs..."
+    print_step "📦 Publishing Open Graph PNGs..."
 
     if [[ "$TYPST_OG" != "true" ]]; then
-        echo "⏭️  Open Graph publishing disabled (TYPST_OG=false)"
+        print_skip "Open Graph publishing disabled (TYPST_OG=false)"
         return 0
     fi
 
@@ -532,6 +593,8 @@ publish_og() {
     fi
 
     stage_end TIME_OG_PUBLISH
+
+    print_ok "Open Graph PNGs published."
 }
 
 # ============================================================
@@ -558,8 +621,7 @@ publish_og() {
 
 og_refresh() {
 
-    echo
-    echo "🔄 Refreshing Open Graph images..."
+    print_step "🔄 Refreshing Open Graph images..."
 
     # --------------------------------------------------------
     # Force a clean OG generation
@@ -572,7 +634,7 @@ og_refresh() {
 
     if [[ -d "generated/og" ]]; then
 
-        echo "🧹 Removing existing generated OG files..."
+        print_info "Removing existing generated OG files..."
 
         rm -rf "generated/og"
 
@@ -590,6 +652,8 @@ og_refresh() {
 
     stage_end TIME_OG_GENERATE
 
+    print_ok "Open Graph sources generated."
+
     # --------------------------------------------------------
     # Build OG PNGs
     # --------------------------------------------------------
@@ -601,6 +665,8 @@ og_refresh() {
     fi
 
     stage_end TIME_OG_BUILD
+
+    print_ok "Open Graph PNGs built."
 
     # --------------------------------------------------------
     # Publish OG PNGs
@@ -614,8 +680,10 @@ og_refresh() {
 
     stage_end TIME_OG_PUBLISH
 
+    print_ok "Open Graph PNGs published."
+
     echo
-    echo "✅ Open Graph images refreshed."
+    print_ok "Open Graph images refreshed."
 }
 
 # ============================================================
@@ -670,18 +738,20 @@ og_refresh() {
 
 validate_config() {
 
-    echo
-    echo "⚙️  Checking configuration..."
+    print_step "⚙️  Checking configuration..."
 
     stage_start
 
     if ! python3 scripts/run.py config; then
-        echo
-        echo "⚠️  Configuration audit reported findings."
-        echo "   See diagnostics/config_report.txt for details."
+        print_warn "Configuration audit reported findings."
+        print_info "See diagnostics/config_report.txt for details."
+    else
+        print_ok "Configuration audit passed."
     fi
 
     stage_end TIME_CONFIG
+
+    print_ok "Configuration audit completed."
 }
 
 
@@ -691,8 +761,7 @@ validate_config() {
 
 validate_metadata() {
 
-    echo
-    echo "📋 Validating source metadata..."
+    print_step "📋 Validating source metadata..."
 
     stage_start
 
@@ -701,6 +770,8 @@ validate_metadata() {
     fi
 
     stage_end TIME_METADATA_CHECK
+
+    print_ok "Source metadata validated."
 }
 
 
@@ -710,8 +781,7 @@ validate_metadata() {
 
 validate_generated() {
 
-    echo
-    echo "🔍 Validating generated files..."
+    print_step "🔍 Validating generated files..."
 
     stage_start
 
@@ -720,6 +790,8 @@ validate_generated() {
     fi
 
     stage_end TIME_GENERATED_CHECK
+
+    print_ok "Generated files validated."
 }
 
 
@@ -737,8 +809,7 @@ validate_generated() {
 
 validate_imports() {
 
-    echo
-    echo "🔍 Validating Typst imports..."
+    print_step "🔍 Validating Typst imports..."
 
     stage_start
 
@@ -747,6 +818,8 @@ validate_imports() {
     fi
 
     stage_end TIME_IMPORT_CHECK
+
+    print_ok "Typst imports validated."
 }
 
 
@@ -779,8 +852,7 @@ validate_imports() {
 
 validate_og() {
 
-    echo
-    echo "🖼️  Checking Open Graph images..."
+    print_step "🖼️  Checking Open Graph images..."
 
     stage_start
 
@@ -789,6 +861,8 @@ validate_og() {
     fi
 
     stage_end TIME_OG_CHECK
+
+    print_ok "Open Graph images validated."
 }
 
 
@@ -808,8 +882,7 @@ validate_og() {
 
 validate_links() {
 
-    echo
-    echo "🔗 Checking links..."
+    print_step "🔗 Checking links..."
 
     stage_start
 
@@ -818,6 +891,8 @@ validate_links() {
     fi
 
     stage_end TIME_LINKS
+
+    print_ok "Links validated."
 }
 
 # ============================================================
@@ -860,8 +935,7 @@ validate_links() {
 
 prepare_dist() {
 
-    echo
-    echo "📁 Preparing dist..."
+    print_step "📁 Preparing dist..."
 
     stage_start
 
@@ -870,6 +944,8 @@ prepare_dist() {
     fi
 
     stage_end TIME_PREPARE_DIST
+
+    print_ok "dist prepared."
 }
 
 
@@ -879,8 +955,7 @@ prepare_dist() {
 
 prepare_diagnostics() {
 
-    echo
-    echo "🧹 Preparing diagnostics..."
+    print_step "🧹 Preparing diagnostics..."
 
     stage_start
 
@@ -890,7 +965,7 @@ prepare_diagnostics() {
 
     stage_end TIME_PREPARE_DIAGNOSTICS
 
-    echo "✓ Diagnostics directory prepared."
+    print_ok "Diagnostics directory prepared."
 }
 
 
@@ -905,8 +980,7 @@ prepare_diagnostics() {
 
 build_html() {
 
-    echo
-    echo "🌐 Building course pages..."
+    print_step "🌐 Building course pages..."
 
     stage_start
 
@@ -915,6 +989,8 @@ build_html() {
     fi
 
     stage_end TIME_HTML
+
+    print_ok "Course pages built."
 }
 
 
@@ -924,8 +1000,7 @@ build_html() {
 
 build_refmap() {
 
-    echo
-    echo "🔖 Building reference map..."
+    print_step "🔖 Building reference map..."
 
     stage_start
 
@@ -934,6 +1009,8 @@ build_refmap() {
     fi
 
     stage_end TIME_REFMAP
+
+    print_ok "Reference map built."
 }
 
 
@@ -943,8 +1020,7 @@ build_refmap() {
 
 fix_html_refs() {
 
-    echo
-    echo "🔗 Fixing HTML references..."
+    print_step "🔗 Fixing HTML references..."
 
     stage_start
 
@@ -953,6 +1029,8 @@ fix_html_refs() {
     fi
 
     stage_end TIME_FIX_REFS
+
+    print_ok "HTML references fixed."
 }
 
 
@@ -962,8 +1040,7 @@ fix_html_refs() {
 
 fix_html_equations() {
 
-    echo
-    echo "🔢 Fixing HTML equation numbers..."
+    print_step "🔢 Fixing HTML equation numbers..."
 
     stage_start
 
@@ -972,6 +1049,8 @@ fix_html_equations() {
     fi
 
     stage_end TIME_FIX_EQUATIONS
+
+    print_ok "HTML equation numbers fixed."
 }
 
 
@@ -981,8 +1060,7 @@ fix_html_equations() {
 
 build_sitemap() {
 
-    echo
-    echo "🗺️  Generating sitemap..."
+    print_step "🗺️  Generating sitemap..."
 
     stage_start
 
@@ -991,6 +1069,8 @@ build_sitemap() {
     fi
 
     stage_end TIME_SITEMAP
+
+    print_ok "Sitemap generated."
 }
 
 
@@ -1000,8 +1080,7 @@ build_sitemap() {
 
 build_robots() {
 
-    echo
-    echo "🤖 Generating robots.txt..."
+    print_step "🤖 Generating robots.txt..."
 
     stage_start
 
@@ -1010,6 +1089,8 @@ build_robots() {
     fi
 
     stage_end TIME_ROBOTS
+
+    print_ok "robots.txt generated."
 }
 
 
@@ -1024,8 +1105,7 @@ build_robots() {
 
 build_pdf() {
 
-    echo
-    echo "📄 Building individual page PDFs..."
+    print_step "📄 Building individual page PDFs..."
 
     stage_start
 
@@ -1034,6 +1114,8 @@ build_pdf() {
     fi
 
     stage_end TIME_PDF
+
+    print_ok "Individual page PDFs built."
 }
 
 
@@ -1043,8 +1125,7 @@ build_pdf() {
 
 build_categories() {
 
-    echo
-    echo "📚 Building category books..."
+    print_step "📚 Building category books..."
 
     stage_start
 
@@ -1053,6 +1134,8 @@ build_categories() {
     fi
 
     stage_end TIME_CATEGORIES
+
+    print_ok "Category books built."
 }
 
 
@@ -1062,8 +1145,7 @@ build_categories() {
 
 build_book() {
 
-    echo
-    echo "📚 Building complete course book..."
+    print_step "📚 Building complete course book..."
 
     stage_start
 
@@ -1072,6 +1154,8 @@ build_book() {
     fi
 
     stage_end TIME_BOOK
+
+    print_ok "Complete course book built."
 }
 
 
@@ -1081,8 +1165,7 @@ build_book() {
 
 build_pages_pdf() {
 
-    echo
-    echo "📚 Building complete pages.pdf..."
+    print_step "📚 Building complete pages.pdf..."
 
     stage_start
 
@@ -1091,6 +1174,8 @@ build_pages_pdf() {
     fi
 
     stage_end TIME_PAGES
+
+    print_ok "Complete pages.pdf built."
 }
 
 
