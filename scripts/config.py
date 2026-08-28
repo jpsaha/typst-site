@@ -60,6 +60,12 @@ ROOT = Path(
 # ============================================================
 # Project directories
 # ============================================================
+#
+# Central definitions of the major project directories.
+#
+# Build, metadata, lint, reference, and OG scripts should use
+# these paths rather than reconstructing them independently.
+# ============================================================
 
 CONTENT_DIR = ROOT / "content"
 
@@ -70,6 +76,8 @@ TEMPLATES_DIR = ROOT / "templates"
 GENERATED_DIR = ROOT / "generated"
 
 DIAGNOSTICS_DIR = ROOT / "diagnostics"
+
+DIST_DIR = ROOT / "dist"
 
 
 # ============================================================
@@ -92,6 +100,9 @@ ASSETS_SOURCE_DIR = ROOT / "assets"
 # ============================================================
 # Project source files
 # ============================================================
+#
+# Top-level Typst source files belonging to the project.
+# ============================================================
 
 BOOK_SOURCE = ROOT / "book_source.typ"
 
@@ -102,6 +113,11 @@ PDFLAYOUT = TEMPLATES_DIR / "pdflayout.typ"
 
 # ============================================================
 # Project configuration files
+# ============================================================
+#
+# Configuration files themselves are defined here so that
+# scripts do not need to reconstruct their locations.
+#
 # ============================================================
 
 CONFIG_FILE = SCRIPTS_DIR / "config.py"
@@ -144,7 +160,6 @@ HOMEPAGE_JSON = (
 REFMAP_JSON = (
     GENERATED_DIR / "refmap.json"
 )
-
 
 
 # ============================================================
@@ -195,8 +210,6 @@ GENERATED_OG_DIR = (
 #
 # ============================================================
 
-DIST_DIR = ROOT / "dist"
-
 PAGES_DIR = (
     DIST_DIR / "pages"
 )
@@ -228,6 +241,11 @@ ROBOTS_TXT = (
 
 # ============================================================
 # Diagnostic files
+# ============================================================
+#
+# Diagnostic output is kept separate from generated website
+# output and is not intended for publication.
+#
 # ============================================================
 
 IMPORTS_DOT = (
@@ -263,8 +281,8 @@ CONFIG_REPORT = (
 #
 #     scripts/site_config.py
 #
-# This module derives the URL and build-related settings from
-# that central configuration.
+# This module imports that identity and derives URL/build
+# related settings from it.
 #
 # ============================================================
 
@@ -384,8 +402,14 @@ TYPST_OG_GITBUILD = False
 # ===========OLD GITHUB ACTION STUFF==========================
 # ============================================================
 
+
 # ============================================================
 # GitHub Actions detection
+# ============================================================
+#
+# Used to distinguish local builds from GitHub Actions builds
+# when determining the effective OG build mode.
+#
 # ============================================================
 
 IS_GITHUB_ACTIONS = (
@@ -399,6 +423,26 @@ IS_GITHUB_ACTIONS = (
 
 # ============================================================
 # Boolean environment helper
+# ============================================================
+#
+# Read a boolean environment variable.
+#
+# Accepted true values:
+#
+#     1
+#     true
+#     yes
+#     on
+#
+# Accepted false values:
+#
+#     0
+#     false
+#     no
+#     off
+#
+# Unknown values fall back to the supplied default.
+#
 # ============================================================
 
 def env_bool(
@@ -510,6 +554,17 @@ SITE_OG_IMAGE = (
 
 # ============================================================
 # Open Graph directories
+# ============================================================
+#
+# These names are kept separately because they describe the
+# two different stages of the OG pipeline:
+#
+#     OG_GENERATED_DIR
+#         Generated/intermediate OG files.
+#
+#     OG_PUBLISHED_DIR
+#         Final public OG images under dist/.
+#
 # ============================================================
 
 # Generated OG sources and intermediate PNG files.
