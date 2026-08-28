@@ -1295,7 +1295,10 @@ run_common_checks() {
 #   all       Complete site build
 #   allpdf    All PDF outputs
 #
-# Individual targets are delegated to scripts/run.py.
+# Individual targets use the same shell functions as the
+# complete build wherever those functions exist. This keeps
+# terminal output consistent and ensures timing is recorded
+# for stages that participate in the diagnostics system.
 # ============================================================
 
 run_build() {
@@ -1347,7 +1350,7 @@ run_build() {
 
         config)
 
-            python3 scripts/run.py config
+            validate_config
 
             ;;
 
@@ -1357,7 +1360,7 @@ run_build() {
 
         metadata)
 
-            python3 scripts/run.py metadata
+            generate_metadata
 
             ;;
 
@@ -1367,19 +1370,19 @@ run_build() {
 
         og-generate)
 
-            python3 scripts/run.py og-generate
+            generate_og
 
             ;;
 
         og-build)
 
-            python3 scripts/run.py og-build
+            build_og
 
             ;;
 
         og-publish)
 
-            python3 scripts/run.py og-publish
+            publish_og
 
             ;;
 
@@ -1395,31 +1398,31 @@ run_build() {
 
         metadata-check)
 
-            python3 scripts/run.py metadata-check
+            validate_metadata
 
             ;;
 
         generated)
 
-            python3 scripts/run.py generated
+            validate_generated
 
             ;;
 
         imports)
 
-            python3 scripts/run.py imports
+            validate_imports
 
             ;;
 
         og-check)
 
-            python3 scripts/run.py og-check
+            validate_og
 
             ;;
 
         links)
 
-            python3 scripts/run.py links
+            validate_links
 
             ;;
 
@@ -1429,19 +1432,19 @@ run_build() {
 
         refmap)
 
-            python3 scripts/run.py refmap
+            build_refmap
 
             ;;
 
         fix-refs)
 
-            python3 scripts/run.py fix-refs
+            fix_html_refs
 
             ;;
 
         fix-equations)
 
-            python3 scripts/run.py fix-equations
+            fix_html_equations
 
             ;;
 
@@ -1451,13 +1454,13 @@ run_build() {
 
         prepare-dist)
 
-            python3 scripts/run.py prepare-dist
+            prepare_dist
 
             ;;
 
         prepare-diagnostics)
 
-            python3 scripts/run.py prepare-diagnostics
+            prepare_diagnostics
 
             ;;
 
@@ -1467,19 +1470,19 @@ run_build() {
 
         html)
 
-            python3 scripts/run.py html
+            build_html
 
             ;;
 
         sitemap)
 
-            python3 scripts/run.py sitemap
+            build_sitemap
 
             ;;
 
         robots)
 
-            python3 scripts/run.py robots
+            build_robots
 
             ;;
 
@@ -1489,25 +1492,25 @@ run_build() {
 
         pdf)
 
-            python3 scripts/run.py pdf
+            build_pdf
 
             ;;
 
         categories)
 
-            python3 scripts/run.py categories
+            build_categories
 
             ;;
 
         book)
 
-            python3 scripts/run.py book
+            build_book
 
             ;;
 
         pages-pdf)
 
-            python3 scripts/run.py pages-pdf
+            build_pages_pdf
 
             ;;
 
@@ -1517,7 +1520,7 @@ run_build() {
 
         report)
 
-            python3 scripts/run.py report
+            print_summary
 
             ;;
 
