@@ -437,6 +437,86 @@ Other pages or content types can omit lecture-specific fields when appropriate.
 
 ---
 
+## Semantic metadata and mathematical tagging
+
+The metadata system is intended to describe not only where a piece of content belongs, but also **what mathematical ideas it contains**.
+
+Exercises, problems, solutions, examples, lectures, and other educational units can eventually carry structured semantic metadata such as:
+
+```text
+topic
+subtopic
+concept
+technique
+method
+difficulty
+prerequisites
+tags
+```
+
+For example:
+
+```typst
+#let exercise = (
+  file: "problem-07",
+  title: "A subgroup counting problem",
+  type: "exercise",
+  category: "Group theory",
+
+  tags: (
+    topic: ["group-theory", "subgroups"],
+    concept: ["lagrange-theorem"],
+    technique: ["counting", "cosets"],
+    difficulty: "intermediate",
+  ),
+)
+```
+
+The purpose of this metadata is not merely classification.
+
+It provides the foundation for **semantic relationships between mathematical content**.
+
+The publishing system can eventually use these relationships to automatically generate:
+
+* related exercises
+* similar problems
+* prerequisite material
+* follow-up problems
+* problems using the same technique
+* problems involving the same theorem or concept
+* topic collections
+* difficulty-based collections
+* recommended next problems
+* cross-links between problems and solutions
+
+For example:
+
+```text
+                    Problem
+                       │
+          ┌────────────┼────────────┐
+          │            │            │
+        Topic       Technique    Concept
+          │            │            │
+          ▼            ▼            ▼
+     Group theory    Cosets    Lagrange theorem
+          │            │            │
+          └────────────┼────────────┘
+                       │
+                       ▼
+                 Related Problems
+```
+
+This makes the metadata layer increasingly valuable as the repository grows.
+
+A key architectural principle is:
+
+> **Relationships between mathematical objects should be derived from structured metadata whenever possible, rather than maintained as manually duplicated links.**
+
+This also creates a path toward a future **mathematical knowledge graph**, where lectures, definitions, theorems, examples, exercises, problems, and solutions can be connected through shared concepts and techniques.
+
+---
+
 # Adding New Content
 
 The normal workflow for adding a lecture, course, olympiad page, or similar content is:
