@@ -1,41 +1,43 @@
 # 🧮 Typst Mathematics Lecture Portal
 
-A metadata-driven mathematics lecture, course, olympiad, and problem-solving portal built with **Typst**.
+A **reproducible mathematical publishing engine** whose current frontend happens to be a website.
 
-The project uses **Typst for mathematical typesetting** and **Python for metadata processing, generation, validation, publishing, and build orchestration**.
+The project is designed for creating, organizing, validating, and publishing mathematical teaching material using **Typst** for typesetting and **Python** for metadata processing, generation, validation, diagnostics, and build orchestration.
 
-It generates a complete static website and PDF collection from the source material.
+It can be adapted to a wide range of educational publishing scenarios, including:
 
-The build system currently provides:
+* university and school courses
+* lecture notes
+* mathematics courses and course sequences
+* olympiad preparation
+* problem collections
+* seminars and reading courses
+* instructor resources
+* exercise and solution repositories
+* programming-for-mathematics material
+* research-oriented notes
+* mathematical handouts and books
 
-* browser-viewable HTML pages
-* print-ready PDF documents
+The same source material can be transformed into multiple synchronized publication formats:
+
+* browser-viewable HTML
 * individual lecture/page PDFs
-* combined books
+* complete books
 * course and category books
-* automatically generated homepage
-* metadata-driven navigation
-* previous/next navigation
-* category navigation
-* metadata-driven homepage organization
+* structured navigation
+* searchable/indexable web content
+* social-media preview assets
 * SEO metadata
-* canonical URLs
-* `sitemap.xml`
-* `robots.txt`
-* Open Graph metadata
-* Twitter Card metadata
-* generated Open Graph images
-* static/default Open Graph assets
-* metadata diagnostics
-* configuration diagnostics
-* generated-file consistency checks
-* Typst import/dependency validation
-* HTML link validation
-* Open Graph asset validation
-* build reports
-* GitHub Pages deployment support
+* machine-generated site metadata
+* diagnostic and validation reports
 
-The source is deliberately organized so that **content, metadata, templates, generation, validation, diagnostics, and published output remain separate**.
+The architecture deliberately separates **content, metadata, presentation, generation, validation, diagnostics, and publication**.
+
+The website is therefore not the fundamental product. It is **one publication frontend produced by the underlying mathematical publishing system**.
+
+The central idea is:
+
+> **Write the mathematics once. Describe it with metadata. Let the publishing engine derive the website, books, PDFs, navigation, SEO, social previews, and diagnostics from the same source.**
 
 The main entry point is:
 
@@ -2335,6 +2337,96 @@ rather than duplicated across individual build scripts.
 
 ---
 
+# Beyond a Website
+
+Although the current implementation publishes a static website, the architecture is intentionally broader than a website generator.
+
+The project can be viewed as a **mathematical publishing engine**.
+
+```text
+                    MATHEMATICAL SOURCE
+                           │
+                           ▼
+                    ┌───────────────┐
+                    │   Metadata    │
+                    │   + Content   │
+                    └───────┬───────┘
+                            │
+                            ▼
+                    ┌───────────────┐
+                    │   Publishing  │
+                    │     Engine    │
+                    └───────┬───────┘
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+          ▼                 ▼                 ▼
+        Website            PDFs            Books
+          │                 │                 │
+          ▼                 ▼                 ▼
+       Teaching         Printing         Distribution
+```
+
+The important abstraction is therefore not:
+
+```text
+Typst → website
+```
+
+but:
+
+```text
+Mathematical source
+        ↓
+Structured metadata
+        ↓
+Reproducible publication pipeline
+        ↓
+Multiple educational and publishing outputs
+```
+
+This makes the system suitable for different teaching environments without changing the underlying content architecture.
+
+For example, the same course material could eventually produce:
+
+```text
+Course
+├── Website
+├── Lecture pages
+├── Lecture PDFs
+├── Complete course book
+├── Instructor version
+├── Student version
+├── Exercise collection
+├── Problem/solution collection
+├── Course index
+├── Search index
+└── Archive
+```
+
+Likewise, olympiad material could produce:
+
+```text
+Olympiad Program
+├── Topic pages
+├── Problem sheets
+├── Solution sheets
+├── Year collections
+├── Category books
+├── Website pages
+└── Searchable archive
+```
+
+The underlying mathematical source remains the same.
+
+This is a deliberate architectural goal:
+
+> **The publication format should be replaceable without rewriting the mathematical content.**
+
+The current website is therefore one consumer of the publishing engine rather than the boundary of the architecture.
+
+---
+
 # GitHub Pages
 
 The generated site is designed to be published as a static website, including through GitHub Pages.
@@ -2415,33 +2507,137 @@ This list is generated dynamically from source metadata and will change as the r
 
 # Future Improvements
 
-The current system is already a functional metadata-driven publishing pipeline.
+The project is designed to evolve incrementally. Future work falls into several layers.
 
-Possible future improvements include:
+## Publishing and presentation
 
-* **Website search** across lectures, courses, olympiad material, and problem collections.
-* **Homepage filtering** by category, content type, date, or tags.
-* **Homepage presentation improvements** as the number of generated pages grows.
-* **More detailed build diagnostics**, including timings, file counts, warnings, and validation statistics.
-* **Stronger metadata validation**, including additional cross-field checks.
-* **Improved navigation**, including breadcrumbs and richer cross-references.
-* **Further PDF refinement**, including typography, title pages, headers, footers, and category-book design.
-* **Further HTML refinement**, including responsive layouts and mobile presentation.
+* **Website search** across lectures, courses, topics, and problem collections.
+* **Homepage filtering** by course, category, topic, content type, date, or tags.
+* **Course landing pages** with structured lecture sequences and course information.
+* **Improved navigation** with breadcrumbs, related material, topic navigation, and richer cross-references.
+* **Responsive and mobile presentation**.
 * **Accessibility improvements**, including semantic HTML, keyboard navigation, focus states, and contrast.
-* **Automated testing** for generated HTML, PDFs, metadata, links, OG assets, and Typst imports.
-* **CI/CD improvements**, including stronger deployment validation and clearer failure diagnostics.
-* **Build performance improvements**, including incremental development workflows.
-* **Documentation expansion** as the project architecture evolves.
+* **Favicon and site identity assets**.
+* **Improved PDF typography**, title pages, headers, footers, and book design.
 
-These are incremental extensions. They do not require abandoning the current separation between:
+## Teaching-oriented features
+
+The metadata model can eventually support richer educational structures such as:
+
+* courses and course sequences
+* lecture numbering and prerequisites
+* topics and subtopics
+* exercises and solutions
+* problem sets
+* assignments
+* quizzes
+* examples
+* reading lists
+* references
+* instructor notes
+* student notes
+* difficulty levels
+* learning objectives
+* prerequisite knowledge
+* estimated study time
+
+This would allow the same publishing engine to support not only lecture notes but complete **teaching collections**.
+
+## Reproducible builds
+
+* **Incremental builds**, avoiding unnecessary regeneration of unchanged content.
+* Content/metadata dependency tracking.
+* Build caching.
+* Per-stage build timing.
+* Explicit build manifests.
+* Source-to-output dependency reports.
+* Stronger stale-output detection.
+* Deterministic generated artifacts where practical.
+* Reproducibility checks between builds.
+
+The goal is that a large repository remains fast and predictable even as the number of mathematical documents grows substantially.
+
+## Validation and quality assurance
+
+* Automated tests for generated HTML.
+* PDF sanity checks.
+* Metadata schema validation.
+* Cross-reference validation.
+* Asset validation.
+* Accessibility checks.
+* SEO validation.
+* Open Graph validation.
+* Link checking.
+* Import/dependency checking.
+* Build regression tests.
+* CI validation before publication.
+
+The build should increasingly behave like a **compiler with a test suite**, rather than a collection of scripts.
+
+## Publishing targets
+
+The architecture can eventually support additional publication targets without changing the source content:
 
 ```text
-source
-→ metadata
-→ generation
-→ validation
-→ publication
+                 Source Mathematics
+                        │
+                 Metadata + Structure
+                        │
+          ┌─────────────┼─────────────┐
+          ▼             ▼             ▼
+        HTML           PDF          Books
+          │             │             │
+          ▼             ▼             ▼
+       Website       Printing      Archives
 ```
+
+Potential future outputs include:
+
+* course websites
+* printable handouts
+* instructor editions
+* student editions
+* problem books
+* solution books
+* lecture collections
+* topic collections
+* downloadable archives
+* machine-readable indexes
+
+## Community and discussion
+
+A future teaching-oriented deployment could optionally integrate discussion systems such as **Giscus** for page-level comments.
+
+This should remain an optional frontend integration rather than becoming part of the mathematical source or build core.
+
+The architectural principle would be:
+
+```text
+Mathematical source
+        │
+        ▼
+Publishing engine
+        │
+        ├── Website
+        ├── PDFs
+        ├── Books
+        └── Optional services
+                ├── Search
+                ├── Comments
+                └── Analytics
+```
+
+This keeps external services replaceable.
+
+## Long-term direction
+
+The long-term goal is not to accumulate website features indefinitely.
+
+It is to build a system in which:
+
+> **Mathematical content is authored once, structured once, validated once, and reproducibly published into whatever educational formats are needed.**
+
+The website is simply the current and most visible publication format.
 
 ---
 
@@ -2521,4 +2717,41 @@ The central idea is:
 
 > **`content/` and its metadata are the authoritative inputs. `scripts/` transforms them, `generated/` holds intermediate artifacts, `dist/` is the published result, and `diagnostics/` records the health of the build.**
 
-This separation allows the project to grow from a collection of Typst lectures into a maintainable mathematics publishing system without requiring the source content to become tightly coupled to the generated website, PDFs, SEO data, or deployment artifacts.
+The project is therefore best understood not as a website with a build script, but as a **reproducible mathematical publishing engine**.
+
+Its fundamental unit is not the HTML page. It is the **structured mathematical source**.
+
+From that source, the system can derive:
+
+```text
+                    Mathematical Source
+                           │
+                    Metadata + Structure
+                           │
+                           ▼
+                 Reproducible Build Engine
+                           │
+        ┌──────────────────┼──────────────────┐
+        │                  │                  │
+        ▼                  ▼                  ▼
+      Website             PDFs              Books
+        │                  │                  │
+        ├── SEO            ├── lectures       ├── courses
+        ├── Search         ├── handouts       ├── categories
+        ├── Navigation     └── archives       └── collections
+        │
+        └── Optional integrations
+             ├── Comments
+             ├── Search
+             └── Analytics
+
+                           │
+                           ▼
+                    Diagnostics + QA
+```
+
+This architecture makes it possible to adapt the same system to **courses, lecture series, olympiad programs, problem collections, seminars, instructor resources, and other forms of mathematical teaching and publication**.
+
+The guiding principle is:
+
+> **Author the mathematics once. Structure it carefully. Validate it automatically. Publish it everywhere.**
