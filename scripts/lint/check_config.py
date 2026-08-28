@@ -71,6 +71,9 @@ from scripts.config import (
     TEMPLATES_DIR,
     CONFIG_FILE,
     CONFIG_REPORT,
+    PAGES_DIR,
+    PDF_DIR,
+    ASSETS_DIR,
 )
 
 from scripts.site_config import (
@@ -112,36 +115,30 @@ CONFIG_MODULES = {
 # ============================================================
 #
 # Project directory names are used by the text-based audit to
-# detect hard-coded paths in scripts.
+# detect hard-coded project paths in scripts.
 #
-# Whenever possible, derive these names from the centralized
-# path constants in config.py rather than repeating literals.
+# The directory names are derived from the centralized path
+# constants in config.py rather than repeated as string literals.
 #
-# Some nested output directory names are included explicitly:
+# This includes both project-root directories and directories
+# nested under dist/, such as:
 #
-#     assets
-#     pages
-#     pdf
-#
-# because they are components of centralized paths such as:
-#
-#     ASSETS_DIR
-#     PAGES_DIR
-#     PDF_DIR
+#     dist/assets/
+#     dist/pages/
+#     dist/pdf/
 #
 # ============================================================
 
 PROJECT_DIRECTORIES = {
     CONTENT_DIR.name,
-    TEMPLATES_DIR.name,
     GENERATED_DIR.name,
     DIAGNOSTICS_DIR.name,
     DIST_DIR.name,
     SCRIPTS_DIR.name,
-
-    "assets",
-    "pages",
-    "pdf",
+    TEMPLATES_DIR.name,
+    PAGES_DIR.name,
+    PDF_DIR.name,
+    ASSETS_DIR.name,
 }
 
 
