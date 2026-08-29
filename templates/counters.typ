@@ -53,13 +53,13 @@
 
 #let math-number() = {
 
-  context {
+  // context {
 
     let lecture = current-lecture.get()
     let block = math-counter.get().first()
 
     str(lecture) + "." + str(block)
 
-  }
+  // }
 
 }
