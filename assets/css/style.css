@@ -335,6 +335,18 @@ body {
 }
 
 .index-header .site-subtitle {
+    color: #4a5568;
+    font-size: 1.3rem;
+    margin: 0 0 8px 0;
+}
+
+.index-header .site-tagline {
+    color: #4a5568;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin: 0;
+}
+/* .index-header .site-subtitle {
     color: #718096;
     font-size: 1.3rem;
     margin: 0 0 8px 0;
@@ -345,7 +357,7 @@ body {
     font-size: 0.9rem;
     font-style: italic;
     margin: 0;
-}
+} */
 
 
 /* ------------------------------------------------------------
