@@ -27,7 +27,6 @@ import subprocess
 from scripts.config import (
     ROOT,
     GENERATED_OG_DIR,
-    ASSETS_SOURCE_DIR,
     OG_WIDTH,
     OG_HEIGHT,
     OG_DENSITY,
@@ -230,12 +229,12 @@ def main():
     # This is a manually maintained source asset.
     # --------------------------------------------------------
 
-    default_source = (
-        ASSETS_SOURCE_DIR / "og" / "default.asy"
-    )
+    # default_source = (
+    #     ASSETS_SOURCE_DIR / "og" / "default.asy"
+    # )
 
-    if default_source.exists():
-        sources.append(default_source)
+    # if default_source.exists():
+    #     sources.append(default_source)
 
     # --------------------------------------------------------
     # Generated OG images

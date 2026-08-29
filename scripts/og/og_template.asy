@@ -102,7 +102,8 @@ label("__CATEGORY__", (60, 345), E, borderDark + Helvetica("b") + fontsize(35));
 
 // 3. Narrative Description Block
 label("__TITLE__", (60, 265), E, textMain + Helvetica() + fontsize(22));
-label("Lectures __LECTURE_NUMBER__", (60, 225), E, textMain + Helvetica() + fontsize(22));
+label("__ASY_NARRATIVE__", (60, 225), E, textMain + Helvetica() + fontsize(22));
+// label("Lectures __LECTURE_NUMBER__", (60, 225), E, textMain + Helvetica() + fontsize(22));
 label("__TAGS__", (60, 185), E, textMain + Helvetica() + fontsize(22));
 
 

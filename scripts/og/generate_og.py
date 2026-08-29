@@ -70,7 +70,13 @@ from scripts.site_config import (
     ASY_TARGET_EXAM,
     ASY_MOCKTITLE_A,
     ASY_MOCKTITLE_B,
-    ASY_MOCKCARD_TOPIC
+    ASY_MOCKCARD_TOPIC,
+    ASY_DEFAULT_MOCKCARD_TOPIC,
+    ASY_DEFAULT_TOP_SECTION,
+    ASY_DEFAULT_TARGET_EXAM,
+    ASY_DEFAULT_MOCKTITLE_A,
+    ASY_DEFAULT_MOCKTITLE_B,
+    ASY_DEFAULT_NARRATIVE,
     )
 
 # ============================================================
@@ -139,7 +145,14 @@ def generate_asy(
     number,
     title,
     category,
+    file,
     tags,
+    narrative,
+    top_section,
+    target_exam,
+    mocktitle_a,
+    mocktitle_b,
+    mockcard_topic,
 ):
     """
     Generate one Asymptote source from content metadata.
@@ -149,6 +162,7 @@ def generate_asy(
         __LECTURE_NUMBER__
         __TITLE__
         __CATEGORY__
+        __FILE__
         __TAGS__
 
     which are replaced with escaped metadata values.
@@ -158,10 +172,6 @@ def generate_asy(
 
     # --------------------------------------------------------
     # Lecture/page number
-    #
-    # Empty string is used when the content item has no
-    # number, which is valid for pages such as MOPSS,
-    # IOQM, course pages, etc.
     # --------------------------------------------------------
 
     source = source.replace(
@@ -187,6 +197,14 @@ def generate_asy(
         escape_asy_string(category),
     )
 
+    # --------------------------------------------------------
+    # File name
+    # --------------------------------------------------------
+
+    source = source.replace(
+        "__FILE__",
+        escape_asy_string(file),
+    )
 
     # --------------------------------------------------------
     # Tags
@@ -197,6 +215,16 @@ def generate_asy(
     source = source.replace(
         "__TAGS__",
         escape_asy_string(tag_text),
+    )
+
+    
+    # --------------------------------------------------------
+    # Narrative description
+    # --------------------------------------------------------
+
+    source = source.replace(
+        "__ASY_NARRATIVE__",
+        escape_asy_string(narrative),
     )
 
     # --------------------------------------------------------
@@ -223,7 +251,7 @@ def generate_asy(
 
     source = source.replace(
         "__ASY_TOP_SECTION__",
-        escape_asy_string(ASY_TOP_SECTION),
+        escape_asy_string(top_section),
     )
 
     # --------------------------------------------------------
@@ -232,7 +260,7 @@ def generate_asy(
 
     source = source.replace(
         "__ASY_TARGET_EXAM__",
-        escape_asy_string(ASY_TARGET_EXAM),
+        escape_asy_string(target_exam),
     )
 
     # --------------------------------------------------------
@@ -241,7 +269,7 @@ def generate_asy(
 
     source = source.replace(
         "__ASY_MOCKTITLE_A__",
-        escape_asy_string(ASY_MOCKTITLE_A),
+        escape_asy_string(mocktitle_a),
     )
 
     # --------------------------------------------------------
@@ -250,7 +278,7 @@ def generate_asy(
 
     source = source.replace(
         "__ASY_MOCKTITLE_B__",
-        escape_asy_string(ASY_MOCKTITLE_B),
+        escape_asy_string(mocktitle_b),
     )
 
     # --------------------------------------------------------
@@ -259,11 +287,10 @@ def generate_asy(
 
     source = source.replace(
         "__ASY_MOCKCARD_TOPIC__",
-        escape_asy_string(ASY_MOCKCARD_TOPIC),
+        escape_asy_string(mockcard_topic),
     )
 
     return source
-
 
 # ============================================================
 # Main
@@ -321,6 +348,41 @@ def main():
     generated = 0
     skipped = 0
     warnings = 0
+
+    # ========================================================
+    # Generate default OG source
+    # ========================================================
+    #
+    # The default OG image uses only site-wide configuration.
+    # It is generated from the same template as page OG images.
+    # ========================================================
+
+    default_source = generate_asy(
+        template,
+        number="",
+        top_section=ASY_DEFAULT_TOP_SECTION,
+        category="Lecture Notes",#ASY_DEFAULT_TOP_SECTION,
+        title="Notes", #ASY_DEFAULT_MOCKTITLE_A,
+        narrative=ASY_DEFAULT_NARRATIVE,
+        file="",
+        tags=[],
+        target_exam=ASY_DEFAULT_TARGET_EXAM,
+        mocktitle_a=ASY_DEFAULT_MOCKTITLE_A,
+        mocktitle_b=ASY_DEFAULT_MOCKTITLE_B,
+        mockcard_topic=ASY_DEFAULT_MOCKCARD_TOPIC,
+    )
+
+    default_output = GENERATED_OG_DIR / "default.asy"
+
+    default_output.write_text(
+        default_source,
+        encoding="utf-8",
+    )
+
+    print(
+        f"📐 Generated "
+        f"{default_output.relative_to(ROOT)}"
+    )
 
     # ========================================================
     # Process all content entries
@@ -522,7 +584,14 @@ def main():
                 number=number,
                 title=title,
                 category=category_name,
+                file=source_path.stem,
                 tags=tags,
+                narrative=f"Lectures {number}",
+                top_section=ASY_TOP_SECTION,
+                target_exam=ASY_TARGET_EXAM,
+                mocktitle_a=ASY_MOCKTITLE_A,
+                mocktitle_b=ASY_MOCKTITLE_B,
+                mockcard_topic=ASY_MOCKCARD_TOPIC,
             )
 
             # =================================================
