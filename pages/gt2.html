@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>/* Alignment */
+mtable.right-align mtd,
+mtable mtd.right-align,
+mtable.left-align mtd.right-align,
+mtable.aligned mtd:nth-child(odd) {
+  justify-items: end;
+  text-align: right;
+}
+mtable.cases mtd,
+mtable.left-align mtd,
+mtable mtd.left-align,
+mtable.aligned mtd:nth-child(even),
+math:is(:not([display])) > mtable.multiline-equation mtd {
+  justify-items: start;
+  text-align: left;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.left-flush {
+  padding-left: 0;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.right-flush {
+  padding-right: 0;
+}
+
+/* Tables */
+mtable {
+  math-style: inherit;
+}
+mtd {
+  math-depth: auto-add;
+  math-style: compact;
+  math-shift: compact;
+}
+
+/* Equations */
+mtable.multiline-equation mtd {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+  padding: 0;
+}
+math > mtable.multiline-equation mtr:not(:last-child) mtd {
+  padding-bottom: 0.5em;
+}
+
+/* Fractions */
+mfrac {
+  padding-inline: 0;
+  margin-inline: 0.1em;
+}
+
+/* Accents */
+mover[accent="true" i] > :first-child {
+  font-feature-settings: "dtls";
+}
+mover.dotted[accent="true" i] > :first-child {
+  font-feature-settings: "dtls" 0;
+}
+
+/* Other rules for scriptlevel, displaystyle and math-shift */
+munder > :nth-child(2),
+munderover > :nth-child(2) {
+  math-shift: compact
+}
+munder[accentunder="true" i] > :not(:first-child),
+mover[accent="true" i] > :not(:first-child) {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+}</style><title>Symmetric groups</title>
+<meta name="description" content="Introduction to Group theory.">
+<link rel="canonical" href="https://jpsaha.github.io/typst-site/pages/gt2.html">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Symmetric groups">
+<meta property="og:description" content="Introduction to Group theory.">
+<meta property="og:url" content="https://jpsaha.github.io/typst-site/pages/gt2.html">
+<meta property="og:site_name" content="Mathematics: Lectures &amp; Notes">
+<meta property="og:image" content="https://jpsaha.github.io/typst-site/assets/og/gt/lec2.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Symmetric groups">
+<meta name="twitter:description" content="Introduction to Group theory.">
+<meta name="twitter:image" content="https://jpsaha.github.io/typst-site/assets/og/gt/lec2.png">
+    <link rel="stylesheet" href="../assets/css/html-equations.css">
+</head><body><nav class="breadcrumb"><a href="../index.html">🏠 Home</a> <span class="breadcrumb-sep">/</span> Group theory <span class="breadcrumb-sep">/</span> Symmetric groups</nav><div class="download-buttons"><p><a href="../pdf/gt2.pdf">⬇ PDF</a></p></div><h1 style="font-family: system-ui, sans-serif;
+        color: #111;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;">2. Symmetric groups</h1><div class="lecture-meta"></div><h3>eqn test</h3><div class="html-equation"><math id="eqn-ab" display="block"><mi>𝑎</mi><mo>=</mo><mi>𝑏</mi><mi>.</mi></math><span class="html-equation-number">(1)</span></div><p>Study the equation in <a href="#eqn-ab">Equation 1</a>.</p><div class="html-equation"><math id="eqn-cd" display="block"><mi>𝑐</mi><mo>=</mo><mi>𝑑</mi><mi>.</mi></math><span class="html-equation-number">(2)</span></div><p>Study the equation in <a href="#eqn-cd">Equation 2</a>.</p><h3>Core Definitions</h3><p>In this session, we analyze how linear transformations scale specific vector subspaces.</p><h4>some defn</h4><figure id="defn-eeigenvalue-eigeenvector"><div class="math-card definition" style="width: 100%;border: 1px solid #2e7d32;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Definition 2.1</strong></div><div class="math-card-body"><p>Let <math><mi>𝑇</mi><mo lspace="0.2777777777777778em" rspace="0.2777777777777778em">:</mo><mi>𝑉</mi><mo stretchy="false">→</mo><mi>𝑉</mi></math> be a linear operator on a vector space <math><mi>𝑉</mi></math> over a field <math><mi>𝐹</mi></math>. A non-zero vector <math><mi>𝑣</mi><mo>∈</mo><mi>𝑉</mi></math> is called an <strong>eigenvector</strong> of <math><mi>𝑇</mi></math> if there exists a scalar <math><mi>𝜆</mi><mo>∈</mo><mi>𝐹</mi></math> such that:</p><math display="block"><mi>𝑇</mi><mrow><mo>(</mo><mi>𝑣</mi><mo>)</mo></mrow><mo>=</mo><mi>𝜆</mi><mi>𝑣</mi></math><p>The scalar <math><mi>𝜆</mi></math> is called the <strong>eigenvalue</strong> corresponding to the eigenvector <math><mi>𝑣</mi></math>.</p></div></div></figure><p>See <a href="#defn-eeigenvalue-eigeenvector">Definition 2.1</a> for the formal definition of eigenvalues and eigenvectors.</p><h3>Fundamental Theorems</h3><figure id="thm-linear-independence-eigenvectors"><div class="math-card theorem" style="width: 100%;border: 1px solid #0066cc;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Theorem 2.2</strong></div><div class="math-card-body">Let <math><mi>𝑇</mi><mo lspace="0.2777777777777778em" rspace="0.2777777777777778em">:</mo><mi>𝑉</mi><mo stretchy="false">→</mo><mi>𝑉</mi></math> be a linear operator. If <math><msub><mi>𝑣</mi><mn>1</mn></msub><mo>,</mo><msub><mi>𝑣</mi><mn>2</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>𝑣</mi><mi>𝑚</mi></msub></math> are eigenvectors corresponding to <strong>distinct</strong> eigenvalues <math><msub><mi>𝜆</mi><mn>1</mn></msub><mo>,</mo><msub><mi>𝜆</mi><mn>2</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>𝜆</mi><mi>𝑚</mi></msub></math>, then the set <math><mo stretchy="false">{</mo><msub><mi>𝑣</mi><mn>1</mn></msub><mo>,</mo><msub><mi>𝑣</mi><mn>2</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>𝑣</mi><mi>𝑚</mi></msub><mo stretchy="false">}</mo></math> is linearly independent.</div></div></figure><p>By <a href="#thm-linear-independence-eigenvectors">Theorem 2.2</a>, we conclude that eigenvectors corresponding to distinct eigenvalues are linearly independent.</p><h3>Homework Practice</h3><figure id="exer-characteristic-polynomial-evaluation"><div class="math-card exercise" style="width: 100%;border: 1px solid #c62828;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Exercise 2.3</strong></div><div class="math-card-body"><p>Consider the <math><mn>2</mn><mo lspace="0.2222222222222222em" rspace="0.2222222222222222em">×</mo><mn>2</mn></math> matrix <math><mi>𝐴</mi></math> representing a linear transformation on <math><msup><mi>ℝ</mi><mn>2</mn></msup></math>:</p><math display="block"><mi>𝐴</mi><mo>=</mo><mrow><mo>(</mo><mtable><mtr><mtd><mn>4</mn></mtd><mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>1</mn></mtd><mtd><mn>3</mn></mtd></mtr></mtable><mo>)</mo></mrow></math><ol><li value="1">Compute the characteristic polynomial <math><mi>𝑝</mi><mrow><mo>(</mo><mi>𝜆</mi><mo>)</mo></mrow><mo>=</mo><mo form="prefix" lspace="0em" rspace="0em">det</mo><mrow><mo>(</mo><mrow><mi>𝐴</mi><mo>−</mo><mi>𝜆</mi><mi>𝐼</mi></mrow><mo>)</mo></mrow></math>.</li><li value="2">Find the distinct eigenvalues <math><msub><mi>𝜆</mi><mn>1</mn></msub></math> and <math><msub><mi>𝜆</mi><mn>2</mn></msub></math> by solving:</li></ol><math display="block"><msup><mi>𝜆</mi><mn>2</mn></msup><mo>−</mo><mn>7</mn><mi>𝜆</mi><mo>+</mo><mn>10</mn><mo>=</mo><mn>0</mn></math></div></div></figure><p>By <a href="#exer-characteristic-polynomial-evaluation">Exercise 2.3</a>.</p><figure id="lemma-test"><div class="math-card lemma" style="width: 100%;border: 1px solid #1565c0;background: none;padding: 12px;margin: 18px 0;border-radius: 5px;box-sizing: border-box;"><div class="math-card-title" style="display: block;font-size: 0.9em;margin-bottom: 4px;"><strong>Lemma 2.4</strong></div><div class="math-card-body">lemma</div></div></figure><p>by <a href="#lemma-test">Lemma 2.4</a>.</p><div class="lecture-navigation"><p><a href="gt1.html">← Groups</a></p><p></p><p><a href="gt3.html">Sylow's theorems →</a></p></div></body></html>
