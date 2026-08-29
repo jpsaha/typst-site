@@ -5,16 +5,21 @@
 /*
  * Global colors and semantic component colors.
  *
- * These variables are overridden below for native dark mode.
+ * The light-mode values are defined here.
+ * Native dark mode overrides these values below.
  */
 
 :root {
+
     /* --------------------------------------------------------
        General site colors
        -------------------------------------------------------- */
 
     --bg: #ffffff;
     --text: #222222;
+    --text-muted: #4a5568;
+    --text-secondary: #666666;
+
     --border: #e9ecef;
     --nav-bg: #f8f9fa;
     --primary: #0066cc;
@@ -47,6 +52,22 @@
     --btn-pdf-bg: #fff0f6;
     --btn-pdf-text: #c2255c;
     --btn-pdf-border: #ffdeeb;
+
+
+    /* --------------------------------------------------------
+       Download-button colors
+       -------------------------------------------------------- */
+
+    --download-bg: #0b63ce;
+    --download-bg-hover: #084fa3;
+    --download-text: #ffffff;
+
+
+    /* --------------------------------------------------------
+       Breadcrumb colors
+       -------------------------------------------------------- */
+
+    --breadcrumb-separator: #d01a1a;
 }
 
 
@@ -57,6 +78,9 @@
 /*
  * Automatically follows the user's operating-system/browser
  * color-scheme preference.
+ *
+ * Only color tokens are overridden here.
+ * Layout and component structure remain unchanged.
  */
 
 @media (prefers-color-scheme: dark) {
@@ -69,6 +93,9 @@
 
         --bg: #121212;
         --text: #e2e8f0;
+        --text-muted: #cbd5e0;
+        --text-secondary: #cbd5e0;
+
         --border: #2d3748;
         --nav-bg: #1a202c;
         --primary: #339af0;
@@ -101,6 +128,22 @@
         --btn-pdf-bg: #2b1b22;
         --btn-pdf-text: #ff85a0;
         --btn-pdf-border: #4a2332;
+
+
+        /* ----------------------------------------------------
+           Download-button colors
+           ---------------------------------------------------- */
+
+        --download-bg: #339af0;
+        --download-bg-hover: #5aaaf5;
+        --download-text: #121212;
+
+
+        /* ----------------------------------------------------
+           Breadcrumb colors
+           ---------------------------------------------------- */
+
+        --breadcrumb-separator: #f87171;
     }
 
 
@@ -335,29 +378,17 @@ body {
 }
 
 .index-header .site-subtitle {
-    color: #4a5568;
+    color: var(--text-muted);
     font-size: 1.3rem;
     margin: 0 0 8px 0;
 }
 
 .index-header .site-tagline {
-    color: #4a5568;
+    color: var(--text-muted);
     font-size: 0.9rem;
     font-style: italic;
     margin: 0;
 }
-/* .index-header .site-subtitle {
-    color: #718096;
-    font-size: 1.3rem;
-    margin: 0 0 8px 0;
-}
-
-.index-header .site-tagline {
-    color: #718096;
-    font-size: 0.9rem;
-    font-style: italic;
-    margin: 0;
-} */
 
 
 /* ------------------------------------------------------------
@@ -454,7 +485,7 @@ body {
     font-family: system-ui, sans-serif;
 
     font-size: 0.95rem;
-    color: #666;
+    color: var(--text-secondary);
 
     margin-top: 0.5rem;
     margin-bottom: 1.5rem;
@@ -475,7 +506,7 @@ body {
     margin: 1rem 0 0.5rem;
 
     font-size: 0.95rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 
@@ -484,7 +515,7 @@ body {
    ------------------------------------------------------------ */
 
 .breadcrumb a {
-    color: #0b63ce;
+    color: var(--primary);
     text-decoration: none;
 }
 
@@ -499,7 +530,7 @@ body {
 
 .breadcrumb-sep {
     margin: 0 0.4em;
-    color: #d01a1a;
+    color: var(--breadcrumb-separator);
 }
 
 
@@ -526,8 +557,8 @@ body {
 
     text-decoration: none;
 
-    background: #0b63ce;
-    color: white;
+    background: var(--download-bg);
+    color: var(--download-text);
 
     font-size: 0.9rem;
 }
@@ -538,5 +569,5 @@ body {
    ------------------------------------------------------------ */
 
 .download-buttons a:hover {
-    background: #084fa3;
+    background: var(--download-bg-hover);
 }
